@@ -45,7 +45,7 @@ export default function ConfirmBooking({ id }) {
                 <div >
                     {confirmBookingResponse && confirmBookingResponse.isSuccessful ? <Alert variant="filled" severity="success">Confirmado</Alert> : <Alert variant="filled" severity="error"> {confirmBookingResponse === null ? "Hubo un error, comuníquese con el administrador" : confirmBookingResponse.message}</Alert>}
                 </div>
-                : <div>Cargando...</div>}
+                : <div>Loading...</div>}
         </div>
 
     );
