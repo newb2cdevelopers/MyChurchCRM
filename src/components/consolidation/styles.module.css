@@ -1,0 +1,553 @@
+:root {
+  --fonts: Arial, Helvetica, sans-serif;
+  --labelColor: #e9ecef;
+}
+
+.containerVerifyAsistents {
+  padding: 20px 147px 0;
+}
+
+.verifyAsistents {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #00000071;
+  font-size: 13px;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.showGeneralInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 220px;
+  margin-top: -40px;
+}
+
+.tableMembersContainer {
+  padding: 28px 49px;
+  position: relative;
+  left: 49px;
+  justify-content: center;
+  width: 1181px;
+}
+
+.tabContainer {
+  padding: 28px 49px;
+  position: relative;
+  left: 0px;
+  justify-content: center;
+}
+
+.relativeTableContainer {
+  position: relative;
+  right: 43px;
+}
+
+.errorMessage {
+  font-size: 11px;
+  color: red;
+  font-weight: bold;
+}
+
+.entryIdTxtFullName label {
+  font-size: 12px;
+  font-weight: bold;
+  /* 
+  color: #666666; */
+  margin-bottom: 5px;
+  width: 137px;
+  border: 1px solid grey;
+  padding: 8px;
+  border-radius: 8px 0px 0px 8px;
+  background-color: var(--labelColor);
+}
+
+.entryIdTxtFullName {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: row;
+  width: 800px;
+}
+
+.inputDataIdTxtFullName {
+  width: 52%;
+  border-left: none;
+  font-family: var(--fonts);
+  border: 1px solid gray;
+  border-radius: 0px 8px 8px 0px;
+  height: 27.6px;
+  padding-left: 7px;
+}
+
+.entryIdTxtAddress label {
+  font-size: 12px;
+  font-weight: bold;
+  /* 
+  color: #666666; */
+  margin-bottom: 5px;
+  width: 137px;
+  border: 1px solid grey;
+  padding: 8px;
+  border-radius: 8px 0px 0px 8px;
+  background-color: var(--labelColor);
+}
+
+.entryIdTxtAddress {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  margin-top: 5px;
+}
+
+.inputDataIdTxtAddress {
+  width: 52%;
+  border-left: none;
+  font-family: var(--fonts);
+  border: 1px solid gray;
+  border-radius: 0px 8px 8px 0px;
+  height: 27.5px;
+  margin-top: -36.5px;
+  margin-left: 155px;
+  padding-left: 7px;
+}
+
+.entryIdTxtPhone label {
+  font-size: 12px;
+  font-weight: bold;
+  /* 
+  color: #666666; */
+  margin-bottom: 5px;
+  width: 137px;
+  border: 1px solid grey;
+  padding: 8px;
+  border-radius: 8px 0px 0px 8px;
+  background-color: var(--labelColor);
+}
+
+.entryIdTxtPhone {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  margin-top: 5px;
+}
+
+.inputDataIdTxtPhone {
+  width: 52%;
+  border-left: none;
+  font-family: var(--fonts);
+  border: 1px solid gray;
+  border-radius: 0px 8px 8px 0px;
+  height: 27.5px;
+  margin-top: -36.5px;
+  margin-left: 155px;
+  padding-left: 7px;
+}
+
+.inputDataIdTxtEmail {
+  width: 52%;
+  border-left: none;
+  font-family: var(--fonts);
+  border: 1px solid gray;
+  border-radius: 0px 8px 8px 0px;
+  height: 27.5px;
+  margin-top: -36.5px;
+  margin-left: 155px;
+  padding-left: 7px;
+}
+
+.entryIdBirthDate {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  margin-top: 5px;
+}
+
+.inputDataIdTxtBirthDate {
+  width: 52%;
+  border-left: none;
+  font-family: var(--fonts);
+  border: 1px solid gray;
+  border-radius: 0px 8px 8px 0px;
+  height: 29.5px;
+  margin-top: -36.5px;
+  margin-left: 155px;
+  padding-left: 7px;
+}
+
+.inputDataIdTxtHousingType {
+  width: 53%;
+  border-left: none;
+  font-family: var(--fonts);
+  border: 1px solid gray;
+  border-radius: 0px 8px 8px 0px;
+  height: 31.5px;
+  margin-top: -36.5px;
+  margin-left: 155px;
+  padding-left: 7px;
+}
+
+.inputDataIdTxtYearsChurch {
+  width: 52%;
+  border-left: none;
+  font-family: Arial, Helvetica, sans-serif !important;
+  border: 1px solid gray;
+  border-radius: 0px 8px 8px 0px;
+  height: 27.5px;
+  margin-top: -36.5px;
+  margin-left: 155px;
+  padding-left: 7px;
+}
+
+.inputDataIdTxtYears {
+  width: 52%;
+  border-left: none;
+  font-family: var(--fonts);
+  border: 1px solid gray;
+  border-radius: 0px 8px 8px 0px;
+  height: 27.5px;
+  margin-top: -36.5px;
+  margin-left: 155px;
+  padding-left: 7px;
+}
+
+.inputDataIdTxtMaritalStatus {
+  width: 53%;
+  border-left: none;
+  font-family: var(--fonts);
+  border: 1px solid gray;
+  border-radius: 0px 8px 8px 0px;
+  height: 31.5px;
+  margin-top: -36.5px;
+  margin-left: 155px;
+  padding-left: 7px;
+}
+
+.inputDataIdTxtEducationLevel {
+  width: 53%;
+  border-left: none;
+  font-family: Arial, Helvetica, sans-serif !important;
+  border: 1px solid gray;
+  border-radius: 0px 8px 8px 0px;
+  height: 31.5px;
+  margin-top: -36.5px;
+  margin-left: 155px;
+  padding-left: 7px;
+}
+
+.inputDataIdTxtOccupation {
+  width: 53%;
+  border-left: none;
+  font-family: Arial, Helvetica, sans-serif !important;
+  border: 1px solid gray;
+  border-radius: 0px 8px 8px 0px;
+  height: 31.5px;
+  margin-top: -36.5px;
+  margin-left: 155px;
+  padding-left: 7px;
+}
+
+.inputDataIdSwitch {
+  margin-left: 157px;
+  margin-top: -40px;
+}
+
+.tableRelatives {
+  border: 1px solid #00000071;
+  width: 1260px;
+}
+
+.tableRelatives thead tr th {
+  width: 25%;
+  text-align: center;
+  background: #000000ba;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.tableRelatives thead tr th p {
+  margin: 5px;
+}
+
+.tableRelatives tbody td {
+  text-align: center;
+}
+
+.tableVerifyAsistents {
+  border: 1px solid #00000071;
+  width: 1037px;
+  position: relative;
+}
+
+.tableVerifyAsistents thead tr th {
+  width: 25%;
+  text-align: center;
+  background: #000000ba;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.buttonContainer {
+  display: flex;
+  position: relative;
+  justify-content: space-evenly;
+  left: 125px;
+  width: 425px;
+}
+
+.buttonClass {
+  font-size: 15px;
+  font-family: var(--fonts);
+  width: 130px;
+    height: 40px;
+  border-width: 1px;
+  color: rgba(255, 255, 255, 1);
+  border-color: #b2b8ad;
+  font-weight: bold;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  box-shadow: inset 0px 0px 14px -3px rgba(110, 110, 108, 1);
+  text-shadow: inset 0px 1px 0px rgba(29, 31, 29, 1);
+  background: linear-gradient(rgba(235, 235, 227, 1), rgba(63, 61, 61, 1));
+}
+
+.buttonClass:hover {
+  background: linear-gradient(rgba(63, 61, 61, 1), rgba(235, 235, 227, 1));
+}
+
+.tableVerifyAsistents thead tr th p {
+  margin: 5px;
+}
+
+.tableVerifyAsistents tbody td {
+  text-align: center;
+}
+
+tbody tr {
+  width: 100%;
+  background: #e9ecef;
+}
+
+.summaryContainer {
+  padding: 7px 0px 10px 0px;
+}
+
+.summaryContainer div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.summaryContainer span {
+  padding: 14px 0px 0px;
+}
+
+.tableContainer {
+  max-height: 700px;
+  overflow-y: scroll;
+  max-width: 1150px;
+  overflow-x: hidden;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 0px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: gray;
+  border-radius: 5px;
+}
+
+.detailTable {
+  border: 1px solid #00000071;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.detailTable thead tr th {
+  font-weight: 500;
+  text-align: left;
+  background-color: #fafafa;
+}
+
+.detailTable thead tr th p {
+  margin: 3px 0px 3px 0px;
+}
+
+.detailTable tbody tr {
+  width: 100%;
+}
+
+.buttons {
+  margin: 5px 0px;
+}
+
+.modalContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: #fff;
+  border: 2px solid #000;
+  box-shadow: 24px;
+  padding: 32px;
+}
+
+.modalTitle {
+  position: absolute;
+  top: 20px;
+  align-items: center;
+  justify-content: center;
+  left: 145px;
+}
+
+.fieldsContainer {
+  position: relative;
+  top: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.labelFieldContainer {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 15px;
+}
+
+.labelField {
+  margin-right: 25px;
+}
+
+.inputField {
+  position: relative;
+  border-bottom: 2px solid;
+  width: 25rem;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.modalButtonContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalButtons {
+  display: flex;
+  position: relative;
+  margin: 10px;
+  width: 90px;
+  justify-content: center;
+  border-radius: 5px;
+}
+
+.createNewRelativeContainer {
+  display: flex;
+  position: relative;
+  margin: 10px;
+  justify-content: left;
+  left: 1155px;
+}
+
+.createNewContainer {
+  display: flex;
+  position: relative;
+  margin: 10px;
+  justify-content: left;
+  left: 918px;
+}
+
+.createNewMemberContainer {
+  display: flex;
+  position: relative;
+  margin: 10px;
+  justify-content: left;
+  left: 617px;
+}
+
+.searchContainer {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+.createNewButton {
+  border-radius: 5px;
+  width: 120px;
+  justify-content: center;
+}
+
+.backToList {
+  cursor: pointer;
+  background: #000000ba;
+  padding: 7px;
+  border-radius: 10px;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+@media (max-width: 480px) {
+  .containerVerifyAsistents {
+    padding: 8% 10px 0;
+  }
+
+  .verifyAsistents {
+    padding: 20px 8px 13px 7px;
+  }
+
+  .modalContainer {
+    width: 290px;
+    padding: 28px;
+  }
+
+  .detailModalContainer {
+    width: 320px;
+    padding: 20px;
+  }
+
+  .summaryContainer span {
+    font-size: 13px;
+  }
+
+  .tableContainer {
+    font-size: 14px;
+    max-height: 255px;
+  }
+
+  .detailTable tbody tr td {
+    padding: 5px;
+  }
+
+  .search input,
+  select {
+    width: 47%;
+    height: 18px;
+  }
+
+  .summaryContainer {
+    padding: 5px 0px 25px;
+  }
+
+  .search select {
+    height: 22px;
+  }
+}

@@ -1,0 +1,23 @@
+.containerNavBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(89.17deg, #1a1a1a 12.64%, #454545 173.99%);
+  height: 55px;
+  position:fixed;
+  width: 100%;
+  z-index: 1;
+  top: 0;
+  color: #F1F1F1;
+}
+
+.textLink {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+@media only screen and (max-width: 375px) {
+  .navButton {
+    font-size: 13px !important;
+  }
+}

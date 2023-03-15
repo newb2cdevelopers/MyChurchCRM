@@ -1,0 +1,232 @@
+.containerVerifyAsistents {
+  padding: 8% 20px 0;
+}
+
+.verifyAsistents {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #00000071;
+  font-size: 13px;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.titleVerfiyAsistents {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.message{
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+}
+
+.entryIdTxtAttendee p {
+  font-size: 12px;
+  font-weight: bold; /* 
+  color: #666666; */
+  margin-bottom: 5px;
+}
+
+.entryIdTxtAttendee {
+  margin-left: auto;
+  margin-bottom: 15px;
+}
+
+.inputDataIdTxtAttendee {
+  width: 100%;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid #00000071;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.tableVerifyAsistents {
+  border: 1px solid #00000071;
+  border-radius: 8px;
+}
+
+.tableVerifyAsistents thead tr th {
+  width: 25%;
+  text-align: center;
+  border: 1px solid black;
+  background: #000000ba;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.tableVerifyAsistents thead tr th p {
+  margin: 5px;
+}
+
+.tableVerifyAsistents tbody td {
+  text-align: center;
+}
+
+tbody tr {
+  width: 100%;
+}
+
+.summaryContainer {
+  padding: 7px 0px 10px 0px;
+}
+
+.summaryContainer div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.summaryContainer span {
+  padding: 14px 0px 0px;
+}
+
+.tableContainer{
+  max-height: 259px;
+  overflow-y: scroll;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 0px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: gray; 
+  border-radius: 5px;
+}
+
+ .detailTable {
+  border: 1px solid #00000071;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.detailTable thead tr th {
+  font-weight: 500;
+  text-align: left;
+  background-color: #fafafa;
+}
+
+.detailTable thead tr th p {
+  margin: 3px 0px 3px 0px;
+}
+
+.detailTable tbody tr {
+  width: 100%;
+}
+
+.confirmButton{
+  background-color:#228B22;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.confirmButton:disabled {
+  background-color: #868686;
+  cursor: no-drop;
+}
+
+.search {
+  padding-top: 17px;
+}
+
+.search input,select{
+  border: 1px solid black;
+  border-radius: 5px;
+  height: 23px;
+}
+
+.search select {
+  height: 27px;
+}
+
+.modalContainer{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: #fff;
+  border: 2px solid #000;
+  box-shadow: 24px;
+  padding: 32px;
+}
+
+.detailModalContainer{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 470px;
+  background-color: #fff;
+  border: 2px solid #000;
+  box-shadow: 24px;
+  padding: 19px 32px 32px;
+  height: 85%;
+}
+
+.buttons{
+  margin: 5px 0px;
+}
+
+.downloadReport {
+  border-radius: 5px;
+  color: #fff;
+  background: #1976d2;
+  border: 1px;
+  padding: 8px 10px 8px 10px;
+  margin-top: 18px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .containerVerifyAsistents {
+    padding: 8% 10px 0;
+  }
+  .verifyAsistents {
+    padding: 20px 8px 13px 7px;
+  }
+  .modalContainer{
+    width: 290px;
+    padding: 28px;
+  }
+  .detailModalContainer{
+    width: 320px;
+    padding: 20px;
+  }
+  .summaryContainer span {
+    font-size: 13px;
+  }
+  .tableContainer{
+    font-size: 14px;
+    max-height: 255px;
+  }
+  .detailTable tbody tr td {
+    padding: 5px;
+  }
+  .search input,select{
+    width: 47%;
+    height: 18px;
+  }
+  .summaryContainer {
+    padding: 5px 0px 25px;
+  }
+  .search select {
+    height: 22px;
+  }
+}

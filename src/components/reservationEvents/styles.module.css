@@ -1,0 +1,163 @@
+.containerReservationEvent {
+  padding: 20% 0 0;
+}
+
+.reservationEvent {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin: auto;
+  font-size: 13px;
+  border: 2px solid #00000071;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.titleReservationEvent {
+  display: flex;
+  font-size: 16px;
+}
+.message{
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+}
+.spacesAvailables {
+  border: 2px solid #008000b8;
+  font-size: 14px;
+  color: #008000b8;
+  border-radius: 4px;
+  padding: 1px 3px 0;
+  font-weight: bold;
+}
+
+.spacesUnavailables {
+  border: 2px solid #ef0707c2;
+  font-size: 14px;
+  color: #ef0707c2;
+  border-radius: 4px;
+  padding: 1px 3px 0;
+  font-weight: bold;
+}
+
+.titleEvent {
+  color: #413f3f;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.titleReservationEvent p:nth-child(1) {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.dataReservation {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.dataReservation div {
+  width: 50%;
+}
+
+.dataReservation p {
+  font-size: 12px;
+  font-weight: bold;
+  color: #666666;
+  margin-bottom: 5px;
+}
+
+.dataReservation select {
+  width: 105%;
+}
+
+.inputDataReservation {
+  width: 100%;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid #00000071;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.inputDataReservation:focus {
+  border-color: red;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.dataReservationButtons {
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.dataReservationButtons button {
+  width: 100px;
+  height: 30px;
+  border: 1px solid;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.dataReservationButtons button:nth-child(1) {
+  background-color: #454545;
+  color: white;
+}
+
+.dataReservationButtons button:nth-child(1):disabled {
+  opacity: 0.7;
+}
+
+.dataReservationButtons button:nth-child(2) {
+  background-color: #9d2626;
+  color: #fff;
+}
+
+@media (min-width: 600px) {
+  .containerReservationEvent {
+    padding: 15% 0 0;
+  }
+
+  .reservationEvent {
+    width: 450px;
+    font-size: 18px;
+    padding: 42px;
+  }
+
+  .dataReservationButtons {
+    justify-content: end;
+  }
+
+  .dataReservationButtons button {
+    width: 110px;
+    height: 38px;
+  }
+
+  .dataReservation select {
+    width: 102%;
+  }
+}
+
+@media (min-width: 800px) {
+  .containerReservationEvent {
+    padding: 9% 0 0;
+  }
+  .reservationEvent {
+    width: 650px;
+    font-size: 32px;
+  }
+
+  .dataReservation p {
+    margin-bottom: 0px;
+  }
+
+  .dataReservation select {
+    width: 100%;
+  }
+}

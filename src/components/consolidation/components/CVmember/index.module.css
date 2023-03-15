@@ -1,0 +1,122 @@
+.containerCv {
+    width: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #000;
+    box-sizing: content-box;
+}
+
+._containerHeader {
+    display: block;
+}
+
+._container_ProfilePhoto {
+    background-color: #0C59B0;
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+._container_ProfileContact {
+    color: #fff;
+    background-color: #0C59B0;
+    padding: 12px 0 0 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    box-sizing: content-box;
+}
+
+._container_ProfileContact p:nth-child(2n+1) {
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+._container_ProfileContact p:nth-child(even) {
+    margin-bottom: 5px;
+    font-style: italic;
+    margin-left: 15px;
+    margin-top: 0;
+}
+
+._ProfilePhoto {
+    background-image: url(../../../../../assets/profilePhotoCv.png);
+    width: 150px;
+    background-size: cover;
+    height: 150px;
+    border-radius: 50%;
+    margin: auto;
+}
+
+._DataProfile {
+    background-color: #fff;
+    box-sizing: content-box;
+    border-bottom: 1px solid #000;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+._DataProfileFullName {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 0;
+}
+
+._DataProfileDocumentNumber {
+    opacity: 0.5;
+    font-style: italic;
+    text-align: center;
+}
+
+._container_ProfileSummary {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+._MinisterialInformation {
+    padding: 12px;
+}
+
+._MinisterialInformation p:nth-child(odd) {
+    text-align: center;
+    font-size: 24px;
+    font-style: italic;
+}
+
+@media (min-width: 1024px) {
+    .containerCv {
+        width: 1000px;
+        display: flex;
+        flex-direction: column;
+        margin: 75px auto;
+    }
+
+    ._containerHeader {
+        display: flex;
+    }
+
+    ._container_ProfilePhoto {
+        width: 30%;
+    }
+
+    ._DataProfile {
+        width: 70%;
+    }
+
+    ._container_ProfileContact {
+        width: 30%;
+    }
+
+    ._container_ProfileSummary {
+        flex-direction: row;
+    }
+
+    ._MinisterialInformation {
+        width: 70%;
+    }
+}

@@ -1,0 +1,123 @@
+.containerCircularProgress {
+  width: 100%;
+  display: flex;
+  justify-content: ce;
+}
+
+.containerEvents {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.titleContainerEvents {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.currentEvents,
+.nextEvents {
+  display: flex;
+  height: 460px;
+  align-items: center;
+  gap: 20px;
+  max-width: 300px;
+  overflow-x: scroll;
+  scroll-snap-type: x;
+}
+
+.containerPromotionalCard {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 300px;
+}
+
+.cardEvents {
+  /*background: url("../../../assets/calendar.png");
+  background-size: cover;*/
+  min-width: 270px;
+  height: 315px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #999595;
+  transition: 0.5s ;
+  flex-direction: column;
+  box-shadow: -2px 0px 8px 3px grey;
+}
+
+.cardImage {
+    width: 254px;
+    height: 236px;
+    margin-top: 17px;
+    margin-bottom: 5px;
+    border-radius: 7px;
+}
+
+/* .cardEvents:hover {
+  transform: scale(1.1);
+  transition: 0.2s ;
+} */
+
+.cardEventDesactive {
+  filter: brightness(0.5);
+}
+
+.buttonPromotionalCard {
+  width: 50%;
+  height: 40px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px;
+  font-size: 16px;
+  color: #fff;
+  background: #454545;
+  text-align: center;
+  padding: 12px 0px 17px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.buttonPromotionalCard:hover {
+  background-color: #fff;
+  color: #454545;
+  font-weight: bold;
+}
+
+.titleEvent {
+  font-weight: bold;
+  font-size: 20px;
+  text-decoration: underline;
+  text-align: center;
+}
+
+@media (min-width: 480px) {
+  .currentEvents,
+  .nextEvents {
+    max-width: 400px;
+  }
+}
+
+@media (min-width: 768px) {
+  .currentEvents,
+  .nextEvents {
+    max-width: 600px;
+  }
+}
+
+@media (min-width: 900px) {
+  .currentEvents,
+  .nextEvents {
+    max-width: 800px;
+  }
+}
+
+@media (min-width: 1240px) {
+  .currentEvents,
+  .nextEvents {
+    max-width: 1100px;
+  }
+}

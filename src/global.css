@@ -1,0 +1,27 @@
+:root{
+  --color-primary: #F1F1F1;
+  --background-primary: #2A2A2A;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.main{
+  margin-top: 55px;
+}
+
+.text-link {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+table {
+  display: table;
+  border-collapse: separate;
+  box-sizing: border-box;
+  text-indent: initial;
+  border-spacing: 0px;
+  border-color: grey;
+}
