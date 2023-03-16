@@ -93,6 +93,21 @@
   text-decoration: underline;
   text-align: center;
 }
+.noEvents {
+  font-weight: bold;
+  font-size: 20px;
+  text-decoration: underline;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-content: space-around;
+  position: relative;
+  top: 0px;
+  left: 0px;
+  color: red;
+}
 
 @media (min-width: 480px) {
   .currentEvents,
