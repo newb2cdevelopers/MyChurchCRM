@@ -59,8 +59,11 @@
   width: 137px;
   border: 1px solid grey;
   padding: 8px;
-  border-radius: 8px 0px 0px 8px;
+  border-radius: 4px 0px 0px 4px;
   background-color: var(--labelColor);
+  height: 24.8px;
+  display: flex;
+  align-items: center;
 }
 
 .entryIdTxtFullName {
@@ -75,9 +78,10 @@
   border-left: none;
   font-family: var(--fonts);
   border: 1px solid gray;
-  border-radius: 0px 8px 8px 0px;
-  height: 27.6px;
+  border-radius: 0px 4px 4px 0px;
+  height: 39px;
   padding-left: 7px;
+  padding-right: 7px;
 }
 
 .entryIdTxtAddress label {
@@ -89,8 +93,11 @@
   width: 137px;
   border: 1px solid grey;
   padding: 8px;
-  border-radius: 8px 0px 0px 8px;
+  border-radius: 4px 0px 0px 4px;
   background-color: var(--labelColor);
+  height: 24.8px;
+  display: flex;
+  align-items: center;
 }
 
 .entryIdTxtAddress {
@@ -106,11 +113,12 @@
   border-left: none;
   font-family: var(--fonts);
   border: 1px solid gray;
-  border-radius: 0px 8px 8px 0px;
-  height: 27.5px;
-  margin-top: -36.5px;
+  border-radius: 0px 4px 4px 0px;
+  height: 39px;
+  margin-top: -47.5px;
   margin-left: 155px;
   padding-left: 7px;
+  padding-right: 7px;
 }
 
 .entryIdTxtPhone label {
@@ -122,8 +130,11 @@
   width: 137px;
   border: 1px solid grey;
   padding: 8px;
-  border-radius: 8px 0px 0px 8px;
+  border-radius: 4px 0px 0px 4px;
   background-color: var(--labelColor);
+  height: 24.8px;
+  display: flex;
+  align-items: center;
 }
 
 .entryIdTxtPhone {
@@ -135,25 +146,25 @@
 }
 
 .inputDataIdTxtPhone {
-  width: 52%;
+  width: 52.7%;
   border-left: none;
   font-family: var(--fonts);
   border: 1px solid gray;
-  border-radius: 0px 8px 8px 0px;
-  height: 27.5px;
-  margin-top: -36.5px;
+  border-radius: 0px 4px 4px 0px;
+  height: 39px;
+  margin-top: -47.5px;
   margin-left: 155px;
   padding-left: 7px;
 }
 
 .inputDataIdTxtEmail {
-  width: 52%;
+  width: 52.7%;
   border-left: none;
   font-family: var(--fonts);
   border: 1px solid gray;
-  border-radius: 0px 8px 8px 0px;
-  height: 27.5px;
-  margin-top: -36.5px;
+  border-radius: 0px 4px 4px 0px;
+  height: 39px;
+  margin-top: -47.5px;
   margin-left: 155px;
   padding-left: 7px;
 }
@@ -167,92 +178,92 @@
 }
 
 .inputDataIdTxtBirthDate {
-  width: 52%;
+  width: 53%;
   border-left: none;
   font-family: var(--fonts);
   border: 1px solid gray;
-  border-radius: 0px 8px 8px 0px;
-  height: 29.5px;
-  margin-top: -36.5px;
+  border-radius: 0px 4px 4px 0px;
+  height: 41px;
+  margin-top: -47.5px;
   margin-left: 155px;
   padding-left: 7px;
 }
 
 .inputDataIdTxtHousingType {
-  width: 53%;
+  width: 54%;
   border-left: none;
   font-family: var(--fonts);
   border: 1px solid gray;
-  border-radius: 0px 8px 8px 0px;
-  height: 31.5px;
-  margin-top: -36.5px;
+  border-radius: 0px 4px 4px 0px;
+  height: 43px;
+  margin-top: -47.5px;
   margin-left: 155px;
   padding-left: 7px;
 }
 
 .inputDataIdTxtYearsChurch {
-  width: 52%;
+  width: 52.7%;
   border-left: none;
   font-family: Arial, Helvetica, sans-serif !important;
   border: 1px solid gray;
-  border-radius: 0px 8px 8px 0px;
-  height: 27.5px;
-  margin-top: -36.5px;
+  border-radius: 0px 4px 4px 0px;
+  height: 39px;
+  margin-top: -47.5px;
   margin-left: 155px;
   padding-left: 7px;
 }
 
 .inputDataIdTxtYears {
-  width: 52%;
+  width: 52.7%;
   border-left: none;
   font-family: var(--fonts);
   border: 1px solid gray;
-  border-radius: 0px 8px 8px 0px;
-  height: 27.5px;
-  margin-top: -36.5px;
+  border-radius: 0px 4px 4px 0px;
+  height: 39px;
+  margin-top: -47.5px;
   margin-left: 155px;
   padding-left: 7px;
 }
 
 .inputDataIdTxtMaritalStatus {
-  width: 53%;
+  width: 53.7%;
   border-left: none;
   font-family: var(--fonts);
   border: 1px solid gray;
-  border-radius: 0px 8px 8px 0px;
-  height: 31.5px;
-  margin-top: -36.5px;
+  border-radius: 0px 4px 4px 0px;
+  height: 42.5px;
+  margin-top: -47.2px;
   margin-left: 155px;
   padding-left: 7px;
 }
 
 .inputDataIdTxtEducationLevel {
-  width: 53%;
+  width: 53.7%;
   border-left: none;
   font-family: Arial, Helvetica, sans-serif !important;
   border: 1px solid gray;
-  border-radius: 0px 8px 8px 0px;
-  height: 31.5px;
-  margin-top: -36.5px;
+  border-radius: 0px 4px 4px 0px;
+  height: 42.5px;
+  margin-top: -47.2px;
   margin-left: 155px;
   padding-left: 7px;
 }
 
 .inputDataIdTxtOccupation {
-  width: 53%;
+  width: 53.7%;
   border-left: none;
   font-family: Arial, Helvetica, sans-serif !important;
   border: 1px solid gray;
-  border-radius: 0px 8px 8px 0px;
-  height: 31.5px;
-  margin-top: -36.5px;
+  border-radius: 0px 4px 4px 0px;
+  height: 42.5px;
+  margin-top: -47.2px;
   margin-left: 155px;
   padding-left: 7px;
 }
 
 .inputDataIdSwitch {
   margin-left: 157px;
-  margin-top: -40px;
+  margin-top: -45px;
 }
 
 .tableRelatives {
@@ -294,32 +305,24 @@
 
 .buttonContainer {
   display: flex;
-  position: relative;
-  justify-content: space-evenly;
-  left: 125px;
-  width: 425px;
+  justify-content: flex-start;
+  width: 735px;
+  margin-left: 48px;
 }
 
 .buttonClass {
   font-size: 15px;
   font-family: var(--fonts);
+  color: white;
   width: 130px;
-    height: 40px;
-  border-width: 1px;
-  color: rgba(255, 255, 255, 1);
-  border-color: #b2b8ad;
-  font-weight: bold;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-  box-shadow: inset 0px 0px 14px -3px rgba(110, 110, 108, 1);
-  text-shadow: inset 0px 1px 0px rgba(29, 31, 29, 1);
-  background: linear-gradient(rgba(235, 235, 227, 1), rgba(63, 61, 61, 1));
+  height: 40px;
+  background-color: #1976d2;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .buttonClass:hover {
-  background: linear-gradient(rgba(63, 61, 61, 1), rgba(235, 235, 227, 1));
+  background-color: #0b4e92;
 }
 
 .tableVerifyAsistents thead tr th p {
