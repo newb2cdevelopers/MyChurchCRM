@@ -59,6 +59,7 @@ export default function GeneralInfo() {
 
     const initialValues = {
         documentNumber: '',
+        documentType: '',
         fullName: '',
         address: '',
         housingType: '',
@@ -96,7 +97,8 @@ export default function GeneralInfo() {
                     occupation: payload.occupation,
                     conversionyear: payload.conversionyear,
                     isBaptised: payload.isBaptised,
-                    yearInChurch: payload.yearInChurch
+                    yearInChurch: payload.yearInChurch,
+                    documentType: payload.documentType
                 };
 
                 const results = await genericPutService(`${B2C_BASE_URL}/member/updateMemberInfo/${memberContext.currentMember._id}`, editPayload, getAuthHeaders(user.token));
@@ -136,6 +138,18 @@ export default function GeneralInfo() {
         <div className={styles.containerVerifyAsistents}>
             <form onSubmit={formik.handleSubmit} >
                 <div className={styles.tabContainer}>
+                <div className={styles.entryIdTxtPhone}>
+                        <label for='documentType'>Tipo de documento de identidad:</label>
+                        <select name='documentType' className={styles.inputDataIdTxtHousingType}
+                            id='documentType'
+                            onChange={formik.handleChange} value={formik.values.documentType}>
+                            <option value={""}>Seleccione una Opción</option>
+                            <option value={"CC"}>Cédula</option>
+                            <option value={"TI"}>Tarjeta de identidad</option>
+                            <option value={"RC"}>Registro civil</option>
+                            <option value={"CE"}>Cédula de extranjería</option>
+                        </select>
+                    </div>
                     <div className={styles.entryIdTxtFullName}>
                         <label for='documentNumber'>Número de Documento:</label>
                         <input

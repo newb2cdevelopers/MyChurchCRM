@@ -34,6 +34,7 @@ export default function AddicionalAcademicStudiesForm({ open, setOpen }) {
       name: '',
       AcademicInstitutionName: '',
       isFinished: false,
+      comments:"",
       _id: null
     },
     validationSchema: validationSchema,
@@ -65,14 +66,16 @@ export default function AddicionalAcademicStudiesForm({ open, setOpen }) {
         "name": memberContext.currentMemberAcademicStudy.name,
         "_id": memberContext.currentMemberAcademicStudy._id,
         "isFinished": memberContext.currentMemberAcademicStudy.isFinished,
-        "AcademicInstitutionName": memberContext.currentMemberAcademicStudy.AcademicInstitutionName
+        "AcademicInstitutionName": memberContext.currentMemberAcademicStudy.AcademicInstitutionName,
+        "comments": memberContext.currentMemberAcademicStudy.comments
       });
     } else {
       formik.setValues({
         "name": "",
         "_id": null,
         "isFinished": false,
-        "AcademicInstitutionName": ""
+        "AcademicInstitutionName": "",
+        "comments":""
       });
     }
   }, [open]);
@@ -122,6 +125,14 @@ export default function AddicionalAcademicStudiesForm({ open, setOpen }) {
                     value={formik.values.isFinished}
                   />
                 </div>
+              </div>
+              <div className={styles.labelFieldModal}>
+                <span className={styles.labelField}>Observaciones:</span>
+                <textarea className={styles.inputFieldTextArea} rows='5' cols='50'
+                  name='comments'
+                  onChange={formik.handleChange}
+                  value={formik.values.comments}
+                />
               </div>
               <div className={styles.modalButtonContainer}>
                 <input className={styles.modalButtons}

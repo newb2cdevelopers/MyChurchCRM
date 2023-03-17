@@ -36,6 +36,7 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
       birthDate: "",
       occupation: "",
       kinship: "",
+      comments:"",
       _id: null
     },
     validationSchema: validationSchema,
@@ -72,6 +73,7 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
         "birthDate": memberContext.currentRelative.birthDate,
         "occupation": memberContext.currentRelative.occupation,
         "kinship": memberContext.currentRelative.kinship,
+        "comments":memberContext.currentRelative.comments,
         "_id":  memberContext.currentRelative._id
       });
     } else {
@@ -84,6 +86,7 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
         "birthDate": "",
         "occupation": "",
         "kinship": "",
+        "comments":"",
         "_id": null
       });
     }
@@ -186,6 +189,14 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
                   <option value='Abuelo/a'>Abuelo/a</option>
                   <option value='Hermano/a'>Hermano/a</option>
                 </select>
+              </div>
+              <div className={styles.labelFieldModal}>
+                <span className={styles.labelField}>Observaciones:</span>
+                <textarea className={styles.inputFieldTextArea} rows='5' cols='50'
+                  name='comments'
+                  onChange={formik.handleChange}
+                  value={formik.values.comments}
+                />
               </div>
               <div className={styles.modalButtonContainer}>
                 <input className={styles.modalButtons}

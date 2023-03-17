@@ -46,6 +46,7 @@ export default function AdditionalAcademicStudies() {
                             <th><p>Titulo</p></th>
                             <th><p>Institución</p></th>
                             <th><p>¿Finalizado?</p></th>
+                            <th><p>Observaciones</p></th>
                             <th></th>
                         </tr>
                     </thead>
@@ -56,6 +57,7 @@ export default function AdditionalAcademicStudies() {
                                     <td>{studie.name}</td>
                                     <td>{studie.AcademicInstitutionName}</td>
                                     <td>{studie.isFinished ? 'Si' : 'No'}</td>
+                                    <td>{studie.comments}</td>
                                     <td>
                                         <div>
                                             <div className="tooltip right" onClick={(e) => { selectedAcademicStudy(academicStudies[index]) }}>

@@ -40,6 +40,7 @@ export default function WorkFrontForm({ open, setOpen, setIsUpdateRequired }) {
       endDate: "",
       status: "",
       role: "",
+      comments:"",
       _id: null
     },
     validationSchema: validationSchema,
@@ -74,6 +75,7 @@ export default function WorkFrontForm({ open, setOpen, setIsUpdateRequired }) {
           "" : memberContext.currentWorkFront.endDate,
         "status": memberContext.currentWorkFront.status,
         "role": memberContext.currentWorkFront.role,
+        "comments":memberContext.currentWorkFront.comments,
         "_id": memberContext.currentWorkFront._id
       });
     } else {
@@ -83,6 +85,7 @@ export default function WorkFrontForm({ open, setOpen, setIsUpdateRequired }) {
         "endDate": "",
         "status": "",
         "role": "",
+        "comments":"",
         "_id": null
       });
     }
@@ -163,6 +166,14 @@ export default function WorkFrontForm({ open, setOpen, setIsUpdateRequired }) {
               {formik.errors.status && formik.touched.status ? (
                 <p className={styles.errorMessage}>{formik.errors.status}</p>
               ) : null}
+              <div className={styles.labelFieldModal}>
+                <span className={styles.labelField}>Observaciones:</span>
+                <textarea className={styles.inputFieldTextArea} rows='5' cols='50'
+                  name='comments'
+                  onChange={formik.handleChange}
+                  value={formik.values.comments}
+                />
+              </div>
               <div className={styles.modalButtonContainer}>
               <input className={styles.modalButtons}
                   type="submit"

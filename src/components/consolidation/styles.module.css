@@ -466,6 +466,15 @@ tbody tr {
   padding: 0 5px;
 }
 
+.inputFieldTextArea {
+  border: 1px solid;
+  width: 70%;
+  border-radius: 4px;
+  height: 90px;
+  display: flex;
+  padding: 0 5px;
+}
+
 .Select {
   border: 1px solid;
   width: 72%;

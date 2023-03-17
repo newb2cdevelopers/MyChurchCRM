@@ -49,7 +49,8 @@ export default function Relatives() {
                                 <th><p>Correo electrónico</p></th>
                                 <th><p>Fecha de nacimiento</p></th>
                                 <th><p>Ocupación</p></th>
-                                <th><p>Parentesco</p></th>                                
+                                <th><p>Parentesco</p></th>
+                                <th><p>Obervaciones</p></th>                                
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -65,6 +66,7 @@ export default function Relatives() {
                                         <td>{relative.birthDate.split('T')[0]}</td>
                                         <td>{relative.occupation}</td>
                                         <td>{relative.kinship}</td>
+                                        <td>{relative.comments}</td>
                                         <td>
                                             <div>
                                                 <div className="tooltip right" onClick={(e) => { selectedRelative(relatives[index]) }}>

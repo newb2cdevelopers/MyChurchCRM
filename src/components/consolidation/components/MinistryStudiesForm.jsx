@@ -33,6 +33,7 @@ export default function MinistryStudiesForm({ open, setOpen, setIsUpdateRequired
       startDate: "",
       endDate: "",
       status: "",
+      comments:"",
       _id: null
     },
     validationSchema: validationSchema,
@@ -66,6 +67,7 @@ export default function MinistryStudiesForm({ open, setOpen, setIsUpdateRequired
         "endDate": !memberContext.currentMinistryStudy.endDate || memberContext.currentMinistryStudy.endDate === '' ?
           "" : memberContext.currentMinistryStudy.endDate,
         "status": memberContext.currentMinistryStudy.status,
+        "comments": memberContext.currentMinistryStudy.comments,
         "_id": memberContext.currentMinistryStudy._id
       });
     } else {
@@ -74,6 +76,7 @@ export default function MinistryStudiesForm({ open, setOpen, setIsUpdateRequired
         "startDate": "",
         "endDate": "",
         "status": "",
+        "comments":"",
         "_id": null
       });
     }
@@ -145,6 +148,14 @@ export default function MinistryStudiesForm({ open, setOpen, setIsUpdateRequired
               {formik.errors.status && formik.touched.status ? (
                 <p className={styles.errorMessage}>{formik.errors.status}</p>
               ) : null}
+              <div className={styles.labelFieldModal}>
+                <span className={styles.labelField}>Observaciones:</span>
+                <textarea className={styles.inputFieldTextArea} rows='5' cols='50'
+                  name='comments'
+                  onChange={formik.handleChange}
+                  value={formik.values.comments}
+                />
+              </div>
               <div className={styles.modalButtonContainer}>
                 <input className={styles.modalButtons}
                   type="submit"

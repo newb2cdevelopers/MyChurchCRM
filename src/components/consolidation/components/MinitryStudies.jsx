@@ -47,6 +47,7 @@ export default function MinistryStudies() {
                             <th><p>Fecha Inicio</p></th>
                             <th><p>Fecha Fin</p></th>
                             <th><p>Estado</p></th>
+                            <th><p>Observaciones</p></th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -58,6 +59,7 @@ export default function MinistryStudies() {
                                     <td>{ministryStudy.startDate.split('T')[0]}</td>
                                     <td>{!ministryStudy.endDate || ministryStudy.endDate === '' ? <></> : ministryStudy.endDate.split('T')[0]}</td>
                                     <td>{ministryStudy.status}</td>
+                                    <td>{ministryStudy.comments}</td>
                                     <td>
                                         <div>
                                             <div className="tooltip right" onClick={(e) => { selectedMinistryStudy(ministryStudies[index]) }}>

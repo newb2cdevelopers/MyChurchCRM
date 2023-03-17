@@ -48,32 +48,34 @@ export default function WorkFronts() {
                             <th><p>Fecha Fin</p></th>
                             <th><p>Rol</p></th>
                             <th><p>Estado</p></th>
+                            <th><p>Observaciones</p></th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {workFronts && workFronts.length > 0 ?
-                                workFronts.map((workFront, index) => {
-                                    return <tr>
-                                        <td>{workFront.name}</td>
-                                        <td>{workFront.startDate.split('T')[0]}</td>
-                                        <td>{workFront.endDate.split('T')[0]}</td>
-                                        <td>{workFront.role}</td>
-                                        <td>{workFront.status}</td>
-                                        <td>
-                                            <div>
-                                                <div className="tooltip right" onClick={(e) => { selectedWorkFront(workFronts[index]) }}>
-                                                    <span className="tiptext" >Editar</span>
-                                                    <ModeEditIcon></ModeEditIcon>
-                                                </div>
+                        {workFronts && workFronts.length > 0 ?
+                            workFronts.map((workFront, index) => {
+                                return <tr>
+                                    <td>{workFront.name}</td>
+                                    <td>{workFront.startDate ? workFront.startDate.split('T')[0] : ""}</td>
+                                    <td>{workFront.endDate ? workFront.endDate.split('T')[0] : ""}</td>
+                                    <td>{workFront.role}</td>
+                                    <td>{workFront.status}</td>
+                                    <td>{workFront.comments}</td>
+                                    <td>
+                                        <div>
+                                            <div className="tooltip right" onClick={(e) => { selectedWorkFront(workFronts[index]) }}>
+                                                <span className="tiptext" >Editar</span>
+                                                <ModeEditIcon></ModeEditIcon>
                                             </div>
-                                        </td>
-                                    </tr>
-                                })
-                                : <tr>
-                                    <td style={{ textAlign: 'center' }}>Sin resultados</td>
+                                        </div>
+                                    </td>
                                 </tr>
-                            }
+                            })
+                            : <tr>
+                                <td style={{ textAlign: 'center' }}>Sin resultados</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
