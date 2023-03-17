@@ -63,6 +63,32 @@
   cursor: pointer;
 }
 
+.arrowLeftNextEvents {
+  display: flex;
+  position: relative;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  flex-direction: row;
+  top: 263px;
+  left: -568px;
+  width: 30px;
+  height: 50px;
+  cursor: pointer;
+}
+
+.arrowRightNextEvents {
+  display: flex;
+  position: relative;
+  left: 575px;
+  top: 263px;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: row;
+  width: 30px;
+  height: 50px;
+  cursor: pointer;
+}
+
 .cardEvents {
   /*background: url("../../../assets/calendar.png");
   background-size: cover;*/
@@ -80,7 +106,7 @@
 }
 
 .cardImage {
-  width: 254px;
+  width: 236px;
   height: 236px;
   margin-top: 17px;
   margin-bottom: 5px;
@@ -138,7 +164,6 @@
   position: relative;
   top: 0px;
   left: 0px;
-  color: red;
 }
 
 @media (min-width: 480px) {
