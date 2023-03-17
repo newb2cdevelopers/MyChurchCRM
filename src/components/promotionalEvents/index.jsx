@@ -12,6 +12,8 @@ import arrowRight from "../../images/arrow right.svg";
 export default function PromotionalEvents() {
   const data = useSelector((state) => state.user.selectedChurchId);
   const [events, setEvents] = useState([])
+  const [currentEvents, setCurrentEvents] = useState([])
+  const [nextEvents, setNextEvents] = useState([])
 
   const BASE_URL = B2C_BASE_URL;
 
@@ -25,6 +27,9 @@ export default function PromotionalEvents() {
 
         if (data[0]) {
           setEvents(data[0].filter(e => { return e.status === "Pendiente" }))
+
+          setCurrentEvents(data[0].filter(event => { return event.isBookingAvailable && event.status === "Pendiente" }));
+          setNextEvents(data[0].filter(event => { return !event.isBookingAvailable && event.status === "Pendiente" }));
         } else {
           alert("Se ha presentado un error");
         }
@@ -34,43 +39,49 @@ export default function PromotionalEvents() {
 
   return (
     <>
-      <div className={styles.arrowContainer}>
-        <img src={arrowLeft} alt="" className={styles.arrowLeft}
-          onClick={() => document.getElementById('containerEvents').scrollBy(-200, 0)} />
-        <img src={arrowRight} alt="" className={styles.arrowRight}
-          onClick={() => document.getElementById('containerEvents').scrollBy(200, 0)} />
-      </div>
-      <div className={styles.containerEvents}>
-        <p className={styles.titleContainerEvents}>Eventos</p>
-        <div className={styles.currentEvents} id='containerEvents'>
-          {
-            events.length > 0 ?
-
-              events.filter(event => { return event.isBookingAvailable }).map(e => {
-                return <PromotionalCard eventId={e._id} title={e.name} bookingAvailable={true} />
-              }) :
-              <div>
-                <img alt="" src={eventImage} className={styles.cardImage}></img>
-                <span className={styles.noEvents}>No hay eventos recientes</span>
-              </div>
-          }
-
+      {events.length > 4 ?
+        <div className={styles.arrowContainer}>
+          <img src={arrowLeft} alt="" className={styles.arrowLeft}
+            onClick={() => document.getElementById('containerEvents').scrollBy(-300, 0)} />
+          <img src={arrowRight} alt="" className={styles.arrowRight}
+            onClick={() => document.getElementById('containerEvents').scrollBy(300, 0)} />
         </div>
-        <p className={styles.titleContainerEvents}>Próximos Eventos</p>
-        <div className={styles.nextEvents}>
-          {
-            events.length > 0 ?
+        : <></>
+      }
+      {events.length > 0 ?
+        <div className={styles.containerEvents}>
+          <p className={styles.titleContainerEvents}>Eventos</p>
+          <div className={styles.currentEvents} id='containerEvents'>
+            {
+              currentEvents.length > 0 ?
 
-              events.filter(event => { return !event.isBookingAvailable }).map(e => {
-                return <PromotionalCard eventId={e._id} title={e.name} bookingAvailable={false} />
-              }) :
-              <div>
-                <img alt="" src={eventImage} className={styles.cardImage}></img>
-                <span className={styles.noEvents}>No hay eventos recientes</span>
-              </div>
-          }
+                currentEvents.map(e => {
+                  return <PromotionalCard eventId={e._id} title={e.name} bookingAvailable={true} />
+                }) :
+                <div>
+                  <img alt="" src={eventImage} className={styles.cardImage}></img>
+                  <span className={styles.noEvents}>No hay eventos recientes</span>
+                </div>
+            }
+
+          </div>
+          <p className={styles.titleContainerEvents}>Próximos Eventos</p>
+          <div className={styles.nextEvents}>
+            {
+              nextEvents.length > 0 ?
+
+                nextEvents.map(e => {
+                  return <PromotionalCard eventId={e._id} title={e.name} bookingAvailable={false} />
+                }) :
+                <div>
+                  <img alt="" src={eventImage} className={styles.cardImage}></img>
+                  <span className={styles.noEvents}>No hay eventos recientes</span>
+                </div>
+            }
+          </div>
         </div>
-      </div>
+        : <>Cargando Eventos...</>
+      }
     </>
   );
 }

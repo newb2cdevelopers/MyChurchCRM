@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch  } from 'react-redux';
 import { selectedEventIdForBooking } from "../../../features/bookings/bookingSlice";
-import calendarImage from "../../../../src/images/calendar.png";
+import calendarImage from "../../../../src/images/adorar.jpg";
 import eventImage from "../../../../src/images/Fundamentos-de-Doctrina-Biblica.jpeg";
 import dinnerImage from "../../../../src/images/cena-de-parejas.jpeg";
 import CanticoImage from "../../../../src/images/CanticoNuevo.jpeg";
