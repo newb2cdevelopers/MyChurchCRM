@@ -102,7 +102,7 @@ export default function WorkFrontForm({ open, setOpen, setIsUpdateRequired }) {
             <div className={styles.fieldsContainer}>
               <div className={styles.labelFieldModal}>
                 <span className={styles.labelField}>Área o frente de trabajo:</span>
-                <select className={styles.inputField}
+                <select className={styles.Select}
                   value={formik.values.name}
                   onChange={formik.handleChange}
                   name='name'
@@ -150,7 +150,7 @@ export default function WorkFrontForm({ open, setOpen, setIsUpdateRequired }) {
               ) : null}
               <div className={styles.labelFieldModal}>
                 <span className={styles.labelField}>Estado:</span>
-                <select className={styles.inputField}
+                <select className={styles.Select}
                   value={formik.values.status}
                   onChange={formik.handleChange}
                   name='status'

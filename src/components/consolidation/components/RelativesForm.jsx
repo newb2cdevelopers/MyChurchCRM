@@ -163,7 +163,7 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
                 />
               </div>
               <div className={styles.labelFieldModal}>
-                <span className={styles.label}>Ocupación:</span>
+                <span className={styles.labelField}>Ocupación:</span>
                 <input className={styles.inputField} type="text"
                   name='occupation'
                   onChange={formik.handleChange}
@@ -172,7 +172,7 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
               </div>
               <div className={styles.labelFieldModal}>
                 <span className={styles.labelField}>Paresteco:</span>
-                <select className={styles.inputField}
+                <select className={styles.Select}
                   value={formik.values.kinship}
                   onChange={formik.handleChange}
                   name='kinship'

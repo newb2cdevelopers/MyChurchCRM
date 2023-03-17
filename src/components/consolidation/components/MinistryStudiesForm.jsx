@@ -131,7 +131,7 @@ export default function MinistryStudiesForm({ open, setOpen, setIsUpdateRequired
               </div>
               <div className={styles.labelFieldModal}>
                 <span className={styles.labelField}>Estado:</span>
-                <select className={styles.inputField}
+                <select className={styles.Select}
                   value={formik.values.status}
                   onChange={formik.handleChange}
                   name='status'

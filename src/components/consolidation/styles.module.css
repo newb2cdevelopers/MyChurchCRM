@@ -407,17 +407,15 @@ tbody tr {
   transform: translate(-50%, -50%);
   width: 400px;
   background-color: #fff;
-  border: 2px solid #000;
+  border: 1px solid #000;
   box-shadow: 24px;
   padding: 32px;
+  width: 40%;
 }
 
 .modalTitle {
-  position: absolute;
-  top: 20px;
-  align-items: center;
-  justify-content: center;
-  left: 145px;
+  margin-bottom: 10px;
+  font-weight: 700;
 }
 
 .fieldsContainer {
@@ -433,24 +431,57 @@ tbody tr {
   margin-bottom: 15px;
 }
 
+.labelFieldModal {
+  display: flex;
+  align-items: center;
+  width: 620px;
+  justify-content: space-evenly;
+  margin: 7px 0px;
+}
+
 .labelField {
-  margin-right: 25px;
+  display: flex;
+  flex-direction: column;
+  width: 170px;
+}
+
+.ToggleContainer {
+  border: none;
+  width: 70%;
+  height: 39px;
+  display: flex;
+  padding: 0 5px;
+}
+
+.toggle {
+  width: 60px;
 }
 
 .inputField {
-  position: relative;
-  border-bottom: 2px solid;
-  width: 25rem;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  border-radius: 5px;
+  border: 1px solid;
+  width: 70%;
+  border-radius: 4px;
+  height: 39px;
+  display: flex;
+  padding: 0 5px;
 }
+
+.Select {
+  border: 1px solid;
+  width: 72%;
+  border-radius: 4px;
+  height: 39px;
+  display: flex;
+  padding: 0 5px;
+}
+
 
 .modalButtonContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  margin-top: 10px;
 }
 
 .modalButtons {
@@ -460,6 +491,8 @@ tbody tr {
   width: 90px;
   justify-content: center;
   border-radius: 5px;
+  padding: 7px;
+  background-color: white;
 }
 
 .createNewRelativeContainer {

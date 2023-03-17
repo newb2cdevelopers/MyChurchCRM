@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { selectedMemberData } from "../../../features/members/membersSlice";
 import './toolTip.css'
 import { Button } from '@mui/material';
+import { display } from '@mui/system';
 
 export default function ChurchMembersList() {
 
@@ -93,11 +94,9 @@ export default function ChurchMembersList() {
         <div className={styles.containerVerifyAsistents}>
             <div className={styles.tableMembersContainer}>
                 <div className={styles.searchContainer}>
-                    <div>
-                        <div>
-                            <span>Número de documento: </span>
-                            <input className={styles.inputDataIdTxtAttendee} type="text" id="idTxtMember" onChange={(e) => { searchMember(e.target.value) }} placeholder={"Ingrese el # documento"} />
-                        </div>
+                    <div style={{ display: 'flex' }}>
+                        <span>Número de documento: </span>
+                        <input className={styles.inputField} type="text" id="idTxtMember" onChange={(e) => { searchMember(e.target.value) }} placeholder={"Ingrese el # documento"} />
                     </div>
                     <div className={styles.createNewMemberContainer}>
                         <div className={styles.createNewButton} >

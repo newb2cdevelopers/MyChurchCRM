@@ -30,7 +30,7 @@ export default function AddicionalAcademicStudiesForm({ open, setOpen }) {
   }
 
   const formik = useFormik({
-    initialValues: { 
+    initialValues: {
       name: '',
       AcademicInstitutionName: '',
       isFinished: false,
@@ -39,35 +39,35 @@ export default function AddicionalAcademicStudiesForm({ open, setOpen }) {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
 
-        const payload = { ...values };
+      const payload = { ...values };
 
-        const results = await genericPutService(`${B2C_BASE_URL}/member/updateAcademicStudy/${memberContext.currentMember._id}`, payload, getAuthHeaders(user.token));
+      const results = await genericPutService(`${B2C_BASE_URL}/member/updateAcademicStudy/${memberContext.currentMember._id}`, payload, getAuthHeaders(user.token));
 
-        if (results[1]) {
-          alert("Se ha presentado un error")
+      if (results[1]) {
+        alert("Se ha presentado un error")
+      } else {
+        if (results[0].isSuccessful) {
+          closeModal();
+          memberContext.setAreTabsDisabled(false);
+          memberContext.setValue(3);
+          memberContext.setCurrentMember(results[0].data);
         } else {
-          if (results[0].isSuccessful) {
-            closeModal();
-            memberContext.setAreTabsDisabled(false);
-            memberContext.setValue(3);
-            memberContext.setCurrentMember(results[0].data);
-          } else {
-            alert(results[0].message)
-          }
+          alert(results[0].message)
         }
+      }
     },
   });
 
   useEffect(() => {
     // If there is a selected member the tabs should be enabled
-    if(memberContext.currentMemberAcademicStudy){
+    if (memberContext.currentMemberAcademicStudy) {
       formik.setValues({
         "name": memberContext.currentMemberAcademicStudy.name,
         "_id": memberContext.currentMemberAcademicStudy._id,
         "isFinished": memberContext.currentMemberAcademicStudy.isFinished,
         "AcademicInstitutionName": memberContext.currentMemberAcademicStudy.AcademicInstitutionName
       });
-    }else{
+    } else {
       formik.setValues({
         "name": "",
         "_id": null,
@@ -75,7 +75,7 @@ export default function AddicionalAcademicStudiesForm({ open, setOpen }) {
         "AcademicInstitutionName": ""
       });
     }
-}, [open]);
+  }, [open]);
 
   return (
     <div>
@@ -113,13 +113,15 @@ export default function AddicionalAcademicStudiesForm({ open, setOpen }) {
               ) : null}
               <div className={styles.labelFieldModal}>
                 <span className={styles.labelField}>Finalizado:</span>
-                <Switch className={styles.labelFieldModal}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                  id='isFinished'
-                  defaultChecked={formik.values.isFinished}
-                  onChange={formik.handleChange}
-                  value={formik.values.isFinished}
-                />
+                <div className={styles.ToggleContainer}>
+                  <Switch className={styles.toggle}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                    id='isFinished'
+                    defaultChecked={formik.values.isFinished}
+                    onChange={formik.handleChange}
+                    value={formik.values.isFinished}
+                  />
+                </div>
               </div>
               <div className={styles.modalButtonContainer}>
                 <input className={styles.modalButtons}
