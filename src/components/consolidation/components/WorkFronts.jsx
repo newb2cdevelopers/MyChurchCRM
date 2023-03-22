@@ -13,6 +13,7 @@ export default function WorkFronts() {
     const memberContext = useContext(MemberContext);
     const [workFronts, setWorkFronts] = useState([])
 
+    
 
     const handleOpen = () => {
         memberContext.setCurrentWorkFront(null);
@@ -56,7 +57,7 @@ export default function WorkFronts() {
                         {workFronts && workFronts.length > 0 ?
                             workFronts.map((workFront, index) => {
                                 return <tr>
-                                    <td>{workFront.name}</td>
+                                    <td>{workFront.workFrontId.name}</td>
                                     <td>{workFront.startDate ? workFront.startDate.split('T')[0] : ""}</td>
                                     <td>{workFront.endDate ? workFront.endDate.split('T')[0] : ""}</td>
                                     <td>{workFront.role}</td>

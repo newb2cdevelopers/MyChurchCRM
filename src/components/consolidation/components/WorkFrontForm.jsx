@@ -3,14 +3,14 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import Modal from '@mui/material/Modal';
 import styles from "../styles.module.css";
 import { useSelector } from 'react-redux';
-import { genericPostService, getAuthHeaders, genericPutService } from '../../../api/externalServices';
+import { genericPostService, getAuthHeaders, genericPutService, genericGetService } from '../../../api/externalServices';
 import { B2C_BASE_URL } from '../../../constants';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import MemberContext from '../../../contexts/MemberContext';
 
 const validationSchema = yup.object({
-  name: yup
+  workFrontId: yup
     .string('Seleccione el frente o área de trabajo')
     .required('El campo frente o árear de trabajo es obligatorio'),
   startDate: yup
@@ -29,18 +29,26 @@ export default function WorkFrontForm({ open, setOpen, setIsUpdateRequired }) {
   const user = useSelector(state => state.user);
   const memberContext = useContext(MemberContext);
 
+  const [workFrontList, setWorkFrontList] = useState([])
+
+  const getWorkFrontListByChurch = async () => {
+    //setLoading(true);
+    return await genericGetService(`${B2C_BASE_URL}/workfront/workfrontsByChurch/${user.selectedChurchId}`);
+  }
+
+
   const closeModal = () => {
     setOpen(false);
   }
 
   const formik = useFormik({
     initialValues: {
-      name: "",
+      workFrontId: "",
       startDate: "",
       endDate: "",
       status: "",
       role: "",
-      comments:"",
+      comments: "",
       _id: null
     },
     validationSchema: validationSchema,
@@ -69,29 +77,42 @@ export default function WorkFrontForm({ open, setOpen, setIsUpdateRequired }) {
     // If there is a selected member the tabs should be enabled
     if (memberContext.currentWorkFront) {
       formik.setValues({
-        "name": memberContext.currentWorkFront.name,
+        "workFrontId": memberContext.currentWorkFront.workFrontId._id,
         "startDate": memberContext.currentWorkFront.startDate,
         "endDate": !memberContext.currentWorkFront.endDate || memberContext.currentWorkFront.endDate === '' ?
           "" : memberContext.currentWorkFront.endDate,
         "status": memberContext.currentWorkFront.status,
         "role": memberContext.currentWorkFront.role,
-        "comments":memberContext.currentWorkFront.comments,
+        "comments": memberContext.currentWorkFront.comments,
         "_id": memberContext.currentWorkFront._id
       });
     } else {
       formik.setValues({
-        "name": "",
+        "workFrontId": "",
         "startDate": "",
         "endDate": "",
         "status": "",
         "role": "",
-        "comments":"",
+        "comments": "",
         "_id": null
       });
     }
   }, [open]);
 
+  useEffect(() => {
+
+    getWorkFrontListByChurch().then(data => {
+      //setLoading(false);
+      if (data[0]) {
+        setWorkFrontList(data[0]);
+        return;
+      }
+      alert("Error");
+    });
+  }, []);
+
   return (
+    workFrontList.length > 0 &&
     <div>
       <Modal
         open={open}
@@ -106,20 +127,21 @@ export default function WorkFrontForm({ open, setOpen, setIsUpdateRequired }) {
               <div className={styles.labelFieldModal}>
                 <span className={styles.labelField}>Área o frente de trabajo:</span>
                 <select className={styles.Select}
-                  value={formik.values.name}
+                  value={formik.values.workFrontId}
                   onChange={formik.handleChange}
-                  name='name'
+                  name='workFrontId'
                 >
                   <option value={""}>Seleccione una Opción</option>
-                  <option value='Familia'>Familia</option>
-                  <option value='Evangelismo'>Evangelismo</option>
-                  <option value='Servicio'>Servicio</option>
-                  <option value='Adoración'>Adoración</option>
-                  <option value='MIA'>MIA</option>
+
+                  {
+                    workFrontList.map((item, index) => {
+                      return <option value={item._id}>{item.name}</option>
+                    })
+                  }
                 </select>
               </div >
-              {formik.errors.name && formik.touched.name ? (
-                <p className={styles.errorMessage}>{formik.errors.name}</p>
+              {formik.errors.workFrontId && formik.touched.workFrontId ? (
+                <p className={styles.errorMessage}>{formik.errors.workFrontId}</p>
               ) : null}
               <div className={styles.labelFieldModal}>
                 <span className={styles.labelField}>Fecha Inicio:</span>
@@ -175,7 +197,7 @@ export default function WorkFrontForm({ open, setOpen, setIsUpdateRequired }) {
                 />
               </div>
               <div className={styles.modalButtonContainer}>
-              <input className={styles.modalButtons}
+                <input className={styles.modalButtons}
                   type="submit"
                   disabled={!formik.dirty}
                   value='Guardar'
