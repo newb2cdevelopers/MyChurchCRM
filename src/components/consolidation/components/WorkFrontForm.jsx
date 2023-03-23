@@ -32,7 +32,6 @@ export default function WorkFrontForm({ open, setOpen, setIsUpdateRequired }) {
   const [workFrontList, setWorkFrontList] = useState([])
 
   const getWorkFrontListByChurch = async () => {
-    //setLoading(true);
     return await genericGetService(`${B2C_BASE_URL}/workfront/workfrontsByChurch/${user.selectedChurchId}`);
   }
 
