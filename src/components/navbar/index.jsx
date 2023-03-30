@@ -25,7 +25,7 @@ function Navbar() {
   return (
     <div className={styles.containerNavBar}>
       <Link to="/" className= {styles.textLink}>
-        <Button className= {styles.navButton} color="inherit">Bienvenido a B2C</Button>{" "}
+        <Button className= {styles.navButton} color="inherit">Bienvenido a Sistema de gestión Mi Iglesia</Button>{" "}
       </Link>
       <Link to="/manageBookings" className= {styles.textLink}>
           <Button className= {styles.navButton} color="inherit">Gestionar mis reservas</Button>{" "}

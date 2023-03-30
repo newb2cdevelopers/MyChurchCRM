@@ -16,38 +16,19 @@ import { genericPostService, getAuthHeaders, genericPutService } from '../../../
 const validationSchema = yup.object({
     documentNumber: yup
         .string('Ingrese la cédula')
-        .required('El numero de documento es obligatorio'),
+        .required('El número de documento es obligatorio'),
     fullName: yup
         .string('Ingrese el nombre completo')
         .required('El nombre completo es obligatorio'),
     address: yup
         .string('Ingrese la dirección')
         .required('La dirección es obligatoria'),
-    housingType: yup
-        .string('Ingrese el tipo de vivienda')
-        .required('El tipo de vivienda obligatorio'),
     mobilePhone: yup
         .string('Ingrese el número del celular')
         .required('El número de celular es obligatorio'),
     email: yup
         .string('Ingrese el correo')
-        .required('El correo es obligatorio')
-        .email("El correo no es válido"),
-    birthDate: yup
-        .date()
-        .required('la fecha es obligatoria'),
-    maritalStatus: yup
-        .string('Seleccione el estado civil')
-        .required('El estado civil es obligatorio'),
-    occupation: yup
-        .string('Ingrese la ocupación')
-        .required('La ocupación es obligatoria'),
-    conversionyear: yup
-        .number()
-        .positive("El campo debe sere mayor a 0"),
-    yearInChurch: yup
-        .number()
-        .positive("El campo debe sere mayor a 0")
+        .email("El correo no es válido")
 });
 
 export default function GeneralInfo() {
@@ -203,9 +184,6 @@ export default function GeneralInfo() {
                             <option value={"Familiar"}>Familiar</option>
                         </select>
                     </div>
-                    {formik.errors.housingType && formik.touched.housingType ? (
-                        <p className={styles.errorMessage}>{formik.errors.housingType}</p>
-                    ) : null}
                     <div className={styles.entryIdTxtPhone}>
                         <label for='landLine'>Telefóno fijo:</label>
                         <input
@@ -217,9 +195,6 @@ export default function GeneralInfo() {
                             className={styles.inputDataIdTxtPhone}
                         />
                     </div>
-                    {formik.errors.landLine && formik.touched.landLine ? (
-                        <p className={styles.errorMessage}>{formik.errors.landLine}</p>
-                    ) : null}
                     <div className={styles.entryIdTxtPhone}>
                         <label for='mobilePhone'>Celular:</label>
                         <input
@@ -244,9 +219,9 @@ export default function GeneralInfo() {
                             className={styles.inputDataIdTxtEmail}
                         />
                     </div>
-                    {formik.errors.email && formik.touched.email ? (
+                    {/*{formik.errors.email && formik.touched.email ? (
                         <p className={styles.errorMessage}>{formik.errors.email}</p>
-                    ) : null}
+                    ) : null}*/}
                     <div className={styles.entryIdTxtPhone}>
                         <label for='birthDate'>Fecha de nacimiento:</label>
                         <input
@@ -254,13 +229,10 @@ export default function GeneralInfo() {
                             id='birthDate'
                             type='date'
                             onChange={formik.handleChange}
-                            value={formik.values.birthDate.split('T')[0]}
+                            value={formik.values.birthDate ? formik.values.birthDate.split('T')[0]:""}
                             className={styles.inputDataIdTxtBirthDate}
                         />
                     </div>
-                    {formik.errors.birthDate && formik.touched.birthDate ? (
-                        <p className={styles.errorMessage}>{formik.errors.birthDate}</p>
-                    ) : null}
                     <div className={styles.entryIdTxtPhone}>
                         <label for='conversionyear'>Año de conversión:</label>
                         <input
@@ -272,9 +244,6 @@ export default function GeneralInfo() {
                             className={styles.inputDataIdTxtYears}
                         />
                     </div>
-                    {formik.errors.conversionyear && formik.touched.conversionyear ? (
-                        <p className={styles.errorMessage}>{formik.errors.conversionyear}</p>
-                    ) : null}
                     <div className={styles.entryIdTxtPhone}>
                         <label for='yearInChurch'>Años en la Iglesia:</label>
                         <input
@@ -286,9 +255,6 @@ export default function GeneralInfo() {
                             className={styles.inputDataIdTxtYearsChurch}
                         />
                     </div>
-                    {formik.errors.yearInChurch && formik.touched.yearInChurch ? (
-                        <p className={styles.errorMessage}>{formik.errors.yearInChurch}</p>
-                    ) : null}
                     <div className={styles.entryIdTxtPhone}>
                         <label for='yearInChurch'>¿Bautizado?</label>
                         <Switch className={styles.inputDataIdSwitch}
@@ -311,9 +277,6 @@ export default function GeneralInfo() {
                             <option value={"Viudo"}>Viudo</option>
                         </select>
                     </div>
-                    {formik.errors.maritalStatus && formik.touched.maritalStatus ? (
-                        <p className={styles.errorMessage}>{formik.errors.maritalStatus}</p>
-                    ) : null}
                     <div className={styles.entryIdTxtPhone}>
                         <label for='educationalLevel'>Nivel Educativo:</label>
                         <select className={styles.inputDataIdTxtEducationLevel} onChange={formik.handleChange}
@@ -328,9 +291,6 @@ export default function GeneralInfo() {
                             <option value={"Ninguno"}>Ninguno</option>
                         </select>
                     </div>
-                    {formik.errors.educationalLevel && formik.touched.educationalLevel ? (
-                        <p className={styles.errorMessage}>{formik.errors.educationalLevel}</p>
-                    ) : null}
                     <div className={styles.entryIdTxtPhone}>
                         <label for='occupation'>Ocupación:</label>
                         <select className={styles.inputDataIdTxtOccupation} onChange={formik.handleChange}
@@ -344,9 +304,6 @@ export default function GeneralInfo() {
                             <option value={"Pensionado"}>Pensionado</option>
                         </select>
                     </div>
-                    {formik.errors.occupation && formik.touched.occupation ? (
-                        <p className={styles.errorMessage}>{formik.errors.occupation}</p>
-                    ) : null}
                 </div>
                 <div className={styles.buttonContainer}>
                     <button type="submit" disabled={!formik.dirty} className={styles.buttonClass}>Guardar</button>

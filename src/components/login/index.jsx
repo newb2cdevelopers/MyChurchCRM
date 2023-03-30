@@ -27,7 +27,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <LinkMu color="inherit" href="/">
-        B2C-APP
+        Sistema de gestión Mi Igleisa
       </LinkMu>{' '}
       {new Date().getFullYear()}
       {'.'}
