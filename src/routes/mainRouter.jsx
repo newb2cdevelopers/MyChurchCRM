@@ -21,11 +21,13 @@ import BulkLoad from "../components/BulkLoad/BulkLoad";
 import Consolidation from "../components/consolidation";
 import ChurchMembersList from "../components/consolidation/components/ChurchMembersList";
 import CvMember from "../components/consolidation/components/CVmember";
+import RecoveryPasswordRequest from './../components/login/recoveryPasswordRequest';
 
 const RoutesCollection = (
   <Routes>
     <Route exact path="/" element={<Home />} />
     <Route path="/login" element={<Login />} />
+    <Route path="/recoveryPassword" element={<RecoveryPasswordRequest/>} />
     <Route path="/main" element={<MainOptionsScreen />} />
     <Route path="/register" element={<Register />} />
     <Route path="/aforo" element={
