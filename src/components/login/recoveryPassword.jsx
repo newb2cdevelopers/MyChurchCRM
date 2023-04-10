@@ -128,7 +128,7 @@ function RecoveryPassword() {
               helperText={email === "" ? "El campo es requerido" : ""}
               error={email === "" ? true : false}
               autoFocus
-              onChange={(e) => (setEmail(e.target.value))}
+              onChange={(e) => (setEmail(e.target.value.toLocaleLowerCase()))}
               value={email}
             />
             <Button
