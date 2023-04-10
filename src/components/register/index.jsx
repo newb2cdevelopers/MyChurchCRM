@@ -72,7 +72,7 @@ function Register() {
     onSubmit: async (values) => {
 
       var payload = {
-        email: values.email,
+        email: values.email.toLowerCase(),
         name: values.names,
         lastName: values.lastNames,
         password: values.password,

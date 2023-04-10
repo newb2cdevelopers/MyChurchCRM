@@ -84,7 +84,11 @@ function Login() {
     }
 
     setLoading(true);
-    const results = await genericPostService(`${BASE_URL}/login`, loginInfo);
+    const loginPayload = {
+      user: loginInfo.user.toLowerCase(),
+      pass: loginInfo.pass
+    }
+    const results = await genericPostService(`${BASE_URL}/login`, loginPayload);
     setLoading(false);
 
     if (results[0] && results[0].access_token) {
