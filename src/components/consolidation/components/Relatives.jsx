@@ -63,7 +63,7 @@ export default function Relatives() {
                                         <td>{relative.address}</td>
                                         <td>{relative.mobilePhone}</td>
                                         <td>{relative.email}</td>
-                                        <td>{relative.birthDate.split('T')[0]}</td>
+                                        <td>{relative.birthDate ? relative.birthDate.split('T')[0]:""}</td>
                                         <td>{relative.occupation}</td>
                                         <td>{relative.kinship}</td>
                                         <td>{relative.comments}</td>

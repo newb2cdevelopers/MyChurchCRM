@@ -15,10 +15,7 @@ const validationSchema = yup.object({
     .required('El nombre es obligatorio'),
   documentNumber: yup
     .string('Ingrese el número de documento')
-    .required('El campo es obligatorio'),
-  mobilePhone: yup
-    .string('Ingrese el número teléfono')
-    .required('El campo es obligatorio'),
+    .required('El campo es obligatorio')
 });
 
 export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
@@ -42,7 +39,7 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
 
-      const payload = { ...values };
+      const payload = { ...values, documentNumber: values.documentNumber.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'') };
 
       const results = await genericPutService(`${B2C_BASE_URL}/member/updateRelativeInfo/${memberContext.currentMember._id}`, payload, getAuthHeaders(user.token));
 
@@ -146,9 +143,6 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
                   value={formik.values.mobilePhone}
                 />
               </div >
-              {formik.errors.mobilePhone && formik.touched.mobilePhone ? (
-                <p className={styles.errorMessage}>{formik.errors.mobilePhone}</p>
-              ) : null}
               <div className={styles.labelFieldModal}>
                 <span className={styles.labelField}>Correo electrónico:</span>
                 <input className={styles.inputField} type="text"

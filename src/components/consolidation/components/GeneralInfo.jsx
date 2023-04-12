@@ -97,7 +97,7 @@ export default function GeneralInfo() {
                 }
 
             } else {
-                var payload = { ...values, churchId: user.selectedChurchId };
+                var payload = { ...values, churchId: user.selectedChurchId, documentNumber: values.documentNumber.trim() };
                 const results = await genericPostService(`${B2C_BASE_URL}/member`, payload, getAuthHeaders(user.token));
 
                 if (results[1]) {
@@ -114,12 +114,12 @@ export default function GeneralInfo() {
             }
         },
     });
-    
+
     return (
         <div className={styles.containerVerifyAsistents}>
             <form onSubmit={formik.handleSubmit} >
                 <div className={styles.tabContainer}>
-                <div className={styles.entryIdTxtPhone}>
+                    <div className={styles.entryIdTxtPhone}>
                         <label for='documentType'>Tipo de documento de identidad:</label>
                         <select name='documentType' className={styles.inputDataIdTxtHousingType}
                             id='documentType'
@@ -229,7 +229,7 @@ export default function GeneralInfo() {
                             id='birthDate'
                             type='date'
                             onChange={formik.handleChange}
-                            value={formik.values.birthDate ? formik.values.birthDate.split('T')[0]:""}
+                            value={formik.values.birthDate ? formik.values.birthDate.split('T')[0] : ""}
                             className={styles.inputDataIdTxtBirthDate}
                         />
                     </div>
