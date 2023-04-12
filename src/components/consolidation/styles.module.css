@@ -290,7 +290,7 @@
 
 .tableVerifyAsistents {
   border: 1px solid #00000071;
-  width: 1037px;
+  width: 1111px;
   position: relative;
 }
 
@@ -354,7 +354,7 @@ tbody tr {
 .tableContainer {
   max-height: 700px;
   overflow-y: scroll;
-  max-width: 1150px;
+  max-width: 1115px;
   overflow-x: hidden;
 }
 
