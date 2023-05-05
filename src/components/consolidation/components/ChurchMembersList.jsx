@@ -111,6 +111,7 @@ export default function ChurchMembersList() {
                     <table className={styles.tableVerifyAsistents}>
                         <thead>
                             <tr>
+                                <th>Acciones</th>
                                 <th><p>Identificación</p></th>
                                 <th><p>Nombre completo</p></th>
                                 <th><p>Dirección</p></th>
@@ -119,22 +120,13 @@ export default function ChurchMembersList() {
                                 <th><p>Correo</p></th>
                                 <th><p>Años en la iglesia</p></th>
                                 <th><p>¿Bautizado?</p></th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {membersList && membersList.length > 0 ?
                                 membersList.map((member, index) => {
                                     return <tr>
-                                        <td>{member.documentNumber}</td>
-                                        <td>{member.fullName}</td>
-                                        <td>{member.address}</td>
-                                        <td>{member.landLine}</td>
-                                        <td>{member.mobilePhone}</td>
-                                        <td>{member.email}</td>
-                                        <td>{member.yearInChurch}</td>
-                                        <td>{member.isBaptised ? 'Si' : 'No'}</td>
-                                        <td>
+                                           <td>
                                             <div>
                                                 <div className="tooltip right" onClick={(e) => { selectedMemberToEdit(member.documentNumber, "/consolidation") }}>
                                                     <span className="tiptext" >Editar</span>
@@ -145,8 +137,15 @@ export default function ChurchMembersList() {
                                                     <VisibilityIcon />
                                                 </div>
                                             </div>
-
                                         </td>
+                                        <td>{member.documentNumber}</td>
+                                        <td>{member.fullName}</td>
+                                        <td>{member.address}</td>
+                                        <td>{member.landLine}</td>
+                                        <td>{member.mobilePhone}</td>
+                                        <td>{member.email}</td>
+                                        <td>{member.yearInChurch}</td>
+                                        <td>{member.isBaptised ? 'Si' : 'No'}</td>
                                     </tr>
                                 })
                                 : <tr>

@@ -79,7 +79,8 @@ export default function GeneralInfo() {
                     conversionyear: payload.conversionyear,
                     isBaptised: payload.isBaptised,
                     yearInChurch: payload.yearInChurch,
-                    documentType: payload.documentType
+                    documentType: payload.documentType,
+                    email: payload.email
                 };
 
                 const results = await genericPutService(`${B2C_BASE_URL}/member/updateMemberInfo/${memberContext.currentMember._id}`, editPayload, getAuthHeaders(user.token));
@@ -97,7 +98,7 @@ export default function GeneralInfo() {
                 }
 
             } else {
-                var payload = { ...values, churchId: user.selectedChurchId, documentNumber: values.documentNumber.trim() };
+                var payload = { ...values, churchId: user.selectedChurchId, documentNumber: values.documentNumber.trim(), email: values.email.trim() };
                 const results = await genericPostService(`${B2C_BASE_URL}/member`, payload, getAuthHeaders(user.token));
 
                 if (results[1]) {
@@ -219,9 +220,9 @@ export default function GeneralInfo() {
                             className={styles.inputDataIdTxtEmail}
                         />
                     </div>
-                    {/*{formik.errors.email && formik.touched.email ? (
+                    {formik.errors.email && formik.touched.email ? (
                         <p className={styles.errorMessage}>{formik.errors.email}</p>
-                    ) : null}*/}
+                    ) : null}
                     <div className={styles.entryIdTxtPhone}>
                         <label for='birthDate'>Fecha de nacimiento:</label>
                         <input

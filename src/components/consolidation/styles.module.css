@@ -352,7 +352,7 @@ tbody tr {
 }
 
 .tableContainer {
-  max-height: 700px;
+  max-height: 500px;
   overflow-y: scroll;
   max-width: 1115px;
   overflow-x: hidden;
