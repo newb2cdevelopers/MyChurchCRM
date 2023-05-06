@@ -355,7 +355,7 @@ tbody tr {
   max-height: 500px;
   overflow-y: scroll;
   max-width: 1115px;
-  overflow-x: hidden;
+  overflow-x: scroll;
 }
 
 /* width */
