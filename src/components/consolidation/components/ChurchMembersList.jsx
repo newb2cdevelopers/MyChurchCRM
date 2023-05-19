@@ -98,6 +98,9 @@ export default function ChurchMembersList() {
                         <span>Número de documento: </span>
                         <input className={styles.inputField} type="text" id="idTxtMember" onChange={(e) => { searchMember(e.target.value) }} placeholder={"Ingrese el # documento"} />
                     </div>
+                    <div>
+                    <span>Cantidad de registros: {membersList.length}</span>
+                    </div>
                     <div className={styles.createNewMemberContainer}>
                         <div className={styles.createNewButton} >
                             <div className="tooltip right" onClick={() => navigateToManageMembers("/consolidation")}>
