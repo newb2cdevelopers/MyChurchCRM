@@ -4,7 +4,10 @@
 }
 
 .containerVerifyAsistents {
-  padding: 20px 147px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-block: 25px;
 }
 
 .verifyAsistents {
@@ -22,14 +25,6 @@
   align-items: center;
   margin-left: 220px;
   margin-top: -40px;
-}
-
-.tableMembersContainer {
-  padding: 28px 49px;
-  position: relative;
-  left: 49px;
-  justify-content: center;
-  width: 1181px;
 }
 
 .tabContainer {
@@ -290,8 +285,6 @@
 
 .tableVerifyAsistents {
   border: 1px solid #00000071;
-  width: 1111px;
-  position: relative;
 }
 
 .tableVerifyAsistents thead tr th {
@@ -354,7 +347,8 @@ tbody tr {
 .tableContainer {
   max-height: 500px;
   overflow-y: scroll;
-  max-width: 1115px;
+  min-width: 1240px;
+  max-width: 1240px;
   overflow-x: scroll;
 }
 
@@ -459,7 +453,6 @@ tbody tr {
 
 .inputField {
   border: 1px solid;
-  width: 70%;
   border-radius: 4px;
   height: 39px;
   display: flex;
@@ -520,24 +513,11 @@ tbody tr {
   left: 918px;
 }
 
-.createNewMemberContainer {
-  display: flex;
-  position: relative;
-  margin: 10px;
-  justify-content: left;
-  left: 617px;
-}
-
 .searchContainer {
   display: flex;
-  flex-direction: row;
   margin-bottom: 10px;
-}
-
-.createNewButton {
-  border-radius: 5px;
-  width: 120px;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .backToList {

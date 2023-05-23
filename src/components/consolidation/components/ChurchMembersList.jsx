@@ -94,12 +94,10 @@ export default function ChurchMembersList() {
         <div className={styles.containerVerifyAsistents}>
             <div className={styles.tableMembersContainer}>
                 <div className={styles.searchContainer}>
-                    <div style={{ display: 'flex' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <span>Número de documento: </span>
                         <input className={styles.inputField} type="text" id="idTxtMember" onChange={(e) => { searchMember(e.target.value) }} placeholder={"Ingrese el # documento"} />
-                    </div>
-                    <div>
-                    <span>Cantidad de registros: {membersList.length}</span>
+                        <span>Cantidad de registros: {membersList.length}</span>
                     </div>
                     <div className={styles.createNewMemberContainer}>
                         <div className={styles.createNewButton} >
