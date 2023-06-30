@@ -1,12 +1,11 @@
 .containerNavBar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   background: linear-gradient(89.17deg, #1a1a1a 12.64%, #454545 173.99%);
   height: 55px;
-  position:fixed;
+  position: fixed;
   width: 100%;
-  z-index: 1;
+  z-index: 2;
   top: 0;
   color: #F1F1F1;
 }
@@ -16,8 +15,33 @@
   text-decoration: inherit;
 }
 
+.containerNavBarMobile {
+  display: none;
+}
+
+.containerNavBarDesktop {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding-inline: 16px;
+}
+
 @media only screen and (max-width: 375px) {
   .navButton {
     font-size: 13px !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .containerNavBarMobile {
+    display: flex;
+    padding-inline: 16px;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .containerNavBarDesktop {
+    display: none;
   }
 }
