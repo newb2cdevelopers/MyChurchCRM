@@ -60,8 +60,8 @@ export default function VerifyAsistents() {
           {message && <Alert variant="filled" severity={message.severity} onClick={()=>{setMessage(null)}}>{message.message}</Alert>}
       </div>
         <div className={styles.entryIdTxtAttendee}>
-          <p>Número de documento</p>
-          <input className={styles.inputDataIdTxtAttendee} type="text" id="idTxtAttendee" value={document} onChange={(e) =>{setDocument(e.target.value)}} placeholder={"Ingrese la cédula"}/>
+          <p>Número de documento o Nombre</p>
+          <input className={styles.inputDataIdTxtAttendee} type="text" id="idTxtAttendee" value={document} onChange={(e) =>{setDocument(e.target.value)}} placeholder={"Ingrese Cédula o Nombre"}/>
           <br></br>
           <input type="button" id="searchBooking" style={{"border-radius":"6px", "margin-top":"9px"}} value={"Consultar..."} onClick={() => {searchBookings()}}/>
         </div>
