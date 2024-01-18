@@ -6,13 +6,15 @@ export const userSlice = createSlice({
         userEmail:'',
         token: '',
         selectedChurchId: '',
-        roles: []
+        roles: [],
+        workfront: null,
     },
     reducers: {
         login: (state, action) => {
             state.userEmail = action.payload.userEmail;
             state.token = action.payload.token;
             state.roles = action.payload.roles;
+            state.workfront = action.payload.workfront;
         },
         setSelectedChurch: (state, action) => {
             state.selectedChurchId = action.payload.selectedChurchId;

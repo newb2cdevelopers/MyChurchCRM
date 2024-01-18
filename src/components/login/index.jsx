@@ -92,11 +92,13 @@ function Login() {
     setLoading(false);
 
     if (results[0] && results[0].access_token) {
+      console.log(results[0]);
       dispatch(
         login({
           userEmail: loginInfo.user,
           token: results[0].access_token,
-          roles: results[0].roles
+          roles: results[0].roles,
+          workfront: results[0].workfront,
         })
       );
 
