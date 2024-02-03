@@ -31,8 +31,10 @@ export default function ChurchMembersList() {
     const BASE_URL = B2C_BASE_URL;
 
     const getMembers = async () => {
+
+        const headers= getAuthHeaders(user.token);
         //setLoading(true);
-        return await genericGetService(`${BASE_URL}/member?churchId=${user.selectedChurchId}`);
+        return await genericGetService(`${BASE_URL}/member?churchId=${user.selectedChurchId}`, headers);
     }
 
     useEffect(() => {
