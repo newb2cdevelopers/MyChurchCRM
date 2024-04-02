@@ -82,7 +82,7 @@ export default function ChurchMembersList() {
         if (document !== '' && document.length >= 3) {
             let _filteredMembers = members.filter(member => {
                 return member.documentNumber.toString().indexOf(document) >= 0 ||
-                 member.fullName.toString().indexOf(document) >= 0
+                 (member.fullName.toLowerCase().indexOf(document) >= 0 || member.fullName.toUpperCase().indexOf(document) >= 0)
             });
 
             if (_filteredMembers && _filteredMembers.length > 0) {
@@ -144,7 +144,30 @@ export default function ChurchMembersList() {
                                             </div>
                                         </td>
                                         <td>{member.documentNumber}</td>
-                                        <td>{member.fullName.toUpperCase()}</td>
+                                        <td>{/*member.fullName.split(' ').length === 2 ?
+                                                member.fullName.split(' ')[0].charAt(0).toUpperCase() +
+                                                member.fullName.split(' ')[0].slice(1) + ' ' +
+                                                member.fullName.split(' ')[1].charAt(0).toUpperCase() +
+                                                member.fullName.split(' ')[1].slice(1) :
+                                            member.fullName.split(' ').length === 3 ?
+                                                member.fullName.split(' ')[0].charAt(0).toUpperCase() +
+                                                member.fullName.split(' ')[0].slice(1) + ' ' +
+                                                member.fullName.split(' ')[1].charAt(0).toUpperCase() +
+                                                member.fullName.split(' ')[1].slice(1) + ' ' +
+                                                member.fullName.split(' ')[2].charAt(0).toUpperCase() +
+                                                member.fullName.split(' ')[2].slice(1) :
+                                            member.fullName.split(' ').length === 4 || member.fullName.split(' ').length === 5 ?
+                                                member.fullName.split(' ')[0].charAt(0).toUpperCase() + 
+                                                member.fullName.split(' ')[0].slice(1) + ' ' +
+                                                member.fullName.split(' ')[1].charAt(0).toUpperCase() +
+                                                member.fullName.split(' ')[1].slice(1) + ' ' +
+                                                member.fullName.split(' ')[2].charAt(0).toUpperCase() +
+                                                member.fullName.split(' ')[2].slice(1) + ' ' +
+                                                member.fullName.split(' ')[3].charAt(0).toUpperCase() +
+                                                member.fullName.split(' ')[3].slice(1) :*/
+                                                member.fullName.toUpperCase() 
+                                        
+                                            }</td>
                                         <td>{member.workfront ? member.workfront.name : ''}</td>
                                         <td>{member.address}</td>
                                         <td>{member.landLine}</td>
