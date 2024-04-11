@@ -11,7 +11,7 @@ import Switch from '@mui/material/Switch';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useSelector } from 'react-redux';
-import { genericPostService, getAuthHeaders, genericPutService } from '../../../api/externalServices';
+import { genericPostService, getAuthHeaders, genericPutService, genericGetService } from '../../../api/externalServices';
 
 const validationSchema = yup.object({
     documentNumber: yup
@@ -38,6 +38,23 @@ export default function GeneralInfo() {
 
     const isEditting = memberContext.currentMember !== null;
 
+    const [workFrontList, setWorkFrontList] = useState([])
+
+  const getWorkFrontListByChurch = async () => {
+    return await genericGetService(`${B2C_BASE_URL}/workfront/workfrontsByChurch/${user.selectedChurchId}`);
+  }
+  useEffect(() => {
+
+    getWorkFrontListByChurch().then(data => {
+      //setLoading(false);
+      if (data[0]) {
+        setWorkFrontList(data[0]);
+        return;
+      }
+      alert("Error");
+    });
+  }, []);
+
     const initialValues = {
         documentNumber: '',
         documentType: '',
@@ -53,7 +70,9 @@ export default function GeneralInfo() {
         occupation: '',
         conversionyear: 0,
         yearInChurch: 0,
-        isBaptised: false
+        isBaptised: false,
+        workfront: '',
+        comments: ''
     };
 
     const formik = useFormik({
@@ -80,7 +99,9 @@ export default function GeneralInfo() {
                     isBaptised: payload.isBaptised,
                     yearInChurch: payload.yearInChurch,
                     documentType: payload.documentType,
-                    email: payload.email
+                    email: payload.email,
+                    workfront: payload.workfront,
+                    comments: payload.comments
                 };
 
                 const results = await genericPutService(`${B2C_BASE_URL}/member/updateMemberInfo/${memberContext.currentMember._id}`, editPayload, getAuthHeaders(user.token));
@@ -304,6 +325,31 @@ export default function GeneralInfo() {
                             <option value={"Empleado"}>Empleado</option>
                             <option value={"Pensionado"}>Pensionado</option>
                         </select>
+                    </div>
+                    <div className={styles.entryIdTxtPhone}>
+                        <label for='workfront'>Frente o Área de trabajo:</label>
+                        <select className={styles.inputDataIdTxtOccupation} onChange={formik.handleChange}
+                            id='workfront'
+                            name='workfront' value={formik.values.workfront ? formik.values.workfront._id: ''}>
+                                <option value={""}>Seleccione una Opción</option>
+                                    {
+                                    workFrontList.map((item, index) => {
+                                        return <option value={item._id}>{item.name}</option>
+                                    })
+                                    }
+                        </select>
+                    </div>
+                    <div className={styles.entryIdTxtPhone}>
+                        <label for='landLine'>Observaciones:</label>
+                        <textarea
+                            rows='5' cols='50'
+                            type='text'
+                            name='comments'
+                            id='comments'
+                            onChange={formik.handleChange}
+                            value={formik.values.comments}
+                            className={styles.inputDataIdTxtPhone}
+                        />
                     </div>
                 </div>
                 <div className={styles.buttonContainer}>

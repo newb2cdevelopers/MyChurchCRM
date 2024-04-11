@@ -68,7 +68,6 @@ export default function Consolidation() {
                     <Tab label="INFORMACIÓN FAMILIAR" disabled={areTabsDisabled} />
                     <Tab label="ESTUDIOS / OTRAS FORMACIONES" disabled={areTabsDisabled} />
                     <Tab label="FORMACIÓN MINSTERIAL" disabled={areTabsDisabled} />
-                    <Tab label="ÁREAS / FRENTES DE TRABAJO" disabled={areTabsDisabled} />
                 </Tabs>
                 <div className={styles.tabContainer}>
                     <MemberContext.Provider value={{
