@@ -50,7 +50,7 @@ function Navbar() {
           <MenuIcon />
         </IconButton>
         <Link to="/" className={styles.textLink}>
-          <Button className={styles.navButton} color="inherit">Bienvenido a Sistema de gestión Mi Iglesia</Button>{" "}
+          <Button className={styles.navButton} color="inherit">Sistema de gestión Mi Iglesia</Button>{" "}
         </Link>
         <Drawer
           variant="persistent"
@@ -87,7 +87,7 @@ function Navbar() {
 
       <div className={styles.containerNavBarDesktop}>
         <Link to="/" className={styles.textLink}>
-          <Button className={styles.navButton} color="inherit">Bienvenido a Sistema de gestión Mi Iglesia</Button>{" "}
+          <Button className={styles.navButton} color="inherit">Sistema de gestión Mi Iglesia</Button>{" "}
         </Link>
         <Link to="/manageBookings" className={styles.textLink}>
           <Button className={styles.navButton} color="inherit">Gestionar mis reservas</Button>{" "}
