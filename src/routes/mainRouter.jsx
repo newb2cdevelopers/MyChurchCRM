@@ -22,6 +22,7 @@ import Consolidation from "../components/consolidation";
 import ChurchMembersList from "../components/consolidation/components/ChurchMembersList";
 import CvMember from "../components/consolidation/components/CVmember";
 import RecoveryPasswordRequest from './../components/login/recoveryPasswordRequest';
+import WorkfrontAssignment from "../components/workfrontAssignments/workfrontAssignment";
 
 const RoutesCollection = (
   <Routes>
@@ -56,6 +57,12 @@ const RoutesCollection = (
       element={
         <ProtectedRoute>
           <EventListView />
+        </ProtectedRoute>
+      } />
+        <Route path="/front-assignment"
+      element={
+        <ProtectedRoute>
+          <WorkfrontAssignment />
         </ProtectedRoute>
       } />
     <Route path="/confirmarReserva" element={<ConfirmBooking />} />

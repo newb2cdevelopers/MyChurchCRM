@@ -1,0 +1,7 @@
+const BLACK = "#000000";
+const MEDIUM_GRAY = "#B9B9B9";
+const LIGTH_SEA_GREEN = "#00AAA9";
+const SEAL_BROWN = "#28161C";
+const WHITE = "#FFFFFF"
+
+export { BLACK, MEDIUM_GRAY, LIGTH_SEA_GREEN, SEAL_BROWN, WHITE };
