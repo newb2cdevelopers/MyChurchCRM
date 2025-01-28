@@ -92,7 +92,7 @@ export default function WorkfrontAssignment() {
 
         return;
       }
-        alert("Se presentó un error al guardar la asignación");
+        alert("Se presentó un error al guardar la asignación de frentes");
 
     
     } else {
