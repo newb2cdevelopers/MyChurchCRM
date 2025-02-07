@@ -23,6 +23,7 @@ import ChurchMembersList from "../components/consolidation/components/ChurchMemb
 import CvMember from "../components/consolidation/components/CVmember";
 import RecoveryPasswordRequest from './../components/login/recoveryPasswordRequest';
 import WorkfrontAssignment from "../components/workfrontAssignments/workfrontAssignment";
+import FamilyGroupList from './../components/manageFamilyGroup/components/familyGroupList';
 
 const RoutesCollection = (
   <Routes>
@@ -83,6 +84,7 @@ const RoutesCollection = (
         <ChurchMembersList />
       </ProtectedRoute>} />
     <Route path="/cv-member" element={<CvMember /> }/>
+    <Route path="/AdministrarGruposamiliares" element={<FamilyGroupList />} />
   </Routes>
 );
 

@@ -1,17 +1,15 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import MemberContext from '../../../contexts/MemberContext';
-
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
 import styles from "../styles.module.css";
 import { B2C_BASE_URL } from '../../../constants';
-import { display } from '@mui/system';
 import Switch from '@mui/material/Switch';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useSelector } from 'react-redux';
 import { genericPostService, getAuthHeaders, genericPutService, genericGetService } from '../../../api/externalServices';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+import { style } from '@mui/system';
 
 const validationSchema = yup.object({
     documentNumber: yup
@@ -40,20 +38,20 @@ export default function GeneralInfo() {
 
     const [workFrontList, setWorkFrontList] = useState([])
 
-  const getWorkFrontListByChurch = async () => {
-    return await genericGetService(`${B2C_BASE_URL}/workfront/workfrontsByChurch/${user.selectedChurchId}`);
-  }
-  useEffect(() => {
+    const getWorkFrontListByChurch = async () => {
+        return await genericGetService(`${B2C_BASE_URL}/workfront/workfrontsByChurch/${user.selectedChurchId}`);
+    }
+    useEffect(() => {
 
-    getWorkFrontListByChurch().then(data => {
-      //setLoading(false);
-      if (data[0]) {
-        setWorkFrontList(data[0]);
-        return;
-      }
-      alert("Error");
-    });
-  }, []);
+        getWorkFrontListByChurch().then(data => {
+            //setLoading(false);
+            if (data[0]) {
+                setWorkFrontList(data[0]);
+                return;
+            }
+            alert("Error");
+        });
+    }, []);
 
     const initialValues = {
         documentNumber: '',
@@ -138,12 +136,13 @@ export default function GeneralInfo() {
     });
 
     return (
-        <div className={styles.containerVerifyAsistents}>
+        <div className={styles.infoGeneralContainer}>
             <form onSubmit={formik.handleSubmit} >
-                <div className={styles.tabContainer}>
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='documentType'>Tipo de documento de identidad:</label>
-                        <select name='documentType' className={styles.inputDataIdTxtHousingType}
+                <div>
+                    <div class="mb-3">
+                        <span
+                            style={{color: "white", width:"257px" }}>Tipo de documento de identidad:</span>
+                        <select name='documentType' className={`${styles.selectorsInfoGeneral} form-select`}
                             id='documentType'
                             onChange={formik.handleChange} value={formik.values.documentType}>
                             <option value={""}>Seleccione una Opción</option>
@@ -153,51 +152,64 @@ export default function GeneralInfo() {
                             <option value={"CE"}>Cédula de extranjería</option>
                         </select>
                     </div>
-                    <div className={styles.entryIdTxtFullName}>
-                        <label for='documentNumber'>Número de Documento:</label>
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}
+                        >Número de Documento:</span>
                         <input
+                            class="form-control"
                             name='documentNumber'
                             type='text'
                             onChange={formik.handleChange}
-                            className={styles.inputDataIdTxtFullName}
                             value={formik.values.documentNumber}
                             id='documentNumber'
-                        />
+                            aria-label="documentNumber" aria-describedby="basic-addon1"
+                            style={{ border: "1px solid grey" }} />
                     </div>
                     {formik.errors.documentNumber && formik.touched.documentNumber ? (
                         <p className={styles.errorMessage}>{formik.errors.documentNumber}</p>
                     ) : null}
-                    <div className={styles.entryIdTxtFullName}>
-                        <label for='fullName'>Nombre completo:</label>
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}
+                            >Nombre completo:</span>
                         <input
+                            class="form-control"
                             name='fullName'
                             type='text'
                             onChange={formik.handleChange}
                             className={styles.inputDataIdTxtFullName}
                             value={formik.values.fullName}
                             id='fullName'
-                        />
+                            aria-label="documentNumber" aria-describedby="basic-addon1"
+                            style={{ border: "1px solid grey" }} />
                     </div>
                     {formik.errors.fullName && formik.touched.fullName ? (
                         <p className={styles.errorMessage}>{formik.errors.fullName}</p>
                     ) : null}
-                    <div className={styles.entryIdTxtAddress}>
-                        <label for='address'>Dir. de residencia:</label>
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}
+                            >Dir. de residencia:</span>
                         <input
+                            class="form-control"
                             name='address'
                             id='address'
                             type='text'
                             onChange={formik.handleChange}
                             value={formik.values.address}
-                            className={styles.inputDataIdTxtAddress}
-                        />
+                            aria-label="documentNumber" aria-describedby="basic-addon1"
+                            style={{ border: "1px solid grey" }} />
                     </div>
                     {formik.errors.address && formik.touched.address ? (
                         <p className={styles.errorMessage}>{formik.errors.address}</p>
                     ) : null}
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='housingType'>Tipo de vivienda:</label>
-                        <select name='housingType' className={styles.inputDataIdTxtHousingType}
+
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}
+                            >Tipo de vivienda:</span>
+                        <select name='documentType' className={`${styles.selectorsInfoGeneral} form-select`}
                             id='housingType'
                             onChange={formik.handleChange} value={formik.values.housingType}>
                             <option value={""}>Seleccione una Opción</option>
@@ -206,92 +218,109 @@ export default function GeneralInfo() {
                             <option value={"Familiar"}>Familiar</option>
                         </select>
                     </div>
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='landLine'>Telefóno fijo:</label>
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}
+                            >Telefóno fijo:</span>
                         <input
+                            class="form-control"
                             type='text'
                             name='landLine'
                             id='landLine'
                             onChange={formik.handleChange}
                             value={formik.values.landLine}
-                            className={styles.inputDataIdTxtPhone}
-                        />
+                            aria-label="documentNumber" aria-describedby="basic-addon1"
+                            style={{ border: "1px solid grey" }} />
                     </div>
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='mobilePhone'>Celular:</label>
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}
+                            >Celular:</span>
                         <input
+                            class="form-control"
                             id='mobilePhone'
                             name='mobilePhone'
                             type='text'
                             onChange={formik.handleChange}
                             value={formik.values.mobilePhone}
-                            className={styles.inputDataIdTxtPhone}
-                        />
+                            aria-label="documentNumber" aria-describedby="basic-addon1"
+                            style={{ border: "1px solid grey" }} />
                     </div>
                     {formik.errors.mobilePhone && formik.touched.mobilePhone ? (
                         <p className={styles.errorMessage}>{formik.errors.mobilePhone}</p>
                     ) : null}
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='email'>Correo:</label>
-                        <input type='text'
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}>Correo:</span>
+                        <input
+                            class="form-control"
                             id='email'
                             name='email'
                             onChange={formik.handleChange}
                             value={formik.values.email}
-                            className={styles.inputDataIdTxtEmail}
-                        />
+                            type='email'
+                            aria-label="documentNumber" aria-describedby="basic-addon1"
+                            style={{ border: "1px solid grey" }} />
                     </div>
                     {formik.errors.email && formik.touched.email ? (
                         <p className={styles.errorMessage}>{formik.errors.email}</p>
                     ) : null}
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='birthDate'>Fecha de nacimiento:</label>
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}>Fecha de nacimiento:</span>
                         <input
+                            class="form-control"
                             name='birthDate'
                             id='birthDate'
                             type='date'
                             onChange={formik.handleChange}
                             value={formik.values.birthDate ? formik.values.birthDate.split('T')[0] : ""}
-                            className={styles.inputDataIdTxtBirthDate}
-                        />
+                            aria-label="documentNumber" aria-describedby="basic-addon1"
+                            style={{ border: "1px solid grey" }} />
                     </div>
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='conversionyear'>Año de conversión:</label>
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}>Año de conversión:</span>
                         <input
+                            class="form-control"
                             id='conversionyear'
                             name='conversionyear'
                             type='text'
                             onChange={formik.handleChange}
                             value={formik.values.conversionyear}
-                            className={styles.inputDataIdTxtYears}
-                        />
+                            aria-label="documentNumber" aria-describedby="basic-addon1"
+                            style={{ border: "1px solid grey" }} />
                     </div>
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='yearInChurch'>Años en la Iglesia:</label>
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}>Años en la Iglesia:</span>
                         <input
+                            class="form-control"
                             id='yearInChurch'
                             name='yearInChurch'
                             type='text'
                             onChange={formik.handleChange}
                             value={formik.values.yearInChurch}
-                            className={styles.inputDataIdTxtYearsChurch}
-                        />
+                            aria-label="documentNumber" aria-describedby="basic-addon1"
+                            style={{ border: "1px solid grey" }} />
                     </div>
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='yearInChurch'>¿Bautizado?</label>
-                        <Switch className={styles.inputDataIdSwitch}
-                            id='yearInChurch'
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}>¿Bautizado?</span>
+                        <Switch
+                            class="form-control"
+                            id='isBaptised'
                             name="isBaptised"
                             onChange={formik.handleChange}
                             inputProps={{ 'aria-label': 'controlled' }}
-                            defaultChecked={formik.values.isBaptised}
-                        />
+                            defaultChecked={formik.values.isBaptised} />
                     </div>
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='maritalStatus'>Estado civil:</label>
-                        <select className={styles.inputDataIdTxtMaritalStatus}
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}>Estado civil:</span>
+                        <select name='maritalStatus' className={`${styles.selectorsInfoGeneral} form-select`}
                             id='maritalStatus'
-                            onChange={formik.handleChange} name='maritalStatus' value={formik.values.maritalStatus}>
+                            onChange={formik.handleChange} value={formik.values.maritalStatus}>
                             <option value={""}>Seleccione una Opción</option>
                             <option value={"Casado"}>Casado</option>
                             <option value={"Divoriciado"}>Divorciado</option>
@@ -299,9 +328,11 @@ export default function GeneralInfo() {
                             <option value={"Viudo"}>Viudo</option>
                         </select>
                     </div>
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='educationalLevel'>Nivel Educativo:</label>
-                        <select className={styles.inputDataIdTxtEducationLevel} onChange={formik.handleChange}
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}>Nivel Educativo:</span>
+                        <select className={`${styles.selectorsInfoGeneral} form-select`}
+                            onChange={formik.handleChange}
                             id='educationalLevel'
                             name='educationalLevel' value={formik.values.educationalLevel}>
                             <option value={""}>Seleccione una Opción</option>
@@ -313,9 +344,11 @@ export default function GeneralInfo() {
                             <option value={"Ninguno"}>Ninguno</option>
                         </select>
                     </div>
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='occupation'>Ocupación:</label>
-                        <select className={styles.inputDataIdTxtOccupation} onChange={formik.handleChange}
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}>Ocupación:</span>
+                        <select className={`${styles.selectorsInfoGeneral} form-select`}
+                            onChange={formik.handleChange}
                             id='occupation'
                             name='occupation' value={formik.values.occupation}>
                             <option value={""}>Seleccione una Opción</option>
@@ -326,34 +359,35 @@ export default function GeneralInfo() {
                             <option value={"Pensionado"}>Pensionado</option>
                         </select>
                     </div>
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='workfront'>Frente o Área de trabajo:</label>
-                        <select className={styles.inputDataIdTxtOccupation} onChange={formik.handleChange}
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}>Frente o Área de trabajo:</span>
+                        <select className={`${styles.selectorsInfoGeneral} form-select`}
+                            onChange={formik.handleChange}
                             id='workfront'
-                            name='workfront' value={formik.values.workfront ? formik.values.workfront._id: ''}>
-                                <option value={""}>Seleccione una Opción</option>
-                                    {
-                                    workFrontList.map((item, index) => {
-                                        return <option value={item._id}>{item.name}</option>
-                                    })
-                                    }
+                            name='workfront' value={formik.values.workfront ? formik.values.workfront._id : ''}>
+                            <option value={""}>Seleccione una Opción</option>
+                            {
+                                workFrontList.map((item, index) => {
+                                    return <option value={item._id}>{item.name}</option>
+                                })
+                            }
                         </select>
                     </div>
-                    <div className={styles.entryIdTxtPhone}>
-                        <label for='landLine'>Observaciones:</label>
-                        <textarea
-                            rows='5' cols='50'
-                            type='text'
+                    <div class="mb-3">
+                        <span 
+                            style={{color: "white", width:"257px" }}>Observaciones</span>
+                        <textarea class="form-control" aria-label="With textarea"
                             name='comments'
                             id='comments'
                             onChange={formik.handleChange}
                             value={formik.values.comments}
-                            className={styles.inputDataIdTxtPhone}
-                        />
+                            style={{ border: "1px solid grey", width:"520px" }}
+                        ></textarea>
                     </div>
                 </div>
-                <div className={styles.buttonContainer}>
-                    <button type="submit" disabled={!formik.dirty} className={styles.buttonClass}>Guardar</button>
+                <div className={`${styles.buttons} btn-group`} role="group" aria-label="Basic example">
+                    <button class="btn btn-success" type="submit" disabled={!formik.dirty}>Guardar</button>
                 </div>
             </form>
         </div>

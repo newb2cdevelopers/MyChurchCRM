@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from "../styles.module.css";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { genericGetService, getAuthHeaders } from '../../../api/externalServices';
@@ -10,9 +9,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useSelector } from 'react-redux';
 import { selectedMemberData } from "../../../features/members/membersSlice";
-import './toolTip.css'
-import { Button } from '@mui/material';
-import { display } from '@mui/system';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 export default function ChurchMembersList() {
 
@@ -32,7 +30,7 @@ export default function ChurchMembersList() {
 
     const getMembers = async () => {
 
-        const headers= getAuthHeaders(user.token);
+        const headers = getAuthHeaders(user.token);
         //setLoading(true);
         return await genericGetService(`${BASE_URL}/member?churchId=${user.selectedChurchId}`, headers);
     }
@@ -82,7 +80,7 @@ export default function ChurchMembersList() {
         if (document !== '' && document.length >= 3) {
             let _filteredMembers = members.filter(member => {
                 return member.documentNumber.toString().indexOf(document) >= 0 ||
-                 (member.fullName.toLowerCase().indexOf(document) >= 0 || member.fullName.toUpperCase().indexOf(document) >= 0)
+                    (member.fullName.toLowerCase().indexOf(document) >= 0 || member.fullName.toUpperCase().indexOf(document) >= 0)
             });
 
             if (_filteredMembers && _filteredMembers.length > 0) {
@@ -94,57 +92,52 @@ export default function ChurchMembersList() {
     }
 
     return (
-        <div className={styles.containerVerifyAsistents}>
-            <div className={styles.tableMembersContainer}>
-                <div className={styles.searchContainer}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span>Buscar por número de documento o nombre: </span>
-                        <input className={styles.inputField} type="text" id="idTxtMember" onChange={(e) => { searchMember(e.target.value) }} placeholder={"Ingrese el # documento o nombre"} />
-                        <span>Cantidad de registros: {membersList.length}</span>
-                    </div>
-                    <div className={styles.createNewMemberContainer}>
-                        <div className={styles.createNewButton} >
-                            <div className="tooltip right" onClick={() => navigateToManageMembers("/consolidation")}>
-                                <span className="tiptext" >Crear nuevo</span>
-                                <AddCircleIcon></AddCircleIcon>
-                            </div>
-                        </div>
+        <div className={styles.mainContainer}>
+            <div className={styles.infoContainer}>
+                <div class="mb-3">
+                    <label for="idTxtMember" class="form-label">Buscar por número de documento o nombre:</label>
+                    <input type="text" class="form-control form-control-dark" id="idTxtMember"
+                        onChange={(e) => { searchMember(e.target.value) }} placeholder={"Ingrese el # documento o nombre"}
+                        style={{ border: "1px solid grey" }} />
+                </div>
+                <div>
+                    <label for="idTxtMember" class="form-label">Cantidad de registros: {membersList.length}</label>
+                </div>
+                <div className={styles.createNewMemberContainer}>
+                    <div onClick={() => navigateToManageMembers("/consolidation")}>
+                        <AddCircleIcon style={{ height: "40px", width: "40px" }}></AddCircleIcon>
                     </div>
                 </div>
-                <div className={styles.tableContainer}>
-                    <table className={styles.tableVerifyAsistents}>
-                        <thead>
-                            <tr>
-                                <th>Acciones</th>
-                                <th><p>Identificación</p></th>
-                                <th><p>Nombre completo</p></th>
-                                <th><p>Frente o área de trabajo</p></th>
-                                <th><p>Dirección</p></th>
-                                <th><p>Teléfono</p></th>
-                                <th><p>Celular</p></th>
-                                <th><p>Correo</p></th>
-                                <th><p>Años en la iglesia</p></th>
-                                <th><p>¿Bautizado?</p></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {membersList && membersList.length > 0 ?
-                                membersList.map((member, index) => {
-                                    return <tr>
-                                           <td>
-                                            <div>
-                                                <div className="tooltip right" onClick={(e) => { selectedMemberToEdit(member.documentNumber, "/consolidation") }}>
-                                                    <span className="tiptext" >Editar</span>
-                                                    <ModeEditIcon />
-                                                </div>
-                                                <div className="tooltip right" onClick={(e) => { selectedMemberToEdit(member.documentNumber, "/cv-member") }}>
-                                                    <span className="tiptext" >Ver perfil</span>
-                                                    <VisibilityIcon />
-                                                </div>
+            </div>
+            <div className={styles.tableContainer}>
+                <table className="table table-striped table-hover table-dark table-borderless">
+                    <thead>
+                        <tr>
+                            <th><p>Acciones</p></th>
+                            <th><p>Identificación</p></th>
+                            <th><p>Nombre completo</p></th>
+                            <th><p>Frente o área de trabajo</p></th>
+                            <th><p>Dirección</p></th>
+                            <th><p>Teléfono / Celular</p></th>
+                            <th><p>Correo</p></th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        {membersList && membersList.length > 0 ?
+                            membersList.map((member, index) => {
+                                return <tr>
+                                    <td>
+                                        <div>
+                                            <div onClick={(e) => { selectedMemberToEdit(member.documentNumber, "/consolidation") }}>
+                                                <ModeEditIcon />
                                             </div>
-                                        </td>
-                                        <td>{member.documentNumber}</td>
-                                        <td>{/*member.fullName.split(' ').length === 2 ?
+                                            <div onClick={(e) => { selectedMemberToEdit(member.documentNumber, "/cv-member") }}>
+                                                <VisibilityIcon />
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><p>{member.documentNumber}</p></td>
+                                    <td>{/*member.fullName.split(' ').length === 2 ?
                                                 member.fullName.split(' ')[0].charAt(0).toUpperCase() +
                                                 member.fullName.split(' ')[0].slice(1) + ' ' +
                                                 member.fullName.split(' ')[1].charAt(0).toUpperCase() +
@@ -165,25 +158,21 @@ export default function ChurchMembersList() {
                                                 member.fullName.split(' ')[2].slice(1) + ' ' +
                                                 member.fullName.split(' ')[3].charAt(0).toUpperCase() +
                                                 member.fullName.split(' ')[3].slice(1) :*/
-                                                member.fullName.toUpperCase() 
-                                        
-                                            }</td>
-                                        <td>{member.workfront ? member.workfront.name : ''}</td>
-                                        <td>{member.address}</td>
-                                        <td>{member.landLine}</td>
-                                        <td>{member.mobilePhone}</td>
-                                        <td>{member.email}</td>
-                                        <td>{member.yearInChurch}</td>
-                                        <td>{member.isBaptised ? 'Si' : 'No'}</td>
-                                    </tr>
-                                })
-                                : <tr>
-                                    <td style={{ textAlign: 'center' }}>Sin resultados</td>
+                                        member.fullName.toUpperCase()
+
+                                    }</td>
+                                    <td><p>{member.workfront ? member.workfront.name : ''}</p></td>
+                                    <td><p>{member.address}</p></td>
+                                    <td><p>{`${member.landLine}  ${member.mobilePhone}`}</p></td>
+                                    <td><p>{member.email}</p></td>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                            })
+                            : <tr>
+                                <td style={{ textAlign: 'center' }}><p>Sin resultados</p></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     )

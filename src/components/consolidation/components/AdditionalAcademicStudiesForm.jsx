@@ -9,6 +9,8 @@ import * as yup from 'yup';
 import { useSelector } from 'react-redux';
 import { genericPostService, getAuthHeaders, genericPutService } from '../../../api/externalServices';
 import { B2C_BASE_URL } from '../../../constants';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 
 const validationSchema = yup.object({
@@ -34,7 +36,7 @@ export default function AddicionalAcademicStudiesForm({ open, setOpen }) {
       name: '',
       AcademicInstitutionName: '',
       isFinished: false,
-      comments:"",
+      comments: "",
       _id: null
     },
     validationSchema: validationSchema,
@@ -75,7 +77,7 @@ export default function AddicionalAcademicStudiesForm({ open, setOpen }) {
         "_id": null,
         "isFinished": false,
         "AcademicInstitutionName": "",
-        "comments":""
+        "comments": ""
       });
     }
   }, [open]);
@@ -89,63 +91,60 @@ export default function AddicionalAcademicStudiesForm({ open, setOpen }) {
 
       >
         <Box className={styles.modalContainer}>
-          <form onSubmit={formik.handleSubmit} >
-            <div className={styles.modalTitle}>Crea nuevo estudio o formación</div>
-            <div className={styles.fieldsContainer}>
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Título:</span>
-                <input className={styles.inputField} type="text"
-                  name='name'
+          <form className={styles.formContainer} onSubmit={formik.handleSubmit} >
+            <h1 className={styles.modalTitle}>Formación escolar-profesional</h1>
+            <div class="mb-3">
+              <label 
+                style={{color: "white", width:"520px" }}>Título:</label>
+              <input class="form-control" type="text"
+                name='name'
+                onChange={formik.handleChange}
+                value={formik.values.name}
+                style={{ border: "1px solid grey" }}
+              />
+            </div >
+            {formik.errors.name && formik.touched.name ? (
+              <p className={styles.errorMessage}>{formik.errors.name}</p>
+            ) : null}
+            <div class="mb-3">
+              <label 
+                style={{color: "white", width:"520px" }}>Institución:</label>
+              <input class="form-control" type="text"
+                name='AcademicInstitutionName'
+                onChange={formik.handleChange}
+                value={formik.values.AcademicInstitutionName}
+                style={{ border: "1px solid grey" }}
+              />
+            </div>
+            {formik.errors.AcademicInstitutionName && formik.touched.AcademicInstitutionName ? (
+              <p className={styles.errorMessage}>{formik.errors.AcademicInstitutionName}</p>
+            ) : null}
+             <div class="mb-3">
+              <label 
+                style={{color: "white", width:"520px" }}>Finalizado:</label>
+              <div className={styles.ToggleContainer}>
+                <Switch class="form-control"
+                  inputProps={{ 'aria-label': 'controlled' }}
+                  id='isFinished'
+                  defaultChecked={formik.values.isFinished}
                   onChange={formik.handleChange}
-                  value={formik.values.name}
-                />
-              </div >
-              {formik.errors.name && formik.touched.name ? (
-                <p className={styles.errorMessage}>{formik.errors.name}</p>
-              ) : null}
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Institución:</span>
-                <input className={styles.inputField} type="text"
-                  name='AcademicInstitutionName'
-                  onChange={formik.handleChange}
-                  value={formik.values.AcademicInstitutionName}
+                  value={formik.values.isFinished}
                 />
               </div>
-              {formik.errors.AcademicInstitutionName && formik.touched.AcademicInstitutionName ? (
-                <p className={styles.errorMessage}>{formik.errors.AcademicInstitutionName}</p>
-              ) : null}
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Finalizado:</span>
-                <div className={styles.ToggleContainer}>
-                  <Switch className={styles.toggle}
-                    inputProps={{ 'aria-label': 'controlled' }}
-                    id='isFinished'
-                    defaultChecked={formik.values.isFinished}
-                    onChange={formik.handleChange}
-                    value={formik.values.isFinished}
-                  />
-                </div>
-              </div>
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Observaciones:</span>
-                <textarea className={styles.inputFieldTextArea} rows='5' cols='50'
-                  name='comments'
-                  onChange={formik.handleChange}
-                  value={formik.values.comments}
-                />
-              </div>
-              <div className={styles.modalButtonContainer}>
-                <input className={styles.modalButtons}
-                  type="submit"
-                  disabled={!formik.dirty}
-                  value='Guardar'
-                />
-                <input className={styles.modalButtons}
-                  type="button"
-                  onClick={() => closeModal()}
-                  value='Cancelar'
-                />
-              </div>
+            </div>
+            <div class="mb-3">
+              <label for="comments" 
+                style={{color: "white", width:"520px" }}>Observaciones:</label>
+              <textarea type="text" class="form-control"
+                name='comments'
+                onChange={formik.handleChange}
+                value={formik.values.comments}
+                style={{ border: "1px solid grey" }}
+              />
+            </div>
+            <div className={`${styles.buttons} btn-group`} role="group" aria-label="Basic example">
+              <button type="button" class="btn btn-secondary" onClick={() => closeModal()}>Cancelar</button>
+              <button class="btn btn-success" type="submit" disabled={!formik.dirty}>Guardar</button>
             </div>
           </form>
         </Box>

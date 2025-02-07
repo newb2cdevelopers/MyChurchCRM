@@ -5,6 +5,8 @@ import RelativesForm from './RelativesForm';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import './toolTip.css'
 import MemberContext from '../../../contexts/MemberContext';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 export default function Relatives() {
     const [open, setOpen] = useState(false);
@@ -28,62 +30,56 @@ export default function Relatives() {
     }
 
     return (
-        <div className={styles.containerVerifyAsistents}>
-            <div className={styles.tabContainer}>
-                <div className={styles.createNewRelativeContainer}>
-                    <div className={styles.createNewButton} >
-                        <div className="tooltip right" onClick={() => handleOpen()}>
-                            <span className="tiptext" >Crear nuevo</span>
-                            <AddCircleIcon></AddCircleIcon>
-                        </div>
-                    </div>
+        <div className={styles.relativesContainer}>
+            <div className={styles.createNewRelativesContainer}>
+                <div onClick={() => handleOpen()}>
+                    <AddCircleIcon style={{ height: "40px", width: "40px",position: "absolute", top: "30px" }}></AddCircleIcon>
                 </div>
-                <div className={styles.relativeTableContainer}>
-                    <table className={styles.tableRelatives}>
-                        <thead>
-                            <tr>
-                                <th><p>Nombre</p></th>
-                                <th><p>Número de identificación</p></th>
-                                <th><p>Dirección</p></th>
-                                <th><p>Celular / Teléfono</p></th>
-                                <th><p>Correo electrónico</p></th>
-                                <th><p>Fecha de nacimiento</p></th>
-                                <th><p>Ocupación</p></th>
-                                <th><p>Parentesco</p></th>
-                                <th><p>Obervaciones</p></th>                                
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {relatives && relatives.length > 0 ?
-                                relatives.map((relative, index) => {
-                                    return <tr>
-                                        <td>{relative.name}</td>
-                                        <td>{relative.documentNumber}</td>
-                                        <td>{relative.address}</td>
-                                        <td>{relative.mobilePhone}</td>
-                                        <td>{relative.email}</td>
-                                        <td>{relative.birthDate ? relative.birthDate.split('T')[0]:""}</td>
-                                        <td>{relative.occupation}</td>
-                                        <td>{relative.kinship}</td>
-                                        <td>{relative.comments}</td>
-                                        <td>
-                                            <div>
-                                                <div className="tooltip right" onClick={(e) => { selectedRelative(relatives[index]) }}>
-                                                    <span className="tiptext" >Editar</span>
-                                                    <ModeEditIcon></ModeEditIcon>
-                                                </div>
+            </div>
+            <div>
+                <table className="table table-striped table-hover table-dark table-borderless">
+                    <thead>
+                        <tr>
+                            <th><p>Nombre</p></th>
+                            <th><p>Número de identificación</p></th>
+                            <th><p>Dirección</p></th>
+                            <th><p>Celular / Teléfono</p></th>
+                            <th><p>Correo electrónico</p></th>
+                            <th><p>Fecha de nacimiento</p></th>
+                            <th><p>Ocupación</p></th>
+                            <th><p>Parentesco</p></th>
+                            <th><p>Obervaciones</p></th>
+                            <th><p>Acciones</p></th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        {relatives && relatives.length > 0 ?
+                            relatives.map((relative, index) => {
+                                return <tr>
+                                    <td><p>{relative.name}</p></td>
+                                    <td><p>{relative.documentNumber}</p></td>
+                                    <td><p>{relative.address}</p></td>
+                                    <td><p>{relative.mobilePhone}</p></td>
+                                    <td><p>{relative.email}</p></td>
+                                    <td><p>{relative.birthDate ? relative.birthDate.split('T')[0] : ""}</p></td>
+                                    <td><p>{relative.occupation}</p></td>
+                                    <td><p>{relative.kinship}</p></td>
+                                    <td><p>{relative.comments}</p></td>
+                                    <td>
+                                        <div>
+                                            <div onClick={(e) => { selectedRelative(relatives[index]) }}>
+                                                <ModeEditIcon style={{ cursor:"pointer" }}></ModeEditIcon>
                                             </div>
-                                        </td>
-                                    </tr>
-                                })
-                                : <tr>
-                                    <td style={{ textAlign: 'center' }}>Sin resultados</td>
+                                        </div>
+                                    </td>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                            })
+                            : <tr>
+                                <td style={{ textAlign: 'center' }}>Sin resultados</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
             <RelativesForm
                 open={open}

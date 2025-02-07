@@ -5,6 +5,8 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import './toolTip.css'
 import MemberContext from '../../../contexts/MemberContext';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 export default function MinistryStudies() {
 
@@ -30,53 +32,47 @@ export default function MinistryStudies() {
     }
 
     return (
-        <div className={styles.containerVerifyAsistents}>
-            <div className={styles.tabContainer}>
-                <div className={styles.createNewContainer}>
-                    <div className={styles.createNewButton} >
-                        <div className="tooltip right" onClick={() => handleOpen()}>
-                            <span className="tiptext" >Crear nuevo</span>
-                            <AddCircleIcon></AddCircleIcon>
-                        </div>
-                    </div>
+        <div className={styles.relativesContainer}>
+            <div className={styles.createNewRelativesContainer}>
+                <div onClick={() => handleOpen()}>
+                    <AddCircleIcon style={{ height: "40px", width: "40px",position: "absolute", top: "30px" }}></AddCircleIcon>
                 </div>
-                <table className={styles.tableVerifyAsistents}>
-                    <thead>
-                        <tr>
-                            <th><p>Título</p></th>
-                            <th><p>Fecha Inicio</p></th>
-                            <th><p>Fecha Fin</p></th>
-                            <th><p>Estado</p></th>
-                            <th><p>Observaciones</p></th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {ministryStudies && ministryStudies.length > 0 ?
-                            ministryStudies.map((ministryStudy, index) => {
-                                return <tr>
-                                    <td>{ministryStudy.name}</td>
-                                    <td>{ministryStudy.startDate.split('T')[0]}</td>
-                                    <td>{!ministryStudy.endDate || ministryStudy.endDate === '' ? <></> : ministryStudy.endDate.split('T')[0]}</td>
-                                    <td>{ministryStudy.status}</td>
-                                    <td>{ministryStudy.comments}</td>
-                                    <td>
-                                        <div>
-                                            <div className="tooltip right" onClick={(e) => { selectedMinistryStudy(ministryStudies[index]) }}>
-                                                <span className="tiptext" >Editar</span>
-                                                <ModeEditIcon></ModeEditIcon>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            })
-                            : <tr>
-                                <td style={{ textAlign: 'center' }}>Sin resultados</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
             </div>
+            <table className="table table-striped table-hover table-dark table-borderless">
+                <thead>
+                    <tr>
+                        <th><p>Título</p></th>
+                        <th><p>Fecha Inicio</p></th>
+                        <th><p>Fecha Fin</p></th>
+                        <th><p>Estado</p></th>
+                        <th><p>Observaciones</p></th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    {ministryStudies && ministryStudies.length > 0 ?
+                        ministryStudies.map((ministryStudy, index) => {
+                            return <tr>
+                                <td><p>{ministryStudy.name}</p></td>
+                                <td><p>{ministryStudy.startDate.split('T')[0]}</p></td>
+                                <td><p>{!ministryStudy.endDate || ministryStudy.endDate === '' ? <></> : ministryStudy.endDate.split('T')[0]}</p></td>
+                                <td><p>{ministryStudy.status}</p></td>
+                                <td><p>{ministryStudy.comments}</p></td>
+                                <td>
+                                    <div>
+                                        <div onClick={(e) => { selectedMinistryStudy(ministryStudies[index]) }}>
+                                            <ModeEditIcon></ModeEditIcon>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        })
+                        : <tr>
+                            <td style={{ textAlign: 'center' }}>Sin resultados</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
             <MinistryStudiesForm
                 open={open}
                 setOpen={setOpen}

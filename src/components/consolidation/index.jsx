@@ -11,6 +11,8 @@ import WorkFronts from './components/WorkFronts';
 import MemberContext from '../../contexts/MemberContext';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 export default function Consolidation() {
 
@@ -37,7 +39,7 @@ export default function Consolidation() {
 
     useEffect(() => {
         // If there is a selected member the tabs shoul be enabled
-        if(selectedMember !== null){
+        if (selectedMember !== null) {
             setAreTabsDisabled(false);
         }
         setShowGeneralInfo(value === 0 ? true : false)
@@ -47,15 +49,16 @@ export default function Consolidation() {
         setShowWorkFronts(value === 4 ? true : false)
     }, [value]);
 
-    
+
     const navigateToRoute = (route) => {
         return navigate(route);
     }
 
     return (
-        <div className={styles.containerVerifyAsistents}>
-            <Box sx={{ maxWidth: { xs: 320, sm: 1100 }, bgcolor: 'background.paper' }}>
-                <a  className={styles.backToList} onClick={() => navigateToRoute("/members")}> Volver al listado</a>
+        <div className={styles.mainContainer}>
+            <Box>
+                <button type="button" class="btn btn-dark"
+                    onClick={() => navigateToRoute("/members")}>Volver al listado</button>
                 <Tabs
                     value={value}
                     onChange={handleChange}
@@ -63,11 +66,12 @@ export default function Consolidation() {
                     scrollButtons
                     allowScrollButtonsMobile
                     aria-label="scrollable force tabs example"
+                    className={styles.tabDetailsContainer}
                 >
-                    <Tab label="INFORMACIÓN GENERAL" />
-                    <Tab label="INFORMACIÓN FAMILIAR" disabled={areTabsDisabled} />
-                    <Tab label="ESTUDIOS / OTRAS FORMACIONES" disabled={areTabsDisabled} />
-                    <Tab label="FORMACIÓN MINSTERIAL" disabled={areTabsDisabled} />
+                    <Tab label="INFORMACIÓN GENERAL" className={styles.tabs} style={{borderRadius:" 4px 0px 0px 4px"}} />
+                    <Tab label="INFORMACIÓN FAMILIAR" disabled={areTabsDisabled} className={styles.tabs} />
+                    <Tab label="ESTUDIOS / OTRAS FORMACIONES" disabled={areTabsDisabled} className={styles.tabs} />
+                    <Tab label="FORMACIÓN MINSTERIAL" disabled={areTabsDisabled} className={styles.tabs} style={{borderRadius:"0px 4px 4px 0px"}} />
                 </Tabs>
                 <div className={styles.tabContainer}>
                     <MemberContext.Provider value={{

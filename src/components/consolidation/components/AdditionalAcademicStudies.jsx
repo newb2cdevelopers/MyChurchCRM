@@ -5,6 +5,8 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import './toolTip.css'
 import MemberContext from '../../../contexts/MemberContext';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 export default function AdditionalAcademicStudies() {
 
@@ -30,51 +32,47 @@ export default function AdditionalAcademicStudies() {
     }
 
     return (
-        <div className={styles.containerVerifyAsistents}>
-            <div className={styles.tabContainer}>
-                <div className={styles.createNewContainer}>
-                    <div className={styles.createNewButton} >
-                        <div className="tooltip right" onClick={() => handleOpen()}>
-                            <span className="tiptext" >Crear nuevo</span>
-                            <AddCircleIcon></AddCircleIcon>
-                        </div>
+        <div className={styles.relativesContainer}>
+            <div className={styles.createNewRelativesContainer}>
+                <div className={styles.createNewButton} >
+                    <div onClick={() => handleOpen()}>
+                        <AddCircleIcon style={{ height: "40px", width: "40px",position: "absolute", top: "30px" }}></AddCircleIcon>
                     </div>
                 </div>
-                <table className={styles.tableVerifyAsistents}>
-                    <thead>
-                        <tr>
-                            <th><p>Titulo</p></th>
-                            <th><p>Institución</p></th>
-                            <th><p>¿Finalizado?</p></th>
-                            <th><p>Observaciones</p></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {academicStudies && academicStudies.length > 0 ?
-                            academicStudies.map((studie, index) => {
-                                return <tr>
-                                    <td>{studie.name}</td>
-                                    <td>{studie.AcademicInstitutionName}</td>
-                                    <td>{studie.isFinished ? 'Si' : 'No'}</td>
-                                    <td>{studie.comments}</td>
-                                    <td>
-                                        <div>
-                                            <div className="tooltip right" onClick={(e) => { selectedAcademicStudy(academicStudies[index]) }}>
-                                                <span className="tiptext" >Editar</span>
-                                                <ModeEditIcon></ModeEditIcon>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            })
-                            : <tr>
-                                <td style={{ textAlign: 'center' }}>Sin resultados</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
             </div>
+            <table className="table table-striped table-hover table-dark table-borderless">
+                <thead>
+                    <tr>
+                        <th><p>Titulo</p></th>
+                        <th><p>Institución</p></th>
+                        <th><p>¿Finalizado?</p></th>
+                        <th><p>Observaciones</p></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    {academicStudies && academicStudies.length > 0 ?
+                        academicStudies.map((studie, index) => {
+                            return <tr>
+                                <td><p>{studie.name}</p></td>
+                                <td><p>{studie.AcademicInstitutionName}</p></td>
+                                <td><p>{studie.isFinished ? 'Si' : 'No'}</p></td>
+                                <td><p>{studie.comments}</p></td>
+                                <td>
+                                    <div>
+                                        <div onClick={(e) => { selectedAcademicStudy(academicStudies[index]) }}>
+                                            <ModeEditIcon></ModeEditIcon>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        })
+                        : <tr>
+                            <td style={{ textAlign: 'center' }}>Sin resultados</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
             <AddicionalAcademicStudiesForm
                 open={open}
                 setOpen={setOpen}

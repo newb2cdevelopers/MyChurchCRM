@@ -8,6 +8,8 @@ import { B2C_BASE_URL } from '../../../constants';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import MemberContext from '../../../contexts/MemberContext';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 const validationSchema = yup.object({
   name: yup
@@ -33,13 +35,13 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
       birthDate: "",
       occupation: "",
       kinship: "",
-      comments:"",
+      comments: "",
       _id: null
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
 
-      const payload = { ...values, documentNumber: values.documentNumber.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'') };
+      const payload = { ...values, documentNumber: values.documentNumber.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '') };
 
       const results = await genericPutService(`${B2C_BASE_URL}/member/updateRelativeInfo/${memberContext.currentMember._id}`, payload, getAuthHeaders(user.token));
 
@@ -70,8 +72,8 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
         "birthDate": memberContext.currentRelative.birthDate,
         "occupation": memberContext.currentRelative.occupation,
         "kinship": memberContext.currentRelative.kinship,
-        "comments":memberContext.currentRelative.comments,
-        "_id":  memberContext.currentRelative._id
+        "comments": memberContext.currentRelative.comments,
+        "_id": memberContext.currentRelative._id
       });
     } else {
       formik.setValues({
@@ -83,7 +85,7 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
         "birthDate": "",
         "occupation": "",
         "kinship": "",
-        "comments":"",
+        "comments": "",
         "_id": null
       });
     }
@@ -102,108 +104,111 @@ export default function RelativesForm({ open, setOpen, setIsUpdateRequired }) {
 
       >
         <Box className={styles.modalContainer}>
-          <form onSubmit={formik.handleSubmit} >
-            <div className={styles.modalTitle}>Crea nuevo familiar</div>
-            <div className={styles.fieldsContainer}>
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Nombre:</span>
-                <input className={styles.inputField} type="text"
-                  name='name'
-                  onChange={formik.handleChange}
-                  value={formik.values.name}
-                />
-              </div >
-              {formik.errors.name && formik.touched.name ? (
-                <p className={styles.errorMessage}>{formik.errors.name}</p>
-              ) : null}
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Idetificación:</span>
-                <input className={styles.inputField} type="text"
-                  name='documentNumber'
-                  onChange={formik.handleChange}
-                  value={formik.values.documentNumber}
-                />
-              </div >
-              {formik.errors.documentNumber && formik.touched.documentNumber ? (
-                <p className={styles.errorMessage}>{formik.errors.documentNumber}</p>
-              ) : null}
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Dirección:</span>
-                <input className={styles.inputField} type="text"
-                  name='address'
-                  onChange={formik.handleChange}
-                  value={formik.values.address}
-                />
-              </div>
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Celular:</span>
-                <input className={styles.inputField} type="text"
-                  name='mobilePhone'
-                  onChange={formik.handleChange}
-                  value={formik.values.mobilePhone}
-                />
-              </div >
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Correo electrónico:</span>
-                <input className={styles.inputField} type="text"
-                  name='email'
-                  onChange={formik.handleChange}
-                  value={formik.values.email}
-                />
-              </div>
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Fecha de nacimiento:</span>
-                <input className={styles.inputField} type="date"
-                  name='birthDate'
-                  onChange={formik.handleChange}
-                  value={formik.values.birthDate.split('T')[0]}
-                />
-              </div>
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Ocupación:</span>
-                <input className={styles.inputField} type="text"
-                  name='occupation'
-                  onChange={formik.handleChange}
-                  value={formik.values.occupation}
-                />
-              </div>
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Paresteco:</span>
-                <select className={styles.Select}
-                  value={formik.values.kinship}
-                  onChange={formik.handleChange}
-                  name='kinship'
-                >
-                  <option value='Cónyuge'>Cónyuge</option>
-                  <option value='Hijo/a'>Hijo/a</option>
-                  <option value='Sobrino/a'>Sobrino/a</option>
-                  <option value='Primo/a'>Primo/a</option>
-                  <option value='Padre'>Padre</option>
-                  <option value='Madre'>Madre</option>
-                  <option value='Abuelo/a'>Abuelo/a</option>
-                  <option value='Hermano/a'>Hermano/a</option>
-                </select>
-              </div>
-              <div className={styles.labelFieldModal}>
-                <span className={styles.labelField}>Observaciones:</span>
-                <textarea className={styles.inputFieldTextArea} rows='5' cols='50'
-                  name='comments'
-                  onChange={formik.handleChange}
-                  value={formik.values.comments}
-                />
-              </div>
-              <div className={styles.modalButtonContainer}>
-                <input className={styles.modalButtons}
-                  type="submit"
-                  disabled={!formik.dirty}
-                  value='Guardar'
-                />
-                <input className={styles.modalButtons}
-                  type="button"
-                  onClick={() => closeModal()}
-                  value='Cancelar'
-                />
-              </div>
+          <form className={styles.formContainer} onSubmit={formik.handleSubmit} >
+            <h1>Crea nuevo familiar</h1>
+            <div class="mb-3">
+              <label 
+                style={{color: "white", width:"520px" }}>Nombre:</label>
+              <input type="text" class="form-control" id="name"
+                placeholder="Escribe el nombre de la persona"
+                name='name'
+                onChange={formik.handleChange}
+                value={formik.values.name}
+                style={{ border: "1px solid grey" }} />
+            </div>
+            {formik.errors.name && formik.touched.name ? (
+              <p className={styles.errorMessage}>{formik.errors.name}</p>
+            ) : null}
+            <div class="mb-3">
+              <label 
+                style={{color: "white", width:"520px" }}>Idetificación:</label>
+              <input type="text" class="form-control" id="documentNumber"
+                placeholder="Escribe el nombre de la persona"
+                name='documentNumber'
+                onChange={formik.handleChange}
+                value={formik.values.documentNumber}
+                style={{ border: "1px solid grey" }} />
+            </div>
+            {formik.errors.documentNumber && formik.touched.documentNumber ? (
+              <p className={styles.errorMessage}>{formik.errors.documentNumber}</p>
+            ) : null}
+            <div class="mb-3">
+              <label 
+                style={{color: "white", width:"520px" }}>Dirección:</label>
+              <input type="text" class="form-control" id="address"
+                name='address'
+                onChange={formik.handleChange}
+                value={formik.values.address}
+                style={{ border: "1px solid grey" }} />
+            </div>
+            <div class="mb-3">
+              <label 
+                style={{color: "white", width:"520px" }}>Celular:</label>
+              <input type="text" class="form-control" id="mobilePhone"
+                name='mobilePhone'
+                onChange={formik.handleChange}
+                value={formik.values.mobilePhone}
+                style={{ border: "1px solid grey" }} />
+            </div>
+            <div class="mb-3">
+              <label 
+                style={{color: "white", width:"520px" }}>Correo electrónico:</label>
+              <input type="email" class="form-control" id="email"
+                name='email'
+                onChange={formik.handleChange}
+                value={formik.values.email}
+                style={{ border: "1px solid grey" }} />
+            </div>
+            <div class="mb-3">
+              <label 
+                style={{color: "white", width:"520px" }}>Fecha de nacimiento:</label>
+              <input type="date" class="form-control" id="birthDate"
+                name='birthDate'
+                onChange={formik.handleChange}
+                value={formik.values.birthDate.split('T')[0]}
+                style={{ border: "1px solid grey" }} />
+            </div>
+            <div class="mb-3">
+              <label  for="occupation"
+                style={{color: "white", width:"520px" }}
+              >Ocupación:</label>
+              <input type="text" class="form-control" id="occupation"
+                name='occupation'
+                onChange={formik.handleChange}
+                value={formik.values.occupation}
+                style={{ border: "1px solid grey" }} />
+            </div>
+            <div class="mb-3">
+              <label 
+                style={{color: "white", width:"520px" }}>Paresteco:</label>
+              <select className={`${styles.selectors} form-select`}
+                value={formik.values.kinship}
+                onChange={formik.handleChange}
+                name='kinship'
+              >
+                <option value='Cónyuge'>Cónyuge</option>
+                <option value='Hijo/a'>Hijo/a</option>
+                <option value='Sobrino/a'>Sobrino/a</option>
+                <option value='Primo/a'>Primo/a</option>
+                <option value='Padre'>Padre</option>
+                <option value='Madre'>Madre</option>
+                <option value='Abuelo/a'>Abuelo/a</option>
+                <option value='Hermano/a'>Hermano/a</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="comments" 
+                style={{color: "white", width:"520px" }}>Observaciones: </label>
+              <textarea type="text" class="form-control" id="comments"
+                name='comments'
+                onChange={formik.handleChange}
+                value={formik.values.comments}
+                style={{ border: "1px solid grey" }}
+              ></textarea>
+            </div>
+            <div className={`${styles.buttons} btn-group`} role="group" aria-label="Basic example">
+              <button type="button" class="btn btn-secondary" onClick={() => closeModal()}>Cancelar</button>
+              <button class="btn btn-success" type="submit" disabled={!formik.dirty}>Guardar</button>
             </div>
           </form>
         </Box>
