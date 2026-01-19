@@ -1,0 +1,107 @@
+.familyGroupFormContainer {
+    display: flex;
+    position: relative;
+    top: 125px;
+    width: 600px;
+    left: 500px;
+    background: linear-gradient(to right, #151515, #2b2c2d);
+    border-radius: 10px;
+    color: white;
+    overflow-y: auto;
+    max-height: 500px;
+
+    .form {
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+    }
+
+    .buttons {
+        display: flex;
+    }
+}
+
+.MainContainer {
+    display: block;
+    padding: 25px;
+
+    .createNewContainer {
+        display: inline-block;
+        position: absolute;
+        /* margin: 10px; */
+        justify-content: left;
+        right: 180px;
+        top: 170px;
+        cursor: pointer;
+    }
+
+    .detailsFamilyGroupContainer {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        justify-content: center;
+        align-items: flex-start;
+        position: relative;
+        left: 290px;
+        margin-bottom: 20px;
+    }
+
+    .previewBox {
+        border: 1px solid black;
+        padding: 5px;
+        overflow: auto;
+        width: 500px;
+        height: 200px;
+        margin: auto;
+        background: white !important;
+        color: black !important;
+    }
+
+    .previewBox ul li {
+        list-style-type: none;
+    }
+
+    p,
+    ul {
+        text-align: center;
+    }
+}
+
+.table {
+    border: 1px solid #999595;
+    border-spacing: 0;
+    border-collapse: separate;
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px #494040;
+  
+    tr th:first-child {
+      border-top-left-radius: 10px;
+    }
+  
+    tr th:last-child {
+      border-top-right-radius: 10px;
+    }
+  
+    tr:last-child td:first-child {
+      border-bottom-left-radius: 10px;
+    }
+  
+    tr:last-child td:last-child {
+      border-bottom-right-radius: 10px;
+    }
+  
+    th {
+      border-bottom: 1px solid #999595;
+    }
+  
+    td {
+      border-bottom: 1px solid #999595;
+    }
+    thead {
+      position: sticky;
+      top: 0;
+      background-color: lightgray; /* Opcional: para destacar el header */
+      /* Estilos adicionales para el header */
+    }
+}

@@ -2,13 +2,14 @@
     display: flex;
     position: relative;
     top: 125px;
-    width: 600px;
+    width: 500px;
     left: 500px;
     background: linear-gradient(to right, #151515, #2b2c2d);
     border-radius: 10px;
     color:white;
     overflow-y: auto;
     max-height: 500px;
+    align-items: flex-start;
 
     .form {
         width: 100%;
@@ -18,5 +19,9 @@
 
     .buttons{
         display: flex;
+    }
+    .errorMessage{
+        color: red;
+        text-align: left;
     }
 }

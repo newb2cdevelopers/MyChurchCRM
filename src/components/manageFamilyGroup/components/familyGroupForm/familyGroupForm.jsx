@@ -4,12 +4,348 @@ import Modal from '@mui/material/Modal';
 import styles from './styles.module.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { style } from '@mui/system';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+import {
+  genericPostService,
+  genericPutService,
+  getAuthHeaders,
+  genericGetService
+} from '../../../../api/externalServices';
+import { B2C_BASE_URL } from '../../../../constants';
+import { useSelector } from 'react-redux';
+import { create } from 'yup/lib/Reference';
+export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
 
-export default function FamilyGroupForm({ open, setOpen, setIsUpdateRequired }) {
+  const isEditting = selectedItem !== null;
+  const user = useSelector(state => state.user);
+  const [members, setMembers] = useState([]);
+  const [membersList, setMembersList] = useState([]);
+  const [zoneList, setZoneList] = useState([]);
+  const [localityList, setLocalityList] = useState([]);
+  const [allLocalityList, setAllLocalityList] = useState([]);
+  const [neighborhoodList, setNeighborhoodList] = useState([]);
+  const [allNeighborhoodList, setAllNeighborhoodList] = useState([]);
+  const [zoneBind, setZoneBind] = useState(null);
+  const BASE_URL = B2C_BASE_URL;
+  const [enableSave, setEnableSave] = useState(false);
+  const [errorCode, setErrorCode] = useState("");
+  const [errorAddress, setErrorAddress] = useState("");
+  const [errorZones, setErrorZones] = useState("");
+  const [errorLocality, setErrorLocality] = useState("");
+  const [errorNeighborhood, setErrorNeighborhood] = useState("");
+  const [errorLeader, setErrorLeader] = useState("");
+  const [startDateError, setStartDateError] = useState("");
+  const [code, setCode] = useState();
+  const [leader, setLeader] = useState();
+  const [address, setAddress] = useState();
+  const [neighborhood, setNeighborhood] = useState();
+  const [day, setDay] = useState();
+  const [time, setTime] = useState();
+  const [status, setStatus] = useState("");
+  const [startDate, setStartDate] = useState("");
+
+  useEffect(() => {
+
+    setErrorAddress("");
+    setErrorZones("");
+    setErrorLocality("");
+    setErrorNeighborhood("");
+    setErrorLeader("");
+    setErrorCode("");
+
+    if (open) {
+
+      if (selectedItem) {
+        setCode(selectedItem.code);
+        setLeader(selectedItem.leader._id);
+        setAddress(selectedItem.address);
+        setNeighborhood(selectedItem.neighborhood._id);
+        setDay(selectedItem.day);
+        setTime(selectedItem.time);
+        setStatus(selectedItem.status);
+        setStartDate(selectedItem.startDate);
+      }
+
+      getMembers().then(data => {
+        //setLoading(false);
+        if (data[0]) {
+          setMembers(data[0]);
+          setMembersList(data[0])
+          return;
+        }
+        alert("Error");
+      });
+
+      getZones().then(data => {
+        //setLoading(false);
+        if (data[0]) {
+          setZoneList(data[0]);
+          return;
+        }
+        alert("Error");
+      });
+
+      getLocalities().then(data => {
+        //setLoading(false);
+        if (data[0]) {
+          if (selectedItem) {
+            let zone = data[0].filter(locality => { return locality._id === selectedItem.neighborhood.locality })[0];
+            setZoneBind(zone.zone._id)
+            let localities = data[0].filter(locality => { return locality.zone._id === zone.zone._id })
+            setAllLocalityList(localities)
+            setLocalityList(localities);
+            return;
+          }
+          else {
+            setLocalityList(data[0]);
+            setAllLocalityList(data[0]);
+            return;
+          }
+        }
+        alert("Error");
+      });
+
+      getNeighborhoods().then(data => {
+        //setLoading(false);
+        if (data[0]) {
+          if (selectedItem) {
+            let neighborhoods = data[0].filter(neighborhood => { return neighborhood.locality._id === selectedItem.neighborhood.locality })
+            setAllNeighborhoodList(neighborhoods)
+            setNeighborhoodList(neighborhoods);
+          } else {
+            setNeighborhoodList(data[0]);
+            setAllNeighborhoodList(data[0]);
+            return
+          }
+          return;
+        }
+        alert("Error");
+      });
+
+    }
+  }, [open]);
 
   const closeModal = () => {
     setOpen(false);
+  }
+
+  const hundleChange = (event) => {
+    if (event.target.id === "code") {
+      if (event.target.value.length > 0) {
+        setEnableSave(true);
+        setCode(event.target.value);
+        setErrorCode("");
+      }
+      else {
+        setErrorCode("El código es obligatorio");
+        setEnableSave(false);
+      }
+    }
+
+    if (event.target.id === "address") {
+      if (event.target.value.length > 0) {
+        setEnableSave(true);
+        setAddress(event.target.value);
+        setErrorAddress("");
+      }
+      else {
+        setErrorAddress("La dirección es obligatoria");
+        setEnableSave(false);
+      }
+    }
+
+    if (event.target.id === "startDate") {
+      if (event.target.value.length > 0) {
+        setEnableSave(true);
+        setStartDate(event.target.value);
+        setStartDateError("");
+      }
+      else {
+        setStartDateError("La fecha de inicio es obligatoria");
+        setEnableSave(false);
+      }
+    }
+
+    if (event.target.id === "zoneItems") {
+      if (event.target.value.length > 0) {
+        setEnableSave(true);
+        setErrorZones("");
+      }
+      else {
+        setErrorZones("Seleccione una opción válida");
+        setEnableSave(false);
+      }
+    }
+
+    if (event.target.id === "localityItems") {
+      if (event.target.value.length > 0) {
+        setEnableSave(true);
+        setErrorLocality("");
+      }
+      else {
+        setErrorLocality("Seleccione una opcion válida");
+        setEnableSave(false);
+      }
+    }
+
+    if (event.target.id === "neighborhoodItems") {
+      if (event.target.value.length > 0) {
+        setNeighborhood(event.target.value);
+        setEnableSave(true);
+        setErrorNeighborhood("");
+      }
+      else {
+        setErrorNeighborhood("Seleccione una opcion válida");
+        setEnableSave(false);
+      }
+    }
+
+    if (event.target.id === "leaderItems") {
+      if (event.target.value.length > 0) {
+        setLeader(event.target.value);
+        setEnableSave(true);
+        setErrorLeader("");
+      }
+      else {
+        setErrorLeader("Seleccione una opcion válida");
+        setEnableSave(false);
+      }
+    }
+
+    if (event.target.id === "dayItems") {
+      if (event.target.value.length > 0) {
+        setDay(event.target.value);
+        setEnableSave(true);
+        setErrorLeader("");
+      }
+      else {
+        setErrorLeader("Seleccione una opcion válida");
+        setEnableSave(false);
+      }
+    }
+
+    if (event.target.id === "hourItems") {
+      if (event.target.value.length > 0) {
+        setTime(event.target.value);
+        setEnableSave(true);
+        setErrorLeader("");
+      }
+      else {
+        setErrorLeader("Seleccione una opcion válida");
+        setEnableSave(false);
+      }
+    }
+
+    if (event.target.id === "statusItems") {
+      if (event.target.value.length > 0) {
+        setStatus(event.target.value);
+        setEnableSave(true);
+        setErrorLeader("");
+      }
+      else {
+        setErrorLeader("Seleccione una opcion válida");
+        setEnableSave(false);
+      }
+    }
+  }
+
+  const getMembers = async () => {
+
+    const headers = getAuthHeaders(user.token);
+    //setLoading(true);
+    return await genericGetService(`${BASE_URL}/member?churchId=${user.selectedChurchId}`, headers);
+  }
+
+  const getZones = async () => {
+
+    //const headers = getAuthHeaders(user.token);
+    //setLoading(true);
+    return await genericGetService(`${BASE_URL}/zone`);
+  }
+
+  const getLocalities = async () => {
+
+    //const headers = getAuthHeaders(user.token);
+    //setLoading(true);
+    return await genericGetService(`${BASE_URL}/locality`);
+  }
+
+  const getNeighborhoods = async () => {
+
+    //const headers = getAuthHeaders(user.token);
+    //setLoading(true);
+    return await genericGetService(`${BASE_URL}/neighborhood`);
+  }
+
+  const hundleChangeZone = (event) => {
+    setZoneBind(event.target.value);
+    let localities = allLocalityList.filter(locality => { return locality.zone._id === event.target.value })
+    setLocalityList(localities);
+    setNeighborhoodList([]);
+    if (localities.length > 0) {
+      let neighborhoods = allNeighborhoodList.filter(neighborhood => { return neighborhood.locality._id === localities[0]._id })
+      setNeighborhoodList(neighborhoods);
+    }
+  }
+
+  const hundleChangeLocality = (event) => {
+    let neighborhoods = allNeighborhoodList.filter(neighborhood => { return neighborhood.locality._id === event.target.value })
+    setNeighborhoodList(neighborhoods);
+  }
+
+
+  const saveitem = async () => {
+
+    if (code !== "" && address !== "" && startDate !== "" && leader !== ""
+      && neighborhood !== "" && time !== "" && day !== "" && status !== "") {
+      const payload = {
+        code: code,
+        address: address,
+        startDate: startDate,
+        leader: leader,
+        neighborhood: neighborhood,
+        time: time,
+        day: day,
+        status: status,
+        created_by: "62b5eb1ab5f08f33e6de2c28",
+        _id: isEditting ? selectedItem._id : null
+      };
+
+      if (isEditting) {
+
+        const results = await genericPutService(`${B2C_BASE_URL}/familyGroup`, payload);
+
+        if (results[1]) {
+          alert("Se ha presentado un error")
+        } else {
+          if (results[0].isSuccessful) {
+            alert("Guardado exitoso")
+            closeModal();
+          } else {
+            alert(results[0].message)
+          }
+        }
+      }
+      else {
+        const results = await genericPostService(`${B2C_BASE_URL}/familyGroup`, payload);
+
+        if (results[1]) {
+          alert("Se ha presentado un error")
+        } else {
+          if (results[0].isSuccessful) {
+            alert("Guardado exitoso")
+            closeModal();
+          } else {
+            alert(results[0].message)
+          }
+        }
+      }
+    }
+    else{
+      alert("Todos los campos son obligatorios");
+      return;
+    }
   }
 
   return (
@@ -21,65 +357,138 @@ export default function FamilyGroupForm({ open, setOpen, setIsUpdateRequired }) 
 
       >
         <Box className={styles.familyGroupFormContainer}>
-          <div className={styles.form}>
-            <h1>Crea nuevo grupo familiar</h1>
-            <div class="mb-3">
-              <label for="code" class="form-label">Código</label>
-              <input type="text" class="form-control form-control-sm" id="code" placeholder="0001"
-                style={{ width: "80px" }} />
-            </div>
-            <div class="mb-3">
-              <label for="direccion" class="form-label">Dirección</label>
-              <input type="text" class="form-control form-control-sm" id="direccion" placeholder="calle 56..." />
-            </div>
-            <div class="mb-3">
-              <label for="zone" class="form-label">Zona</label>
-              <input class="form-control" list="zoneItems" id="zone" placeholder="Buscar..." />
-              <datalist id="zoneItems">
-                <option value="Zona Norte" />
-                <option value="Zona Sur" />
-              </datalist>
-            </div>
-            <div class="mb-3">
-              <label for="locality" class="form-label">Comuna / Localidad</label>
-              <input class="form-control" list="localityItems" id="locality" placeholder="Buscar..." />
-              <datalist id="localityItems">
-                <option value="Comuna 7" />
-                <option value="Comuna 10" />
-              </datalist>
-            </div>
-            <div class="mb-3">
-              <label for="neighborhood" class="form-label">Barrio</label>
-              <input class="form-control" list="neighborhoodItems" id="neighborhood" placeholder="Buscar..." />
-              <datalist id="neighborhoodItems">
-                <option value="Manrique" />
-                <option value="Los Colores" />
-                <option value="Aranjuez" />
-              </datalist>
-            </div>
-            <div class="mb-3">
-              <label for="mainLeader" class="form-label">Líder Principal</label>
-              <input class="form-control" list="leaderItems" id="mainLeader" placeholder="Buscar..." />
-              <datalist id="leaderItems">
-                <option value="Danny Gómez" />
-                <option value="Andrés Pérez" />
-                <option value="Gloria Franco " />
-                <option value="Javier Hernández" />
-                <option value="Carmen Villa" />
-              </datalist>
-            </div>
-            <div class="mb-3">
-              <label for="status" class="form-label">Estado</label>
-              <input class="form-control" list="statusItems" id="status" placeholder="Buscar..." />
-              <datalist id="statusItems">
-                <option value="Activo" />
-                <option value="Cancelado" />
-                <option value="Suspendido" />
-              </datalist>
-            </div>
-            <div className={`${styles.buttons} btn-group`} role="group" aria-label="Basic example">
-              <button type="button" class="btn btn-secondary" onClick={() => closeModal()}>Cancelar</button>
-              <button type="button" class="btn btn-success" onClick={() => closeModal()}>Guardar</button>
+          <div>
+            <div className={styles.form}>
+              <h1>Datos del Grupo Familiar</h1>
+              <div class="mb-3">
+                <label for="code" class="form-label">Código *</label>
+                <input type="text" class="form-control form-control-sm" id="code" placeholder="0001"
+                  style={{ width: "80px" }} defaultValue={selectedItem ? code : ""}
+                  onChange={(e) => { hundleChange(e) }} />
+              </div>
+              {errorCode ? (
+                <p className={styles.errorMessage}>{errorCode}</p>
+              ) : null}
+              <div class="mb-3">
+                <label for="address" class="form-label">Dirección</label>
+                <input type="text" class="form-control form-control-sm" id="address" placeholder="calle 56..."
+                  defaultValue={selectedItem ? address : ""}
+                  onChange={(e) => { hundleChange(e) }} />
+              </div>
+              {errorAddress ? (
+                <p className={styles.errorMessage}>{errorAddress}</p>
+              ) : null}
+              <div class="mb-3">
+                <label for="startDate" class="form-label">Fecha de inicio</label>
+                <input type="date" class="form-control form-control-sm" id="startDate"
+                  defaultValue={selectedItem ? startDate : ""}
+                  onChange={(e) => { hundleChange(e) }} />
+              </div>
+              {startDateError ? (
+                <p className={styles.errorMessage}>{startDateError}</p>
+              ) : null}
+              <div class="mb-3">
+                <label for="zone" class="form-label">Zona</label>
+                <select class="form-select" style={{ height: "40px" }}
+                  id="zoneItems" onChange={hundleChangeZone}
+                  defaultValue={selectedItem ? zoneBind : ""}>
+                  {zoneList && zoneList.length > 0 ?
+                    zoneList.sort((a, b) => a.name.localeCompare(b.name)).map((zone, index) => {
+                      return <option key={index} value={zone._id} >{zone.name.toUpperCase()}</option>;
+                    }) : null}
+                </select>
+              </div>
+              {errorCode ? (
+                <p className={styles.errorMessage}>{errorZones}</p>
+              ) : null}
+              <div class="mb-3">
+                <label for="locality" class="form-label">Comuna / Localidad</label>
+                <select class="form-select" style={{ height: "40px" }}
+                  id="localityItems" onChange={hundleChangeLocality}
+                  defaultValue={selectedItem ? selectedItem?.neighborhood?.locality : ""}>
+                  {localityList && localityList.length > 0 ?
+                    localityList.sort((a, b) => a.name.localeCompare(b.name)).map((locality, index) => {
+                      return <option key={index} value={locality._id} >{locality.name.toUpperCase()}</option>;
+                    }) : null}
+                </select>
+              </div>
+              {errorCode ? (
+                <p className={styles.errorMessage}>{errorLocality}</p>
+              ) : null}
+              <div class="mb-3">
+                <label for="neighborhood" class="form-label">Barrio</label>
+                <select class="form-select" style={{ height: "40px" }}
+                  id="neighborhoodItems" onChange={(e) => { hundleChange(e) }}
+                  defaultValue={selectedItem ? neighborhood : ""}>
+                  {neighborhoodList && neighborhoodList.length > 0 ?
+                    neighborhoodList.sort((a, b) => a.name.localeCompare(b.name)).map((neighborhood, index) => {
+                      return <option key={index} value={neighborhood._id} >{neighborhood.name.toUpperCase()}</option>;
+                    }) : null}
+                </select>
+              </div>
+              {errorCode ? (
+                <p className={styles.errorMessage}>{errorNeighborhood}</p>
+              ) : null}
+              <div class="mb-3">
+                <label for="mainLeader" class="form-label">Líder Principal</label>
+                <select class="form-select" style={{ height: "40px" }}
+                  id="leaderItems" onChange={(e) => { hundleChange(e) }}
+                  defaultValue={selectedItem ? leader : ""}>
+                  {membersList && membersList.length > 0 ?
+                    membersList.sort((a, b) => a.fullName.localeCompare(b.fullName)).map((member, index) => {
+                      return <option key={index} value={member._id} >{member.fullName.toUpperCase()}</option>;
+                    }) : null}
+                </select>
+              </div>
+              {errorCode ? (
+                <p className={styles.errorMessage}>{errorLeader}</p>
+              ) : null}
+              <div class="mb-3">
+                <label for="day" class="form-label">Día</label>
+                <select class="form-select" style={{ height: "40px" }} id="dayItems"
+                  onChange={(e) => { hundleChange(e) }}
+                  defaultValue={selectedItem ? day : ""}>
+                  <option value="">Seleccione un día</option>
+                  <option value="Lunes">Lunes</option>
+                  <option value="Martes">Martes</option>
+                  <option value="Miércoles">Miércoles</option>
+                  <option value="Jueves">Jueves</option>
+                  <option value="Viernes">Viernes</option>
+                  <option value="Sábado">Sábado</option>
+                  <option value="Domingo">Domingo</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="hour" class="form-label">Hora</label>
+                <select class="form-select" style={{ height: "40px" }} id="hourItems"
+                  onChange={(e) => { hundleChange(e) }}
+                  defaultValue={selectedItem ? time : ""}>
+                  <option value="">Seleccione una hora</option>
+                  <option value="13:00">13:00</option>
+                  <option value="14:00">14:00</option>
+                  <option value="14:00">14:00</option>
+                  <option value="16:00">16:00</option>
+                  <option value="17:00">17:00</option>
+                  <option value="18:00">18:00</option>
+                  <option value="19:00">19:00</option>
+                  <option value="20:00">20:00</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="status" class="form-label">Estado</label>
+                <select id="statusItems" class="form-select" style={{ height: "40px" }}
+                  onChange={(e) => { hundleChange(e) }}
+                  defaultValue={selectedItem ? status : ""}>
+                  <option value="">Seleccione un estado</option>
+                  <option value="Activo">Activo</option>
+                  <option value="Cancelado">Cancelado</option>
+                  <option value="Suspendido">Suspendido</option>
+                </select>
+              </div>
+              <div className={`${styles.buttons} btn-group`} role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-secondary" onClick={() => closeModal()}>Cancelar</button>
+                <button type="button" class="btn btn-success" disabled={!enableSave} onClick={saveitem}>Guardar</button>
+              </div>
             </div>
           </div>
         </Box>
