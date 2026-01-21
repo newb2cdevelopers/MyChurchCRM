@@ -1,33 +1,36 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import LinkMu from '@mui/material/Link';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { genericPostService } from "../../api/externalServices";
-import BackdropLoader from "../common/backdroploader";
-import { useDispatch } from 'react-redux'
-import { login, setSelectedChurch } from '../../features/user/userSlice'
-import { useNavigate } from "react-router-dom";
+import { genericPostService } from '../../api/externalServices';
+import BackdropLoader from '../common/backdroploader';
+import { useNavigate } from 'react-router-dom';
 import { B2C_BASE_URL } from '../../constants';
-
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 
 function Copyright(props) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
       {'Copyright © '}
       <LinkMu color="inherit" href="/">
-        Sistema de gestión Mi Igleisa
+        Sistema de gestión Mi Iglesia
       </LinkMu>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -35,66 +38,78 @@ function Copyright(props) {
   );
 }
 
-const requiredFields = [
-  "email",
-  "password"
-];
-
 const theme = createTheme();
 
+// Email validation schema
+const validationSchema = yup.object({
+  email: yup
+    .string('Ingresa tu correo electrónico')
+    .email('Ingresa un correo electrónico válido')
+    .required('El correo electrónico es obligatorio'),
+});
+
 function RecoveryPassword() {
-
   const BASE_URL = B2C_BASE_URL;
-
   let navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const initialFormState = {
-    user: '',
-    pass: ''
-  }
-
-  const validationInfo = {
-    field: {
-      validationMessage: "El campo es requerido"
-    }
-  };
-
- 
-
-  const [loginInfo, setLoginInfo] = useState(initialFormState);
-  const [missingRequiredFields, setMissingRequiredFields] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [email, setEmail] = useState("");
-  
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'info',
+  });
 
-  const handleSubmit = async (event) => {
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: async values => {
+      setLoading(true);
 
-    event.preventDefault();
+      const results = await genericPostService(
+        `${BASE_URL}/login/generateTokenForRecovery`,
+        {
+          email: values.email.toLowerCase(),
+        },
+      );
+      setLoading(false);
 
-    setLoading(true);
+      if (results[0] && results[0].isSuccessful) {
+        setSnackbar({
+          open: true,
+          message:
+            'Se ha enviado un correo para el restablecimiento de su contraseña. Por favor revise su bandeja de entrada.',
+          severity: 'success',
+        });
+        setTimeout(() => navigate('/login'), 3000);
+        return;
+      }
 
-    const results = await genericPostService(`${BASE_URL}/login/generateTokenForRecovery`, {
-      "email": email
-    });
-    setLoading(false);
+      // Specific error handling from backend
+      if (results[1] && results[1].message) {
+        const errorMsg =
+          results[1].message === 'Email not found in our system'
+            ? 'El correo electrónico no está registrado en nuestro sistema'
+            : results[1].message === 'User account is inactive'
+              ? 'La cuenta de usuario está inactiva. Por favor contacte al administrador'
+              : 'Se ha presentado un error. Por favor intente nuevamente';
 
-    if (results[0] && results[0].isSuccessful) {
-      setErrorMessage("Se ha enviado un correo para el restablecimiento de su contraseña, por revise su bandeja de entrada.")
-      return navigate("/login");
-    }
+        setSnackbar({ open: true, message: errorMsg, severity: 'error' });
+        return;
+      }
 
-    if (results[0] && !results[0].isSuccessful) {
-      setErrorMessage("Se ha presentado un error, por favor contacte al administrador")
-      return;
-    }
+      setSnackbar({
+        open: true,
+        message:
+          'Se ha presentado un error. Por favor contacte al administrador',
+        severity: 'error',
+      });
+    },
+  });
 
-    if (!results[0]) {
-      setErrorMessage("Se ha presentado un error, por favor contacte al administrador")
-      return;
-    }
-
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -109,27 +124,43 @@ function RecoveryPassword() {
             alignItems: 'center',
           }}
         >
-
-          <BackdropLoader show={loading} message="Validando los datos ingresados" />
+          <BackdropLoader
+            show={loading}
+            message="Enviando solicitud de recuperación..."
+          />
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Restablecer contraseña
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 1, textAlign: 'center' }}
+          >
+            Ingresa tu correo electrónico y te enviaremos un enlace para
+            restablecer tu contraseña
+          </Typography>
+          <Box
+            component="form"
+            onSubmit={formik.handleSubmit}
+            noValidate
+            sx={{ mt: 3 }}
+          >
             <TextField
               margin="normal"
-              id="user"
+              id="email"
               required
               fullWidth
-              label="Correo eléctrónico"
-              name="user"
-              helperText={email === "" ? "El campo es requerido" : ""}
-              error={email === "" ? true : false}
+              label="Correo electrónico"
+              name="email"
+              autoComplete="email"
               autoFocus
-              onChange={(e) => (setEmail(e.target.value.toLocaleLowerCase()))}
-              value={email}
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
             />
             <Button
               type="submit"
@@ -137,14 +168,35 @@ function RecoveryPassword() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Enviar
+              Enviar enlace de recuperación
             </Button>
-            <div>
-              {errorMessage.length > 0 && <Alert severity="error">{errorMessage}</Alert>}
-            </div>
+            <Grid container justifyContent="center">
+              <Grid item>
+                <Link to="/login" className="text-link">
+                  <LinkMu component={'span'} variant="body2">
+                    Volver al inicio de sesión
+                  </LinkMu>
+                </Link>
+              </Grid>
+            </Grid>
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
+
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbar.severity}
+            sx={{ width: '100%' }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Container>
     </ThemeProvider>
   );

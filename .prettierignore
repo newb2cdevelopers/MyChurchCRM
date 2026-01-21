@@ -1,0 +1,23 @@
+# Prettier ignore file
+# Files that should not be formatted by Prettier
+
+# Dependencies
+node_modules/
+
+# Build outputs
+build/
+dist/
+
+# Logs
+*.log
+
+# Lock files
+package-lock.json
+yarn.lock
+
+# Environment files
+.env
+.env.*
+
+# Generated files
+coverage/
