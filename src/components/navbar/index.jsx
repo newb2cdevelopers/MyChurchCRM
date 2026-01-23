@@ -11,9 +11,9 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Link } from "react-router-dom";
 import styles from "./navbar.module.css";
 import { useSelector, useDispatch } from 'react-redux'
-import { login } from '../../features/user/userSlice'
 import { setSelectedModuleRoutes } from "../../features/navigation/navigationSlice";
 import { useNavigate } from "react-router-dom"
+import * as authService from '../../services/authService';
 
 
 function Navbar() {
@@ -22,10 +22,9 @@ function Navbar() {
   const dispatch = useDispatch();
   let navigate = useNavigate();
 
-  const closeSession = (e) => {
-    dispatch(login({ userEmail: '', token: '' }));
+  const closeSession = async (e) => {
+    await authService.logout(dispatch, navigate);
     dispatch(setSelectedModuleRoutes({ selectedModuleRoutes: [] }));
-    return navigate("/");
   };
 
   const resetDashboard = (e) => {
