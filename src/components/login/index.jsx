@@ -14,12 +14,17 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { genericPostService } from "../../api/externalServices";
 import BackdropLoader from "../common/backdroploader";
 import { useDispatch } from 'react-redux'
 import { login, setSelectedChurch } from '../../features/user/userSlice'
 import { useNavigate } from "react-router-dom";
 import { B2C_BASE_URL } from '../../constants';
+import * as tokenService from '../../services/tokenService';
 
 
 function Copyright(props) {
@@ -35,11 +40,6 @@ function Copyright(props) {
   );
 }
 
-const requiredFields = [
-  "email",
-  "password"
-];
-
 const theme = createTheme();
 
 function Login() {
@@ -54,16 +54,12 @@ function Login() {
     pass: ''
   }
 
-  const validationInfo = {
-    field: {
-      validationMessage: "El campo es requerido"
-    }
-  };
-
   const [loginInfo, setLoginInfo] = useState(initialFormState);
   const [missingRequiredFields, setMissingRequiredFields] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (event) => {
 
@@ -92,7 +88,20 @@ function Login() {
     setLoading(false);
 
     if (results[0] && results[0].access_token) {
-      console.log(results[0]);
+      // Save tokens to localStorage or sessionStorage based on "Recordar mis datos"
+      tokenService.setTokens(
+        results[0].access_token, 
+        results[0].refresh_token,
+        rememberMe
+      );
+      
+      // Save user email for session restoration (only if remember me is checked)
+      if (rememberMe) {
+        localStorage.setItem('userEmail', loginInfo.user);
+      } else {
+        sessionStorage.setItem('userEmail', loginInfo.user);
+      }
+      
       dispatch(
         login({
           userEmail: loginInfo.user,
@@ -137,6 +146,18 @@ function Login() {
     setLoginInfo({ ...loginInfo, [name]: value });
   }
 
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleRememberMeChange = (event) => {
+    setRememberMe(event.target.checked);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -178,14 +199,34 @@ function Login() {
               id="pass"
               name="pass"
               label="Contraseña"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               onChange={handleFormOnchange}
               value={loginInfo.pass}
               helperText={missingRequiredFields.indexOf("pass") !== -1 ? "El campo es requerido" : ""}
               error={missingRequiredFields.indexOf("pass") !== -1 ? true : false}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={
+                <Checkbox 
+                  checked={rememberMe}
+                  onChange={handleRememberMeChange}
+                  color="primary" 
+                />
+              }
               label="Recordar mis datos"
             />
             <Button
