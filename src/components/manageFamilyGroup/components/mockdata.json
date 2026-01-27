@@ -4,7 +4,9 @@
         "LiderPrincipal": "Javier Hernandez",
         "Direccion": "Carrera 65",
         "Barrio": "Manrique",
-        "zona": "cebtro",
+        "zona": "centro",
+        "dia": "Domingo",
+        "hora": "16:00",
         "CelularTelefono": "000000000",
         "Estado": "Activo"
     },
@@ -13,7 +15,9 @@
         "LiderPrincipal": "Javier Hernandez",
         "Direccion": "Carrera 65",
         "Barrio": "Manrique",
-        "zona": "cebtro",
+        "zona": "centro",
+        "dia": "Viernes",
+        "hora": "16:00",
         "CelularTelefono": "000000000",
         "Estado": "Activo"
     },
@@ -22,7 +26,9 @@
         "LiderPrincipal": "Ana Fernandez",
         "Direccion": "Carrera 65",
         "Barrio": "Manrique",
-        "zona": "cebtro",
+        "zona": "centro",
+        "dia": "Sábado",
+        "hora": "18:00",
         "CelularTelefono": "000000000",
         "Estado": "Activo"
     },
@@ -31,7 +37,9 @@
         "LiderPrincipal": "Ramiro Cifuentes",
         "Direccion": "Carrera 65",
         "Barrio": "Manrique",
-        "zona": "cebtro",
+        "zona": "centro",
+        "dia": "Jueves",
+        "hora": "19:00",
         "CelularTelefono": "000000000",
         "Estado": "Activo"
     },
@@ -40,7 +48,9 @@
         "LiderPrincipal": "Laura Hernandez",
         "Direccion": "Carrera 65",
         "Barrio": "Manrique",
-        "zona": "cebtro",
+        "zona": "centro",
+        "dia": "Martes",
+        "hora": "18:00",
         "CelularTelefono": "000000000",
         "Estado": "Activo"
     },
@@ -49,7 +59,9 @@
         "LiderPrincipal": "Andrés López",
         "Direccion": "Carrera 65",
         "Barrio": "Manrique",
-        "zona": "cebtro",
+        "zona": "centro",
+        "dia": "Lunes",
+        "hora": "16:00",
         "CelularTelefono": "000000000",
         "Estado": "Activo"
     }

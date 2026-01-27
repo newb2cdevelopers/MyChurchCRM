@@ -74,8 +74,8 @@ export default function GeneralInfo() {
     };
 
     const formik = useFormik({
-        initialValues: isEditting ? memberContext.currentMember : initialValues,
 
+        initialValues: isEditting ? memberContext.currentMember : initialValues,
         validationSchema: validationSchema,
         onSubmit: async (values) => {
 
