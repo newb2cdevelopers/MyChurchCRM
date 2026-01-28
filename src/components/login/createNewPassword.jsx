@@ -217,7 +217,7 @@ function CreateNewPassword() {
                           onClick={handleClickShowPassword}
                           edge="end"
                         >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
                         </IconButton>
                       </InputAdornment>
                     ),
@@ -273,9 +273,9 @@ function CreateNewPassword() {
                           edge="end"
                         >
                           {showPasswordConfirm ? (
-                            <VisibilityOff />
-                          ) : (
                             <Visibility />
+                          ) : (
+                            <VisibilityOff />
                           )}
                         </IconButton>
                       </InputAdornment>

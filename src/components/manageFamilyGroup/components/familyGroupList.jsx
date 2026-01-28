@@ -1,32 +1,45 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from "./styles.module.css";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { genericGetService, getAuthHeaders } from '../../../api/externalServices';
 import { B2C_BASE_URL } from '../../../constants';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSelector } from 'react-redux';
-import { selectedMemberData } from "../../../features/members/membersSlice";
-import './toolTip.css'
-import { Button } from '@mui/material';
-import { display } from '@mui/system';
-import data from './mockdata.json';
+import './toolTip.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import FamilyGroupForm from './familyGroupForm/familyGroupForm';
+import FamilyGroupAttendeeList from '../components/familyGroupAttendee/familyGroupAttendeeList';
+import FamilyGroupAttendanceList from '../components/familyGroupAttendee/familyGroupAttendanceList';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
 
 export default function FamilyGroupList() {
 
     const [open, setOpen] = useState(false);
     const [isUpdateRequired, setIsUpdateRequired] = useState(false);
+    const [isFilteredData, setIsFilteredData] = useState(false);
     const [familyGroups, setFamilyGroups] = useState([]);
     const [familyGroupsList, setFamilyGroupsList] = useState([]);
     const user = useSelector(state => state.user);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedItemToView, setSelectedItemToView] = useState(null);
+    const [areTabsDisabled, setAreTabsDisabled] = useState(true);
+    const [value, setValue] = useState(0);
+    const [showFamilyGroupsAttendee, setShowFamilyGroupsAttendee] = useState(true);
+    const [showAttendance, setShowAttendance] = useState(true);
+
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
     const handleOpen = () => {
+        setSelectedItem(null);
         setIsUpdateRequired(false);
         setOpen(true);
     }
@@ -38,11 +51,8 @@ export default function FamilyGroupList() {
 
     const getFamilyGroupList = async () => {
 
-        //const headers= getAuthHeaders(user.token);
-        //setLoading(true);
-        //return await genericGetService(`${BASE_URL}/member?churchId=${user.selectedChurchId}`, headers);
-
-        return data;
+        const headers = getAuthHeaders(user.token);
+        return await genericGetService(`${BASE_URL}/familyGroup`, headers);
     }
 
     useEffect(() => {
@@ -53,14 +63,23 @@ export default function FamilyGroupList() {
 
         getFamilyGroupList().then(data => {
             //setLoading(false);
-            if (data[0]) {
-                setFamilyGroups(data);
-                setFamilyGroupsList(data)
+            if (data[0] && data[0].length > 0) {
+                setFamilyGroups(data[0]);
+                setFamilyGroupsList(data[0])
                 return;
             }
             alert("Error");
         });
-    }, []);
+    }, [open]);
+
+    useEffect(() => {
+        // If there is a selected member the tabs shoul be enabled
+        if (selectedFamilyGroupToView!== null) {
+            setAreTabsDisabled(false);
+        }
+        setShowFamilyGroupsAttendee(value === 0 ? true : false)
+        setShowAttendance(value === 1 ? true : false)
+    }, [value]);
 
     const navigateToManageMembers = (route) => {
         /*dispatch(selectedEventIdForBooking({
@@ -70,38 +89,61 @@ export default function FamilyGroupList() {
         return navigate(route);
     }
 
-    const selectedFamilyGroupToEdit = (codigo, route) => {
+    const selectedFamilyGroupToEdit = (_code, route) => {
 
         let _selectedFamilyGroup = familyGroups.filter(familyGroup => {
-            return familyGroup.codigo === codigo
+            return familyGroup.code === _code
         });
 
         /*dispatch(selectedMemberData({
             selectedMemberData: _selectedMember[0]
         }));*/
 
-        navigateToManageMembers(route);
+        //navigateToManageMembers(route);
+
+        setSelectedItem(_selectedFamilyGroup[0])
+        setIsUpdateRequired(true);
+        setOpen(true);
+    }
+
+    const selectedFamilyGroupToView = (_code) => {
+
+        let _selectedFamilyGroup = familyGroups.filter(familyGroup => {
+            return familyGroup.code === _code
+        });
+
+        setSelectedItemToView(_selectedFamilyGroup[0])
     }
 
 
 
     const searchFamilyGroup = (code) => {
 
+        setSelectedItemToView(null);
+
         if (code !== '' && code.length >= 3) {
             let _filteredFamilyGroups = familyGroups.filter(familyGroup => {
-                return familyGroup.codigo.toString().indexOf(code) >= 0
+                return familyGroup.code.toString().indexOf(code) >= 0
             });
 
             if (_filteredFamilyGroups && _filteredFamilyGroups.length > 0) {
                 setFamilyGroupsList(_filteredFamilyGroups)
+                setIsFilteredData(true)
             }
-            else setFamilyGroupsList(familyGroups)
+            else {
+                setFamilyGroupsList(familyGroups)
+                setIsFilteredData(false)
+            }
         }
-        else setFamilyGroupsList(familyGroups)
+        else {
+            setFamilyGroupsList(familyGroups)
+            setIsFilteredData(false)
+        }
     }
 
     return (
-        <div className={styles.containerVerifyAsistents}>
+        <div className={styles.MainContainer}>
+            <h1>Administrar grupos familiares</h1>
             <div>
                 <div style={{ display: "inline-block" }}>
                     <div>
@@ -125,8 +167,8 @@ export default function FamilyGroupList() {
                         </div>
                     </div>
                 </div>
-                <div className={`${styles.tableContainer} table-responsive-lg`}>
-                    <table className="table table-striped table-hover table-dark table-borderless">
+                <div className={`table-responsive-lg`}>
+                    <table className={`${styles.table} table table-striped table-hover table-dark table-borderless`}>
                         <thead>
                             <tr>
                                 <th>Acciones</th>
@@ -135,7 +177,9 @@ export default function FamilyGroupList() {
                                 <th>Dirección</th>
                                 <th>Barrio</th>
                                 <th>Zona</th>
-                                <th>Celular / Teéfono</th>
+                                <th>Día</th>
+                                <th>Hora</th>
+                                <th>Celular / Teléfono</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -144,17 +188,31 @@ export default function FamilyGroupList() {
                                 familyGroupsList.map((familyGroup, index) => {
                                     return <tr>
                                         <td>
-                                            <div style={{ cursor: "pointer" }} onClick={(e) => { selectedFamilyGroupToEdit(familyGroup.codigo, "/AdministrarGruposamiliares") }}>
-                                                <ModeEditIcon />
+                                            <div>
+                                                <div style={{
+                                                    cursor: "pointer", display: "inline-block",
+                                                    position: "relative", right: "10px", paddingLeft: "10px"
+                                                }} onClick={(e) => { selectedFamilyGroupToEdit(familyGroup.code, "/AdministrarGruposFamiliares") }}>
+                                                    <ModeEditIcon />
+                                                </div>
+                                                <div alt="Ver detalles" style={{ cursor: "pointer", display: "inline-block" }}
+                                                    onClick={(e) => { selectedFamilyGroupToView(familyGroup.code) }}>
+                                                    <VisibilityIcon />
+                                                </div>
                                             </div>
                                         </td>
-                                        <td>{familyGroup.codigo}</td>
-                                        <td>{familyGroup.LiderPrincipal.toUpperCase()}</td>
-                                        <td>{familyGroup.Direccion}</td>
-                                        <td>{familyGroup.Barrio}</td>
-                                        <td>{familyGroup.zona}</td>
-                                        <td>{familyGroup.CelularTelefono}</td>
-                                        <td>{familyGroup.Estado}</td>
+                                        <td>{familyGroup.code}</td>
+                                        <td>{familyGroup.leader?.fullName.toUpperCase()}</td>
+                                        <td>{familyGroup.address}</td>
+                                        <td>{familyGroup.neighborhood?.name}</td>
+                                        <td>{familyGroup.neighborhood?.name}</td>
+                                        <td>{familyGroup.day}</td>
+                                        <td>{familyGroup.time}</td>
+                                        <td>{familyGroup.leader?.mobilePhone}</td>
+                                        <td style={{
+                                            color: familyGroup.status === "Activo" ? "#2cf72c" :
+                                                familyGroup.status === "Suspendido" ? "orange" : "red"
+                                        }}>{familyGroup.status}</td>
                                     </tr>
                                 })
                                 : <tr>
@@ -168,8 +226,51 @@ export default function FamilyGroupList() {
             <FamilyGroupForm
                 open={open}
                 setOpen={setOpen}
-                setIsUpdateRequired={setIsUpdateRequired}
+                selectedItem={selectedItem}
             />
+            {selectedItemToView !== null ?
+                <div><br />
+                    <Box>
+                        <Tabs
+                            value={value}
+                            onChange={handleChange}
+                            variant="scrollable"
+                            scrollButtons
+                            allowScrollButtonsMobile
+                            aria-label="scrollable force tabs example"
+                            className={styles.tabDetailsContainer}
+                        >
+                            <Tab label="INTENGRANTES DEL GRUPO FAMILIAR" className={styles.tabs} style={{ borderRadius: " 4px 0px 0px 4px" }} />
+                            <Tab label="ASISTENCIAS AL GRUPO FAMILIAR" className={styles.tabs} style={{ borderRadius: "0px 4px 4px 0px" }} />
+                        </Tabs>
+                        <div>
+                            {
+                                showFamilyGroupsAttendee ?
+                                    <div>
+                                        <br />
+                                        <h1>Integrantes del grupo familiar</h1>
+                                        <FamilyGroupAttendeeList
+                                            perfil={'coordinator'}
+                                            familyGroupId={selectedItemToView?._id}
+                                        />
+                                    </div>
+                                    :
+                                    showAttendance ?
+                                        <div><br />
+                                            <h1>Reporte de Asistencia al gurpo familiar</h1>
+                                            <FamilyGroupAttendanceList
+                                                perfil={'coordinator'}
+                                                familyGroupId={selectedItemToView?._id}
+                                            />
+                                        </div>
+                                        :
+                                        <></>
+                            }
+                        </div>
+                    </Box>
+                </div>
+                : <></>
+            }
         </div>
     )
 }

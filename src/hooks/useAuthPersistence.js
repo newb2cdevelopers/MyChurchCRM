@@ -59,13 +59,13 @@ export const useAuthPersistence = () => {
               );
             }
           } else {
-            // Refresh token expired or invalid, clear everything
+            // Refresh token expired or invalid, clear only auth tokens
             tokenService.clearTokens();
-            localStorage.clear();
-            sessionStorage.clear();
+            localStorage.removeItem('userEmail');
+            sessionStorage.removeItem('userEmail');
           }
         } catch (error) {
-          console.error('Error restoring session:', error);
+          // Error restoring session, clear tokens
           tokenService.clearTokens();
         }
       }

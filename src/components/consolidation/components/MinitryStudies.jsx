@@ -38,7 +38,7 @@ export default function MinistryStudies() {
                     <AddCircleIcon style={{ height: "40px", width: "40px",position: "absolute", top: "30px" }}></AddCircleIcon>
                 </div>
             </div>
-            <table className="table table-striped table-hover table-dark table-borderless">
+            <table className={`${styles.table} table table-striped table-hover table-dark table-borderless`}>
                 <thead>
                     <tr>
                         <th><p>Título</p></th>

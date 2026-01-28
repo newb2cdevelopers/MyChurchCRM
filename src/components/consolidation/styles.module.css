@@ -112,3 +112,41 @@
   height: auto;
   width: 100px;
 }
+
+.table {
+  border: 1px solid #999595;
+  border-spacing: 0;
+  border-collapse: separate;
+  border-radius: 10px;
+  box-shadow: 5px 5px 10px #494040;
+
+  tr th:first-child {
+    border-top-left-radius: 10px;
+  }
+
+  tr th:last-child {
+    border-top-right-radius: 10px;
+  }
+
+  tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+  }
+
+  tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+  }
+
+  th {
+    border-bottom: 1px solid #999595;
+  }
+
+  td {
+    border-bottom: 1px solid #999595;
+  }
+  thead {
+    position: sticky;
+    top: 0;
+    background-color: lightgray; /* Opcional: para destacar el header */
+    /* Estilos adicionales para el header */
+  }
+}

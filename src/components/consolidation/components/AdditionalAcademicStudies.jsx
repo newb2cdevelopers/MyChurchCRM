@@ -40,7 +40,7 @@ export default function AdditionalAcademicStudies() {
                     </div>
                 </div>
             </div>
-            <table className="table table-striped table-hover table-dark table-borderless">
+            <table className={`${styles.table} table table-striped table-hover table-dark table-borderless`}>
                 <thead>
                     <tr>
                         <th><p>Titulo</p></th>
