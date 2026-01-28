@@ -79,30 +79,44 @@ function RecoveryPassword() {
         setSnackbar({
           open: true,
           message:
-            'Se ha enviado un correo para el restablecimiento de su contraseña. Por favor revise su bandeja de entrada.',
+            'Si este correo está asociado a una cuenta activa, recibirás instrucciones de recuperación. Revisa tu bandeja de entrada y spam',
           severity: 'success',
         });
-        setTimeout(() => navigate('/login'), 3000);
+        setTimeout(() => navigate('/login'), 5000);
         return;
       }
 
-      // Specific error handling from backend
-      if (results[1] && results[1].message) {
-        const errorMsg =
-          results[1].message === 'Email not found in our system'
-            ? 'El correo electrónico no está registrado en nuestro sistema'
-            : results[1].message === 'User account is inactive'
-              ? 'La cuenta de usuario está inactiva. Por favor contacte al administrador'
-              : 'Se ha presentado un error. Por favor intente nuevamente';
+      // For security reasons, show the same message for all cases (email not found, inactive user, etc.)
+      // This prevents user enumeration attacks
+      if (results[1]) {
+        const backendMessage = results[1].message || '';
+        
+        // Only show different message for actual system errors (email sending failures)
+        if (backendMessage.toLowerCase().includes('send') || 
+            (backendMessage.toLowerCase().includes('email') && backendMessage.toLowerCase().includes('fail'))) {
+          setSnackbar({ 
+            open: true, 
+            message: 'No se pudo enviar el correo. Por favor intente nuevamente', 
+            severity: 'error' 
+          });
+          return;
+        }
 
-        setSnackbar({ open: true, message: errorMsg, severity: 'error' });
+        // For user-not-found, inactive user, etc. - use generic security-focused message
+        setSnackbar({
+          open: true,
+          message: 'Si este correo está asociado a una cuenta activa, recibirás instrucciones de recuperación. Revisa tu bandeja de entrada y spam',
+          severity: 'info',
+        });
+        setTimeout(() => navigate('/login'), 5000);
         return;
       }
 
+      // Network or unexpected errors
       setSnackbar({
         open: true,
         message:
-          'Se ha presentado un error. Por favor contacte al administrador',
+          'No se pudo procesar la solicitud. Por favor verifique su conexión e intente nuevamente',
         severity: 'error',
       });
     },

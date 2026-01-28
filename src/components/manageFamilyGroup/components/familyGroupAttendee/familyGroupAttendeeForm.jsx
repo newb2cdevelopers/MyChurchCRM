@@ -1,10 +1,9 @@
-import { Box } from '@mui/material'
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import { Box, IconButton } from '@mui/material'
 import Modal from '@mui/material/Modal';
 import styles from './styles.module.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { style } from '@mui/system';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function FamilyGroupAttendeeForm({ open, setOpen, setIsUpdateRequired, itemToEdit }) {
 
@@ -16,11 +15,24 @@ export default function FamilyGroupAttendeeForm({ open, setOpen, setIsUpdateRequ
     <div>
       <Modal
         open={open}
+        onClose={closeModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
 
       >
         <Box className={styles.familyGroupFormContainer}>
+          <IconButton
+            aria-label="close"
+            onClick={closeModal}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
           <div className={styles.form}>
             <h1>Crea nuevo grupo familiar</h1>
             <div class="mb-3">

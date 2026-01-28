@@ -1,11 +1,10 @@
-import { Box } from '@mui/material'
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import { Box, IconButton } from '@mui/material'
+import React, { useState, useEffect, useCallback } from 'react';
 import Modal from '@mui/material/Modal';
+import CloseIcon from '@mui/icons-material/Close';
 import styles from './styles.module.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { useFormik } from 'formik';
-import * as yup from 'yup';
 import {
   genericPostService,
   genericPutService,
@@ -14,12 +13,10 @@ import {
 } from '../../../../api/externalServices';
 import { B2C_BASE_URL } from '../../../../constants';
 import { useSelector } from 'react-redux';
-import { create } from 'yup/lib/Reference';
 export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
 
   const isEditting = selectedItem !== null;
   const user = useSelector(state => state.user);
-  const [members, setMembers] = useState([]);
   const [membersList, setMembersList] = useState([]);
   const [zoneList, setZoneList] = useState([]);
   const [localityList, setLocalityList] = useState([]);
@@ -45,6 +42,23 @@ export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
   const [status, setStatus] = useState("");
   const [startDate, setStartDate] = useState("");
 
+  const getMembers = useCallback(async () => {
+    const headers = getAuthHeaders(user.token);
+    return await genericGetService(`${BASE_URL}/member?churchId=${user.selectedChurchId}`, headers);
+  }, [user.token, user.selectedChurchId, BASE_URL]);
+
+  const getZones = useCallback(async () => {
+    return await genericGetService(`${BASE_URL}/zone`);
+  }, [BASE_URL]);
+
+  const getLocalities = useCallback(async () => {
+    return await genericGetService(`${BASE_URL}/locality`);
+  }, [BASE_URL]);
+
+  const getNeighborhoods = useCallback(async () => {
+    return await genericGetService(`${BASE_URL}/neighborhood`);
+  }, [BASE_URL]);
+
   useEffect(() => {
 
     setErrorAddress("");
@@ -68,9 +82,7 @@ export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
       }
 
       getMembers().then(data => {
-        //setLoading(false);
         if (data[0]) {
-          setMembers(data[0]);
           setMembersList(data[0])
           return;
         }
@@ -124,7 +136,7 @@ export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
       });
 
     }
-  }, [open]);
+  }, [open, selectedItem, getMembers, getZones, getLocalities, getNeighborhoods]);
 
   const closeModal = () => {
     setOpen(false);
@@ -250,34 +262,6 @@ export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
     }
   }
 
-  const getMembers = async () => {
-
-    const headers = getAuthHeaders(user.token);
-    //setLoading(true);
-    return await genericGetService(`${BASE_URL}/member?churchId=${user.selectedChurchId}`, headers);
-  }
-
-  const getZones = async () => {
-
-    //const headers = getAuthHeaders(user.token);
-    //setLoading(true);
-    return await genericGetService(`${BASE_URL}/zone`);
-  }
-
-  const getLocalities = async () => {
-
-    //const headers = getAuthHeaders(user.token);
-    //setLoading(true);
-    return await genericGetService(`${BASE_URL}/locality`);
-  }
-
-  const getNeighborhoods = async () => {
-
-    //const headers = getAuthHeaders(user.token);
-    //setLoading(true);
-    return await genericGetService(`${BASE_URL}/neighborhood`);
-  }
-
   const hundleChangeZone = (event) => {
     setZoneBind(event.target.value);
     let localities = allLocalityList.filter(locality => { return locality.zone._id === event.target.value })
@@ -352,11 +336,24 @@ export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
     <div>
       <Modal
         open={open}
+        onClose={closeModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
 
       >
         <Box className={styles.familyGroupFormContainer}>
+          <IconButton
+            aria-label="close"
+            onClick={closeModal}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
           <div>
             <div className={styles.form}>
               <h1>Datos del Grupo Familiar</h1>

@@ -1,9 +1,7 @@
 import React from "react";
-import { useLocation } from 'react-router-dom';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { useSelector } from 'react-redux'
 import Card from "../Card";
-import dataCards from "../dataCards";
 import styles from "../home/home.module.css"
 import { iconsProvider } from "../../utils/iconsProvider";
 
@@ -41,7 +39,7 @@ function HomeUser() {
     return <div className={styles.containerHome}>
         {cards}
         <div key={20}>
-            <Card name={'Administrar Grupos Familiares'} accesses={null} iconName={""} path={"/administrarGruposFamiliares"} />
+            <Card name={'Administrar Grupos Familiares'} accesses={null} iconName={<GroupsIcon sx={{ fontSize: 70 }}/>} path={"/administrarGruposFamiliares"} />
         </div>
     </div>;
 }
