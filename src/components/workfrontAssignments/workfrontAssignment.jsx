@@ -1,36 +1,52 @@
-import React, { useEffect, useState } from "react";
-import styles from "./workfrontAssignment.module.css";
-import Button from "../../customComponents/button/button";
-import Dropdown from "../../customComponents/dropdown/dropdown";
-import { MEDIUM_GRAY, LIGTH_SEA_GREEN } from "../../styleConstanst";
-import { genericGetService, getAuthHeaders, genericPostService } from "../../api/externalServices";
-import { B2C_BASE_URL } from "../../constants";
-import { useSelector } from "react-redux";
+import React, { useCallback, useEffect, useState } from 'react';
+import styles from './workfrontAssignment.module.css';
+import Button from '../../customComponents/button/button';
+import Dropdown from '../../customComponents/dropdown/dropdown';
+import { MEDIUM_GRAY, LIGTH_SEA_GREEN } from '../../styleConstanst';
+import {
+  genericGetService,
+  getAuthHeaders,
+  genericPostService,
+} from '../../api/externalServices';
+import { B2C_BASE_URL } from '../../constants';
+import { useSelector } from 'react-redux';
 
 export default function WorkfrontAssignment() {
-  const user = useSelector((state) => state.user);
+  const user = useSelector(state => state.user);
+
   const [userList, setUserList] = useState([]);
   const [frontList, setFrontlist] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [selectedFront, setSelectedFront] = useState("");
+  const [selectedFront, setSelectedFront] = useState('');
   const [selectedUsers, setSelecterUsers] = useState([]);
-  const [previewText, setPreviewText] = useState("");
+  const [previewText, setPreviewText] = useState('');
 
-  const getAssignmentData = async () => {
+  const getAssignmentData = useCallback(async (churchId, token) => {
     return await genericGetService(
-      `${B2C_BASE_URL}/workfront/assignmentData/${user.selectedChurchId}`,
-      getAuthHeaders(user.token),
+      `${B2C_BASE_URL}/workfront/assignmentData/${churchId}`,
+      getAuthHeaders(token),
     );
-  };
+  }, []);
 
   useEffect(() => {
+    // Wait until session restoration/login has populated required auth context
+    if (!user.selectedChurchId || !user.token) {
+      return;
+    }
+
+    let isMounted = true;
+
+    setIsError(false);
     setIsLoading(true);
-    getAssignmentData().then((data) => {
+
+    getAssignmentData(user.selectedChurchId, user.token).then(data => {
+      if (!isMounted) return;
+
       setIsLoading(false);
       if (data[0]) {
         setUserList(
-          data[0].data.Users.map((user) => {
+          data[0].data.Users.map(user => {
             return {
               value: user.Id,
               label: user.Name,
@@ -39,7 +55,7 @@ export default function WorkfrontAssignment() {
         );
 
         setFrontlist(
-          data[0].data.Worfronts.map((worfront) => {
+          data[0].data.Worfronts.map(worfront => {
             return {
               value: worfront.Id,
               label: worfront.Name,
@@ -50,11 +66,14 @@ export default function WorkfrontAssignment() {
       }
       setIsError(true);
     });
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [getAssignmentData, user.selectedChurchId, user.token]);
 
   useEffect(() => {
-    console.log("Cambiaron los usuarios o los frentes seleccionados");
-    if (selectedUsers.length > 0 || selectedFront !== "") {
+    if (selectedUsers.length > 0 || selectedFront !== '') {
       const previewHtml = (
         <>
           <p></p>
@@ -73,32 +92,33 @@ export default function WorkfrontAssignment() {
     }
   }, [selectedUsers, selectedFront]);
 
-  const handleClick =  async() => {
+  const handleClick = async () => {
     if (selectedFront && selectedUsers.length > 0) {
       const payload = {
         workfrontId: selectedFront.value,
-        users: selectedUsers.map((selectedUser) => {
+        users: selectedUsers.map(selectedUser => {
           return selectedUser.value;
         }),
       };
 
-      const apiResult = await genericPostService( `${B2C_BASE_URL}/workfront/saveAssignment`, payload );
+      const apiResult = await genericPostService(
+        `${B2C_BASE_URL}/workfront/saveAssignment`,
+        payload,
+      );
 
       if (apiResult[0]) {
-        alert("Guardado existoso");
-        
-        setSelectedFront("");
+        alert('Guardado existoso');
+
+        setSelectedFront('');
         setSelecterUsers([]);
 
         return;
       }
-        alert("Se presentó un error al guardar la asignación de frentes");
-
-    
+      alert('Se presentó un error al guardar la asignación de frentes');
     } else {
-      alert("Los datos seleccionados no son válidos");
+      alert('Los datos seleccionados no son válidos');
     }
-  }
+  };
 
   return (
     <div>
@@ -110,21 +130,21 @@ export default function WorkfrontAssignment() {
             <Dropdown
               data={frontList}
               value={selectedFront}
-              onchange={(selectedFront) => {
+              onchange={selectedFront => {
                 setSelectedFront(selectedFront);
               }}
               multiple={false}
-              placeholder='Seleccione el Frente'
+              placeholder="Seleccione el Frente"
               color={LIGTH_SEA_GREEN}
             />
             <Dropdown
               data={userList}
               value={selectedUsers}
-              onchange={(selectedUsers) => {
+              onchange={selectedUsers => {
                 setSelecterUsers(selectedUsers);
               }}
               multiple={true}
-              placeholder='Seleccione usuarios'
+              placeholder="Seleccione usuarios"
               color={LIGTH_SEA_GREEN}
             />
           </form>
@@ -132,16 +152,16 @@ export default function WorkfrontAssignment() {
           <div className={styles.previewBox}>{previewText}</div>
           <div className={styles.buttons}>
             <Button
-              buttonText='Cancelar'
+              buttonText="Cancelar"
               color={MEDIUM_GRAY}
               disable={false}
               onClick={() => {
-                setSelectedFront("");
+                setSelectedFront('');
                 setSelecterUsers([]);
               }}
             />
             <Button
-              buttonText='Enviar'
+              buttonText="Enviar"
               color={LIGTH_SEA_GREEN}
               disable={false}
               onClick={handleClick}
