@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Button from "@mui/material/Button";
+import React, { useState } from 'react';
+import Button from '@mui/material/Button';
 
 import { Drawer } from '@mui/material';
 import List from '@mui/material/List';
@@ -8,27 +8,26 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
-import { Link } from "react-router-dom";
-import styles from "./navbar.module.css";
-import { useSelector, useDispatch } from 'react-redux'
-import { setSelectedModuleRoutes } from "../../features/navigation/navigationSlice";
-import { useNavigate } from "react-router-dom"
+import { Link } from 'react-router-dom';
+import styles from './navbar.module.css';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelectedModuleRoutes } from '../../features/navigation/navigationSlice';
+import { useNavigate } from 'react-router-dom';
 import * as authService from '../../services/authService';
 
-
 function Navbar() {
-  const [open, setOpen] = useState(false)
-  const { token } = useSelector(state => state.user)
+  const [open, setOpen] = useState(false);
+  const { token } = useSelector(state => state.user);
   const dispatch = useDispatch();
   let navigate = useNavigate();
 
-  const closeSession = async (e) => {
+  const closeSession = async e => {
     await authService.logout(dispatch, navigate);
     dispatch(setSelectedModuleRoutes({ selectedModuleRoutes: [] }));
   };
 
-  const resetDashboard = (e) => {
-    handleDrawer()
+  const resetDashboard = e => {
+    handleDrawer();
     dispatch(setSelectedModuleRoutes({ selectedModuleRoutes: [] }));
   };
 
@@ -49,36 +48,69 @@ function Navbar() {
           <MenuIcon />
         </IconButton>
         <Link to="/" className={styles.textLink}>
-          <Button className={styles.navButton} color="inherit">Sistema de gestión Mi Iglesia</Button>{" "}
+          <Button className={styles.navButton} color="inherit">
+            Sistema de gestión Mi Iglesia
+          </Button>{' '}
         </Link>
-        <Drawer
-          variant="persistent"
-          anchor="left"
-          open={open}
-        >
+        <Drawer variant="persistent" anchor="left" open={open}>
           <IconButton onClick={handleDrawer}>
             <ChevronLeftIcon />
           </IconButton>
           <Divider />
           <List>
-            <Link to="/manageBookings" className={styles.textLink} onClick={handleDrawer}>
-              <Button className={styles.navButton} color="inherit">Gestionar mis reservas</Button>{" "}
+            <Link
+              to="/manageBookings"
+              className={styles.textLink}
+              onClick={handleDrawer}
+            >
+              <Button className={styles.navButton} color="inherit">
+                Gestionar mis reservas
+              </Button>{' '}
             </Link>
-            {token ?
+            {token ? (
               <div>
-                <Link to="/dashboard" onClick={resetDashboard} className={styles.textLink}>
-                  <Button className={styles.navButton} color="inherit">Inicio</Button>{" "}
+                <Link
+                  to="/dashboard"
+                  onClick={resetDashboard}
+                  className={styles.textLink}
+                >
+                  <Button className={styles.navButton} color="inherit">
+                    Inicio
+                  </Button>{' '}
                 </Link>
-                <Button className={styles.navButton} color="inherit" onClick={closeSession}>Cerrar Sesión</Button>{" "}
+                <Link
+                  to="/company-directory/new"
+                  onClick={handleDrawer}
+                  className={styles.textLink}
+                >
+                  <Button className={styles.navButton} color="inherit">
+                    Directorio - Ingresar nueva Empresa
+                  </Button>{' '}
+                </Link>
+                <Button
+                  className={styles.navButton}
+                  color="inherit"
+                  onClick={closeSession}
+                >
+                  Cerrar Sesión
+                </Button>{' '}
               </div>
-              : <div>
-                <Link to="/login" onClick={handleDrawer} className={styles.textLink}>
-                  <Button className={styles.navButton} color="inherit">Ingresar</Button>{" "}
+            ) : (
+              <div>
+                <Link
+                  to="/login"
+                  onClick={handleDrawer}
+                  className={styles.textLink}
+                >
+                  <Button className={styles.navButton} color="inherit">
+                    Ingresar
+                  </Button>{' '}
                 </Link>
                 {/* <Link to="/register" className="text-link">
                   <Button color="inherit">Registrarse</Button>{" "}
                 </Link> */}
-              </div>}
+              </div>
+            )}
           </List>
           <Divider />
         </Drawer>
@@ -86,28 +118,52 @@ function Navbar() {
 
       <div className={styles.containerNavBarDesktop}>
         <Link to="/" className={styles.textLink}>
-          <Button className={styles.navButton} color="inherit">Sistema de gestión Mi Iglesia</Button>{" "}
+          <Button className={styles.navButton} color="inherit">
+            Sistema de gestión Mi Iglesia
+          </Button>{' '}
         </Link>
         <Link to="/manageBookings" className={styles.textLink}>
-          <Button className={styles.navButton} color="inherit">Gestionar mis reservas</Button>{" "}
+          <Button className={styles.navButton} color="inherit">
+            Gestionar mis reservas
+          </Button>{' '}
         </Link>
-        {token ?
+        {token ? (
           <div>
-            <Link to="/dashboard" onClick={resetDashboard} className={styles.textLink}>
-              <Button className={styles.navButton} color="inherit">Inicio</Button>{" "}
+            <Link
+              to="/dashboard"
+              onClick={resetDashboard}
+              className={styles.textLink}
+            >
+              <Button className={styles.navButton} color="inherit">
+                Inicio
+              </Button>{' '}
             </Link>
-            <Button className={styles.navButton} color="inherit" onClick={closeSession}>Cerrar Sesión</Button>{" "}
+            <Link to="/company-directory/new" className={styles.textLink}>
+              <Button className={styles.navButton} color="inherit">
+                Directorio - Ingresar nueva Empresa
+              </Button>{' '}
+            </Link>
+            <Button
+              className={styles.navButton}
+              color="inherit"
+              onClick={closeSession}
+            >
+              Cerrar Sesión
+            </Button>{' '}
           </div>
-          : <div>
+        ) : (
+          <div>
             <Link to="/login" className={styles.textLink}>
-              <Button className={styles.navButton} color="inherit">Ingresar</Button>{" "}
+              <Button className={styles.navButton} color="inherit">
+                Ingresar
+              </Button>{' '}
             </Link>
             {/* <Link to="/register" className="text-link">
           <Button color="inherit">Registrarse</Button>{" "}
         </Link> */}
-          </div>}
+          </div>
+        )}
       </div>
-
     </div>
   );
 }

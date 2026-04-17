@@ -23,6 +23,9 @@ import WorkfrontAssignment from '../components/workfrontAssignments/workfrontAss
 import FamilyGroupList from './../components/manageFamilyGroup/components/familyGroupList';
 import FamilyGroupAttendeeList from '../components/manageFamilyGroup/components/familyGroupAttendee/familyGroupAttendeeList';
 import FamilyGroupAttendanceList from '../components/manageFamilyGroup/components/familyGroupAttendee/familyGroupAttendanceList';
+import DirectoryCompanies from '../components/directoryCompanies';
+import CompanyForm from '../components/directoryCompanies/CompanyForm';
+import CompanyDetail from '../components/directoryCompanies/CompanyDetail';
 
 const RoutesCollection = (
   <Routes>
@@ -126,6 +129,16 @@ const RoutesCollection = (
         </ProtectedRoute>
       }
     />
+    <Route path="/company-directory" element={<DirectoryCompanies />} />
+    <Route
+      path="/company-directory/new"
+      element={
+        <ProtectedRoute>
+          <CompanyForm />
+        </ProtectedRoute>
+      }
+    />
+    <Route path="/company-directory/:id" element={<CompanyDetail />} />
   </Routes>
 );
 
