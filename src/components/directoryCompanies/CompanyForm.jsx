@@ -16,11 +16,13 @@ export default function CompanyForm() {
   const companies = getCompanies();
   const [newCategory, setNewCategory] = useState('');
   const [error, setError] = useState('');
+  const [logoFileName, setLogoFileName] = useState('');
   const [formValues, setFormValues] = useState({
     companyName: '',
     companyDescription: '',
     companyPhone: '',
     companyWebPage: '',
+    companyLogo: '',
     companyCategories: [],
     companySocialNetworks: defaultSocialNetworks,
   });
@@ -85,6 +87,42 @@ export default function CompanyForm() {
     setNewCategory('');
   };
 
+  const handleLogoChange = event => {
+    const selectedFile = event.target.files?.[0];
+
+    if (!selectedFile) {
+      setLogoFileName('');
+      setFormValues(previous => ({
+        ...previous,
+        companyLogo: '',
+      }));
+      return;
+    }
+
+    if (!selectedFile.type.startsWith('image/')) {
+      setError('El logo debe ser una imagen.');
+      event.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = loadEvent => {
+      setLogoFileName(selectedFile.name);
+      setError('');
+      setFormValues(previous => ({
+        ...previous,
+        companyLogo: String(loadEvent.target?.result || ''),
+      }));
+    };
+
+    reader.onerror = () => {
+      setError('No fue posible leer el archivo del logo.');
+      event.target.value = '';
+    };
+
+    reader.readAsDataURL(selectedFile);
+  };
+
   const submitForm = event => {
     event.preventDefault();
 
@@ -147,6 +185,21 @@ export default function CompanyForm() {
           </div>
 
           <div>
+            <p className={styles.sectionTitle}>Logo de la empresa</p>
+            <input
+              className={styles.input}
+              type="file"
+              accept="image/*"
+              onChange={handleLogoChange}
+            />
+            {logoFileName ? (
+              <p className={styles.helperText}>
+                Archivo seleccionado: {logoFileName}
+              </p>
+            ) : null}
+          </div>
+
+          <div>
             <p className={styles.sectionTitle}>Categorías</p>
             <p className={styles.helperText}>
               Puede seleccionar varias categorías.
@@ -162,22 +215,6 @@ export default function CompanyForm() {
                   <span>{category}</span>
                 </label>
               ))}
-            </div>
-
-            <div className={styles.actionRow} style={{ marginTop: '10px' }}>
-              <input
-                className={styles.input}
-                value={newCategory}
-                onChange={event => setNewCategory(event.target.value)}
-                placeholder="Agregar categoría personalizada"
-              />
-              <button
-                type="button"
-                className={styles.secondaryButton}
-                onClick={addNewCategory}
-              >
-                Agregar
-              </button>
             </div>
           </div>
 
@@ -233,23 +270,19 @@ export default function CompanyForm() {
               className={styles.secondaryButton}
               onClick={() => navigate('/dashboard')}
             >
-              Cancelar
+              Regresar
             </button>
+            <Link
+              className={styles.primaryButton}
+              to="/company-directory"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Ver Directorio
+            </Link>
           </div>
         </form>
       </section>
-
-      <aside className={styles.rightMenu}>
-        <h3 className={styles.menuTitle}>Opciones</h3>
-        <Link
-          className={styles.menuOption}
-          to="/company-directory"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Directorio Empresas
-        </Link>
-      </aside>
     </div>
   );
 }

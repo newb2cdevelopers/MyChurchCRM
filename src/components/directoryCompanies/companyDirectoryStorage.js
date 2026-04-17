@@ -2,18 +2,46 @@ import mockCompanies from './mockCompanies';
 
 const DIRECTORY_STORAGE_KEY = 'mychurchcrm_company_directory';
 
-const normalizeCompany = company => {
+const getMockCompanyById = companyId => {
+  return mockCompanies.find(mockCompany => mockCompany.id === companyId);
+};
+
+const normalizeCompany = (company, fallbackCompany = {}) => {
   return {
-    id: company.id || String(Date.now()),
-    companyName: company.companyName || company.CompanyName || '',
+    id: company.id || fallbackCompany.id || String(Date.now()),
+    companyName:
+      company.companyName ||
+      company.CompanyName ||
+      fallbackCompany.companyName ||
+      '',
     companyDescription:
-      company.companyDescription || company.CompanyDescription || '',
+      company.companyDescription ||
+      company.CompanyDescription ||
+      fallbackCompany.companyDescription ||
+      '',
     companyCategories:
-      company.companyCategories || company.CompanyCategories || [],
-    companyPhone: company.companyPhone || company.CompanyPhone || '',
-    companyWebPage: company.companyWebPage || company.CompanyWebPage || '',
+      company.companyCategories ||
+      company.CompanyCategories ||
+      fallbackCompany.companyCategories ||
+      [],
+    companyPhone:
+      company.companyPhone ||
+      company.CompanyPhone ||
+      fallbackCompany.companyPhone ||
+      '',
+    companyWebPage:
+      company.companyWebPage ||
+      company.CompanyWebPage ||
+      fallbackCompany.companyWebPage ||
+      '',
+    companyLogo:
+      company.companyLogo ||
+      company.CompanyLogo ||
+      fallbackCompany.companyLogo ||
+      '',
     companySocialNetworks: company.companySocialNetworks ||
-      company.CompanySocialNetworks || {
+      company.CompanySocialNetworks ||
+      fallbackCompany.companySocialNetworks || {
         facebook: '',
         instagram: '',
         x: '',
@@ -38,12 +66,15 @@ const readDirectory = () => {
     const parsedDirectory = JSON.parse(directory);
 
     if (!Array.isArray(parsedDirectory)) {
-      return mockCompanies;
+      return mockCompanies.map(company => normalizeCompany(company, company));
     }
 
-    return parsedDirectory.map(normalizeCompany);
+    return parsedDirectory.map(company => {
+      const fallbackCompany = getMockCompanyById(company.id) || {};
+      return normalizeCompany(company, fallbackCompany);
+    });
   } catch {
-    return mockCompanies;
+    return mockCompanies.map(company => normalizeCompany(company, company));
   }
 };
 
