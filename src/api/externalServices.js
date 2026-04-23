@@ -1,7 +1,7 @@
-import { getAsyncResult } from "../utils/getAsyncResults";
-import * as tokenService from "../services/tokenService";
+import { getAsyncResult } from '../utils/getAsyncResults';
+import * as tokenService from '../services/tokenService';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:4000";
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000';
 
 // Queue to store failed requests during token refresh
 let isRefreshing = false;
@@ -26,7 +26,7 @@ const processQueue = (error, token = null) => {
  */
 const refreshAccessToken = async () => {
   const refreshToken = tokenService.getRefreshToken();
-  
+
   if (!refreshToken) {
     throw new Error('No refresh token available');
   }
@@ -53,12 +53,12 @@ const refreshAccessToken = async () => {
  */
 const fetchWithAuth = async (url, options = {}) => {
   const token = tokenService.getAccessToken();
-  
+
   // Add auth header if token exists and not already present
   if (token && !options.headers?.['Authorization']) {
     options.headers = {
       ...options.headers,
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     };
   }
 
@@ -85,23 +85,23 @@ const fetchWithAuth = async (url, options = {}) => {
     try {
       const newToken = await refreshAccessToken();
       processQueue(null, newToken);
-      
+
       // Retry original request with new token
       options.headers['Authorization'] = `Bearer ${newToken}`;
       response = await fetch(url, options);
-      
+
       isRefreshing = false;
       return response;
     } catch (error) {
       processQueue(error, null);
       isRefreshing = false;
-      
+
       // Clear tokens and redirect to login
       tokenService.clearTokens();
       localStorage.clear();
       sessionStorage.clear();
       window.location.href = '/login';
-      
+
       throw error;
     }
   }
@@ -111,17 +111,20 @@ const fetchWithAuth = async (url, options = {}) => {
 
 export const genericGetService = async (url, options = {}) => {
   return await getAsyncResult(fetchWithAuth(url, options));
-}
+};
 
-export const genericPostService = async (url, payload,
+export const genericPostService = async (
+  url,
+  payload,
   options = {
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
-  }) => {
-
-  const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  },
+) => {
+  const isFormData =
+    typeof FormData !== 'undefined' && payload instanceof FormData;
   const headers = { ...(options.headers || {}) };
 
   if (isFormData) {
@@ -129,22 +132,27 @@ export const genericPostService = async (url, payload,
     delete headers['content-type'];
   }
 
-  return await getAsyncResult(fetchWithAuth(url, {
-    headers,
-    method: "POST",
-    body: isFormData ? payload : JSON.stringify(payload),
-  }));
-}
+  return await getAsyncResult(
+    fetchWithAuth(url, {
+      headers,
+      method: 'POST',
+      body: isFormData ? payload : JSON.stringify(payload),
+    }),
+  );
+};
 
-export const genericPutService = async (url, payload,
+export const genericPutService = async (
+  url,
+  payload,
   options = {
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
-  }) => {
-
-  const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  },
+) => {
+  const isFormData =
+    typeof FormData !== 'undefined' && payload instanceof FormData;
   const headers = { ...(options.headers || {}) };
 
   if (isFormData) {
@@ -152,18 +160,20 @@ export const genericPutService = async (url, payload,
     delete headers['content-type'];
   }
 
-  return await getAsyncResult(fetchWithAuth(url, {
-    headers,
-    method: "PUT",
-    body: isFormData ? payload : JSON.stringify(payload),
-  }));
-}
+  return await getAsyncResult(
+    fetchWithAuth(url, {
+      headers,
+      method: 'PUT',
+      body: isFormData ? payload : JSON.stringify(payload),
+    }),
+  );
+};
 
-export const getAuthHeaders = (token) => {
+export const getAuthHeaders = token => {
   return {
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    }
-  }
-}
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
