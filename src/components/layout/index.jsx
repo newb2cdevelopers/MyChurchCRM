@@ -7,8 +7,9 @@ function Layout() {
 
   const isCompanyDirectoryIndexRoute = pathname === '/company-directory';
   const isCompanyDirectoryDetailRoute =
-    pathname.startsWith('/company-directory/') &&
-    pathname !== '/company-directory/new';
+    /^\/company-directory\/[^/]+$/.test(pathname) &&
+    pathname !== '/company-directory/new' &&
+    pathname !== '/company-directory/internal';
 
   if (isCompanyDirectoryIndexRoute || isCompanyDirectoryDetailRoute) {
     return <>{RoutesCollection}</>;

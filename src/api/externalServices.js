@@ -169,6 +169,25 @@ export const genericPutService = async (
   );
 };
 
+export const genericDeleteService = async (
+  url,
+  options = {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  },
+) => {
+  const headers = { ...(options.headers || {}) };
+
+  return await getAsyncResult(
+    fetchWithAuth(url, {
+      headers,
+      method: 'DELETE',
+    }),
+  );
+};
+
 export const getAuthHeaders = token => {
   return {
     headers: {

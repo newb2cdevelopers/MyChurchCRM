@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import BackdropLoader from '../common/backdroploader';
 import styles from './styles.module.css';
 import { B2C_BASE_URL } from '../../constants';
-import { genericPostService } from '../../api/externalServices';
+import {
+  genericPostService,
+  genericPutService,
+} from '../../api/externalServices';
 
 const defaultSocialNetworks = {
   facebook: '',
@@ -15,12 +18,76 @@ const defaultSocialNetworks = {
   linkedin: '',
 };
 
+const normalizeSocialNetworks = rawSocialNetworks => {
+  if (!rawSocialNetworks) {
+    return { ...defaultSocialNetworks };
+  }
+
+  if (typeof rawSocialNetworks === 'string') {
+    try {
+      const parsedNetworks = JSON.parse(rawSocialNetworks);
+      return normalizeSocialNetworks(parsedNetworks);
+    } catch {
+      return { ...defaultSocialNetworks };
+    }
+  }
+
+  if (Array.isArray(rawSocialNetworks)) {
+    const arrayAsObject = rawSocialNetworks.reduce((accumulator, item) => {
+      const key = String(item?.name || item?.Name || '').toLowerCase();
+      const value = item?.profile || item?.Profile || '';
+
+      if (key) {
+        accumulator[key] = value;
+      }
+
+      return accumulator;
+    }, {});
+
+    return {
+      ...defaultSocialNetworks,
+      ...arrayAsObject,
+    };
+  }
+
+  if (typeof rawSocialNetworks === 'object') {
+    return {
+      ...defaultSocialNetworks,
+      ...rawSocialNetworks,
+    };
+  }
+
+  return { ...defaultSocialNetworks };
+};
+
+const normalizeCategoryId = category => {
+  if (!category) {
+    return null;
+  }
+
+  if (typeof category === 'string' || typeof category === 'number') {
+    return category;
+  }
+
+  return (
+    category.Id ||
+    category.id ||
+    category.categoryId ||
+    category.CategoryId ||
+    null
+  );
+};
+
 export default function CompanyForm() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
   const user = useSelector(state => state.user);
   const [error, setError] = useState('');
   const [logoFileName, setLogoFileName] = useState('');
   const [logoFile, setLogoFile] = useState(null);
+  const [currentLogoUrl, setCurrentLogoUrl] = useState('');
+  const [isLoadingCompany, setIsLoadingCompany] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [availableCategories, setAvailableCategories] = useState([]);
   const [formValues, setFormValues] = useState({
@@ -49,6 +116,118 @@ export default function CompanyForm() {
 
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (!isEditMode) {
+      return;
+    }
+
+    const abortController = new AbortController();
+
+    const fetchCompany = async () => {
+      try {
+        setIsLoadingCompany(true);
+
+        const response = await fetch(
+          `${B2C_BASE_URL}/companyDirectories/${id}`,
+          { signal: abortController.signal },
+        );
+
+        if (!response.ok) {
+          throw new Error('No se pudo cargar la empresa para edición.');
+        }
+
+        const data = await response.json();
+        const companyPayload =
+          data?.data && typeof data.data === 'object' ? data.data : data;
+
+        const rawCategories =
+          companyPayload.categories ||
+          companyPayload.Categories ||
+          companyPayload.companyCategories ||
+          companyPayload.CompanyCategories ||
+          [];
+
+        let categoryIds = [];
+
+        if (typeof rawCategories === 'string') {
+          try {
+            const parsedCategories = JSON.parse(rawCategories);
+            categoryIds = Array.isArray(parsedCategories)
+              ? parsedCategories.map(normalizeCategoryId).filter(Boolean)
+              : [];
+          } catch {
+            categoryIds = [];
+          }
+        } else if (Array.isArray(rawCategories)) {
+          categoryIds = rawCategories.map(normalizeCategoryId).filter(Boolean);
+        }
+
+        const rawSocialNetworks =
+          companyPayload.socialNetworks ||
+          companyPayload.SocialNetworks ||
+          companyPayload.companySocialNetworks ||
+          companyPayload.CompanySocialNetworks ||
+          defaultSocialNetworks;
+
+        setFormValues({
+          name:
+            companyPayload.name ||
+            companyPayload.Name ||
+            companyPayload.companyName ||
+            companyPayload.CompanyName ||
+            '',
+          description:
+            companyPayload.description ||
+            companyPayload.Description ||
+            companyPayload.companyDescription ||
+            companyPayload.CompanyDescription ||
+            '',
+          phone:
+            companyPayload.phone ||
+            companyPayload.Phone ||
+            companyPayload.companyPhone ||
+            companyPayload.CompanyPhone ||
+            '',
+          website:
+            companyPayload.website ||
+            companyPayload.Website ||
+            companyPayload.companyWebPage ||
+            companyPayload.CompanyWebPage ||
+            '',
+          categories: categoryIds,
+          socialNetworks: normalizeSocialNetworks(rawSocialNetworks),
+        });
+
+        const existingLogoUrl =
+          companyPayload.logoUrl ||
+          companyPayload.LogoUrl ||
+          companyPayload.companyLogo ||
+          companyPayload.CompanyLogo ||
+          '';
+
+        setCurrentLogoUrl(existingLogoUrl);
+
+        if (existingLogoUrl) {
+          setLogoFileName('Logo actual cargado');
+        }
+      } catch (requestError) {
+        if (requestError.name === 'AbortError') {
+          return;
+        }
+        toast.error('No fue posible cargar la empresa para editar.');
+        navigate('/company-directory/internal');
+      } finally {
+        setIsLoadingCompany(false);
+      }
+    };
+
+    fetchCompany();
+
+    return () => {
+      abortController.abort();
+    };
+  }, [id, isEditMode, navigate]);
 
   const handleChange = event => {
     const { name, value } = event.target;
@@ -107,7 +286,7 @@ export default function CompanyForm() {
   const submitForm = async event => {
     event.preventDefault();
 
-    if (isSaving) {
+    if (isSaving || isLoadingCompany) {
       return;
     }
 
@@ -151,16 +330,18 @@ export default function CompanyForm() {
         payload.append('logo', logoFile);
       }
 
-      const results = await genericPostService(
-        `${B2C_BASE_URL}/companyDirectories`,
-        payload,
-        {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${user.token}`,
-          },
+      const requestUrl = isEditMode
+        ? `${B2C_BASE_URL}/companyDirectories/${id}`
+        : `${B2C_BASE_URL}/companyDirectories`;
+
+      const requestMethod = isEditMode ? genericPutService : genericPostService;
+
+      const results = await requestMethod(requestUrl, payload, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${user.token}`,
         },
-      );
+      });
 
       if (results[1]) {
         // Try to parse error response
@@ -178,8 +359,12 @@ export default function CompanyForm() {
           toast.error('Se ha presentado un error al guardar la empresa.');
         }
       } else {
-        toast.success('Empresa guardada exitosamente.');
-        navigate('/company-directory');
+        toast.success(
+          isEditMode
+            ? 'Empresa actualizada exitosamente.'
+            : 'Empresa guardada exitosamente.',
+        );
+        navigate('/company-directory/internal');
       }
     } finally {
       setIsSaving(false);
@@ -188,11 +373,18 @@ export default function CompanyForm() {
 
   return (
     <div className={styles.page}>
-      <BackdropLoader show={isSaving} message="Guardando cambios" />
+      <BackdropLoader
+        show={isSaving || isLoadingCompany}
+        message={isLoadingCompany ? 'Cargando empresa' : 'Guardando cambios'}
+      />
       <section className={styles.content}>
-        <h1 className={styles.pageTitle}>Nueva Empresa</h1>
+        <h1 className={styles.pageTitle}>
+          {isEditMode ? 'Editar Empresa' : 'Nueva Empresa'}
+        </h1>
         <p className={styles.descriptionText}>
-          Registra una empresa y asígnale múltiples categorías.
+          {isEditMode
+            ? 'Actualiza la información de la empresa.'
+            : 'Registra una empresa y asígnale múltiples categorías.'}
         </p>
 
         <form className={styles.form} onSubmit={submitForm}>
@@ -202,7 +394,7 @@ export default function CompanyForm() {
             value={formValues.name}
             onChange={handleChange}
             placeholder="Nombre de la empresa"
-            disabled={isSaving}
+            disabled={isSaving || isLoadingCompany}
           />
 
           <textarea
@@ -211,7 +403,7 @@ export default function CompanyForm() {
             value={formValues.description}
             onChange={handleChange}
             placeholder="Descripción"
-            disabled={isSaving}
+            disabled={isSaving || isLoadingCompany}
           />
 
           <div className={styles.rowTwoColumns}>
@@ -221,7 +413,7 @@ export default function CompanyForm() {
               value={formValues.phone}
               onChange={handleChange}
               placeholder="Teléfono"
-              disabled={isSaving}
+              disabled={isSaving || isLoadingCompany}
             />
             <input
               className={styles.input}
@@ -229,18 +421,27 @@ export default function CompanyForm() {
               value={formValues.website}
               onChange={handleChange}
               placeholder="Sitio web"
-              disabled={isSaving}
+              disabled={isSaving || isLoadingCompany}
             />
           </div>
 
           <div>
             <p className={styles.sectionTitle}>Logo de la empresa</p>
+            {isEditMode && currentLogoUrl ? (
+              <div className={styles.detailHeader}>
+                <img
+                  className={styles.companyLogo}
+                  src={currentLogoUrl}
+                  alt={`Logo de ${formValues.name || 'la empresa'}`}
+                />
+              </div>
+            ) : null}
             <input
               className={styles.input}
               type="file"
               accept="image/*"
               onChange={handleLogoChange}
-              disabled={isSaving}
+              disabled={isSaving || isLoadingCompany}
             />
             {logoFileName ? (
               <p className={styles.helperText}>
@@ -261,7 +462,7 @@ export default function CompanyForm() {
                     type="checkbox"
                     checked={formValues.categories.includes(category.Id)}
                     onChange={() => handleCategoryChange(category)}
-                    disabled={isSaving}
+                    disabled={isSaving || isLoadingCompany}
                   />
                   <span>{category.Name}</span>
                 </label>
@@ -278,7 +479,7 @@ export default function CompanyForm() {
                 value={formValues.socialNetworks.facebook}
                 onChange={handleSocialNetworkChange}
                 placeholder="Facebook"
-                disabled={isSaving}
+                disabled={isSaving || isLoadingCompany}
               />
               <input
                 className={styles.input}
@@ -286,7 +487,7 @@ export default function CompanyForm() {
                 value={formValues.socialNetworks.instagram}
                 onChange={handleSocialNetworkChange}
                 placeholder="Instagram"
-                disabled={isSaving}
+                disabled={isSaving || isLoadingCompany}
               />
               <input
                 className={styles.input}
@@ -294,7 +495,7 @@ export default function CompanyForm() {
                 value={formValues.socialNetworks.x}
                 onChange={handleSocialNetworkChange}
                 placeholder="X / Twitter"
-                disabled={isSaving}
+                disabled={isSaving || isLoadingCompany}
               />
               <input
                 className={styles.input}
@@ -302,7 +503,7 @@ export default function CompanyForm() {
                 value={formValues.socialNetworks.tiktok}
                 onChange={handleSocialNetworkChange}
                 placeholder="TikTok"
-                disabled={isSaving}
+                disabled={isSaving || isLoadingCompany}
               />
               <input
                 className={styles.input}
@@ -310,7 +511,7 @@ export default function CompanyForm() {
                 value={formValues.socialNetworks.linkedin}
                 onChange={handleSocialNetworkChange}
                 placeholder="LinkedIn"
-                disabled={isSaving}
+                disabled={isSaving || isLoadingCompany}
               />
             </div>
           </div>
@@ -321,7 +522,7 @@ export default function CompanyForm() {
             <button
               type="submit"
               className={styles.primaryButton}
-              disabled={isSaving}
+              disabled={isSaving || isLoadingCompany}
             >
               {isSaving ? 'Guardando...' : 'Guardar empresa'}
             </button>
@@ -329,19 +530,17 @@ export default function CompanyForm() {
               type="button"
               className={styles.secondaryButton}
               onClick={() => navigate('/dashboard')}
-              disabled={isSaving}
+              disabled={isSaving || isLoadingCompany}
             >
               Regresar
             </button>
             <Link
-              className={`${styles.primaryButton} ${isSaving ? styles.disabledLinkButton : ''}`}
-              to="/company-directory"
-              target="_blank"
-              rel="noreferrer"
-              aria-disabled={isSaving}
-              tabIndex={isSaving ? -1 : 0}
+              className={`${styles.primaryButton} ${isSaving || isLoadingCompany ? styles.disabledLinkButton : ''}`}
+              to="/company-directory/internal"
+              aria-disabled={isSaving || isLoadingCompany}
+              tabIndex={isSaving || isLoadingCompany ? -1 : 0}
             >
-              Ver Directorio
+              Administrar Directorio
             </Link>
           </div>
         </form>

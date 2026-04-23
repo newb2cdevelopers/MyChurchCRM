@@ -332,3 +332,123 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Table Styles for Internal Management Page */
+.tableContainer {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.table thead th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 14px;
+}
+
+.tableRow {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
+}
+
+.tableRow:hover {
+  background-color: #f9fafb;
+}
+
+.tableCell {
+  padding: 12px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.categoriesList {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.categoryBadge {
+  background-color: #ede9fe;
+  color: #4c1d95;
+  border-radius: 12px;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.actionCell {
+  padding: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.editButton,
+.deleteButton {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.editButton {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.editButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.deleteButton {
+  background-color: #ef4444;
+  color: white;
+}
+
+.deleteButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.editButton:disabled,
+.deleteButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .tableContainer {
+    font-size: 12px;
+  }
+
+  .table thead th,
+  .tableCell {
+    padding: 8px;
+  }
+
+  .editButton,
+  .deleteButton {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .actionCell {
+    gap: 4px;
+  }
+}

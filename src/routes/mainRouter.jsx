@@ -26,6 +26,7 @@ import FamilyGroupAttendanceList from '../components/manageFamilyGroup/component
 import DirectoryCompanies from '../components/directoryCompanies';
 import CompanyForm from '../components/directoryCompanies/CompanyForm';
 import CompanyDetail from '../components/directoryCompanies/CompanyDetail';
+import InternalCompanies from '../components/directoryCompanies/InternalCompanies';
 
 const RoutesCollection = (
   <Routes>
@@ -131,6 +132,14 @@ const RoutesCollection = (
     />
     <Route path="/company-directory" element={<DirectoryCompanies />} />
     <Route
+      path="/company-directory/internal"
+      element={
+        <ProtectedRoute>
+          <InternalCompanies />
+        </ProtectedRoute>
+      }
+    />
+    <Route
       path="/company-directory/new"
       element={
         <ProtectedRoute>
@@ -139,6 +148,14 @@ const RoutesCollection = (
       }
     />
     <Route path="/company-directory/:id" element={<CompanyDetail />} />
+    <Route
+      path="/company-directory/:id/edit"
+      element={
+        <ProtectedRoute>
+          <CompanyForm />
+        </ProtectedRoute>
+      }
+    />
   </Routes>
 );
 
