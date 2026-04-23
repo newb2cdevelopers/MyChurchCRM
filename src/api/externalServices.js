@@ -121,10 +121,18 @@ export const genericPostService = async (url, payload,
     }
   }) => {
 
+  const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+  const headers = { ...(options.headers || {}) };
+
+  if (isFormData) {
+    delete headers['Content-Type'];
+    delete headers['content-type'];
+  }
+
   return await getAsyncResult(fetchWithAuth(url, {
-    headers: options.headers,
+    headers,
     method: "POST",
-    body: JSON.stringify(payload),
+    body: isFormData ? payload : JSON.stringify(payload),
   }));
 }
 
@@ -136,10 +144,18 @@ export const genericPutService = async (url, payload,
     }
   }) => {
 
+  const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+  const headers = { ...(options.headers || {}) };
+
+  if (isFormData) {
+    delete headers['Content-Type'];
+    delete headers['content-type'];
+  }
+
   return await getAsyncResult(fetchWithAuth(url, {
-    headers: options.headers,
+    headers,
     method: "PUT",
-    body: JSON.stringify(payload),
+    body: isFormData ? payload : JSON.stringify(payload),
   }));
 }
 
