@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './styles.module.css';
+import { B2C_BASE_URL } from '../../constants';
 import { createCompany, getCompanies } from './companyDirectoryStorage';
 
 const defaultSocialNetworks = {
@@ -14,9 +15,9 @@ const defaultSocialNetworks = {
 export default function CompanyForm() {
   const navigate = useNavigate();
   const companies = getCompanies();
-  const [newCategory, setNewCategory] = useState('');
   const [error, setError] = useState('');
   const [logoFileName, setLogoFileName] = useState('');
+  const [availableCategories, setAvailableCategories] = useState([]);
   const [formValues, setFormValues] = useState({
     companyName: '',
     companyDescription: '',
@@ -27,12 +28,23 @@ export default function CompanyForm() {
     companySocialNetworks: defaultSocialNetworks,
   });
 
-  const availableCategories = useMemo(() => {
-    const existingCategories = companies.flatMap(
-      company => company.companyCategories,
-    );
-    return [...new Set(existingCategories)].sort();
-  }, [companies]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${B2C_BASE_URL}/CompanyCategories`);
+        if (response.ok) {
+          const data = await response.json();
+          setAvailableCategories(data.sort());
+        } else {
+          console.error('Failed to fetch categories');
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleChange = event => {
     const { name, value } = event.target;
@@ -56,35 +68,14 @@ export default function CompanyForm() {
 
   const handleCategoryChange = category => {
     setFormValues(previous => {
-      const wasSelected = previous.companyCategories.includes(category);
+      const wasSelected = previous.companyCategories.includes(category.Id);
       return {
         ...previous,
         companyCategories: wasSelected
-          ? previous.companyCategories.filter(item => item !== category)
-          : [...previous.companyCategories, category],
+          ? previous.companyCategories.filter(item => item !== category.Id)
+          : [...previous.companyCategories, category.Id],
       };
     });
-  };
-
-  const addNewCategory = () => {
-    const cleanedCategory = newCategory.trim();
-
-    if (!cleanedCategory) {
-      return;
-    }
-
-    setFormValues(previous => {
-      if (previous.companyCategories.includes(cleanedCategory)) {
-        return previous;
-      }
-
-      return {
-        ...previous,
-        companyCategories: [...previous.companyCategories, cleanedCategory],
-      };
-    });
-
-    setNewCategory('');
   };
 
   const handleLogoChange = event => {
@@ -206,13 +197,13 @@ export default function CompanyForm() {
             </p>
             <div className={styles.categoriesContainer}>
               {availableCategories.map(category => (
-                <label key={category} className={styles.categoryOption}>
+                <label key={category.Id} className={styles.categoryOption}>
                   <input
                     type="checkbox"
-                    checked={formValues.companyCategories.includes(category)}
+                    checked={formValues.companyCategories.includes(category.Id)}
                     onChange={() => handleCategoryChange(category)}
                   />
-                  <span>{category}</span>
+                  <span>{category.Name}</span>
                 </label>
               ))}
             </div>
