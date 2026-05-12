@@ -77,6 +77,9 @@ const normalizeCompany = company => {
       company.CompanyPhone ||
       '',
     companyCategories: getNormalizedCategories(company),
+    viewsCount: Number(
+      company.ViewsCount ?? company.viewsCount ?? company.views ?? 0,
+    ),
   };
 };
 
@@ -246,6 +249,7 @@ export default function InternalCompanies() {
                   <th>Nombre de Empresa</th>
                   <th>Categorías</th>
                   <th>Teléfono</th>
+                  <th>Visitas</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -267,6 +271,11 @@ export default function InternalCompanies() {
                     </td>
                     <td className={styles.tableCell}>
                       {company.companyPhone || '-'}
+                    </td>
+                    <td className={styles.tableCell}>
+                      {Number.isFinite(company.viewsCount)
+                        ? company.viewsCount
+                        : 0}
                     </td>
                     <td className={styles.actionCell}>
                       <button

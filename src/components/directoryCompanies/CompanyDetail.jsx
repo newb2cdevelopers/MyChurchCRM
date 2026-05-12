@@ -209,6 +209,14 @@ export default function CompanyDetail() {
         const companyPayload =
           data?.data && typeof data.data === 'object' ? data.data : data;
 
+        // Fire-and-forget: record visit without blocking the render.
+        fetch(`${B2C_BASE_URL}/companyDirectories/${id}/register-view`, {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+        }).catch(() => {
+          // Do not interrupt the user experience if the visit registration fails.
+        });
+
         setCompany(normalizeCompany(companyPayload));
       } catch (requestError) {
         if (requestError.name === 'AbortError') {
