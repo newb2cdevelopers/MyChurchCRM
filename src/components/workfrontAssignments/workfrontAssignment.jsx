@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styles from './workfrontAssignment.module.css';
-import Button from '../../customComponents/button/button';
+import Button from '../../customComponents/button';
 import Dropdown from '../../customComponents/dropdown/dropdown';
 import { MEDIUM_GRAY, LIGTH_SEA_GREEN } from '../../styleConstanst';
 import {

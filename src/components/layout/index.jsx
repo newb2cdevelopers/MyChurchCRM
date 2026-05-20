@@ -11,7 +11,16 @@ function Layout() {
     pathname !== '/company-directory/new' &&
     pathname !== '/company-directory/internal';
 
-  if (isCompanyDirectoryIndexRoute || isCompanyDirectoryDetailRoute) {
+  const isAuthRoute =
+    pathname === '/login' ||
+    pathname === '/register' ||
+    pathname === '/recoveryPassword';
+
+  if (
+    isCompanyDirectoryIndexRoute ||
+    isCompanyDirectoryDetailRoute ||
+    isAuthRoute
+  ) {
     return <>{RoutesCollection}</>;
   }
 

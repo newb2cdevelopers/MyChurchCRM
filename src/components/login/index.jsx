@@ -1,75 +1,65 @@
 import React, { useState } from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import LinkMu from '@mui/material/Link';
-import { Link } from "react-router-dom";
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import TextField from '@mui/material/TextField';
+import Button from '../../customComponents/button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
+import Alert from '@mui/material/Alert';
 import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { genericPostService } from "../../api/externalServices";
-import BackdropLoader from "../common/backdroploader";
-import { useDispatch } from 'react-redux'
-import { login, setSelectedChurch } from '../../features/user/userSlice'
-import { useNavigate } from "react-router-dom";
+import { Link as RouterLink } from 'react-router-dom';
+import { genericPostService } from '../../api/externalServices';
+import BackdropLoader from '../common/backdroploader';
+import { useDispatch } from 'react-redux';
+import { login, setSelectedChurch } from '../../features/user/userSlice';
+import { useNavigate } from 'react-router-dom';
 import { B2C_BASE_URL } from '../../constants';
 import * as tokenService from '../../services/tokenService';
 
-
-function Copyright(props) {
+function Copyright() {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <LinkMu color="inherit" href="/">
-        Sistema de gestión Mi Igleisa
-      </LinkMu>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
+    <Box sx={{ textAlign: 'center', py: 4 }}>
+      <Typography variant="caption" color="text.secondary">
+        {'Copyright © '}
+        <Link color="inherit" href="/" underline="hover">
+          Sistema de gestión Mi Iglesia
+        </Link>{' '}
+        {new Date().getFullYear()}
+        {'.'}
+      </Typography>
+    </Box>
   );
 }
 
-const theme = createTheme();
-
 function Login() {
-
   const BASE_URL = B2C_BASE_URL;
-
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
   const initialFormState = {
     user: '',
-    pass: ''
-  }
+    pass: '',
+  };
 
   const [loginInfo, setLoginInfo] = useState(initialFormState);
   const [missingRequiredFields, setMissingRequiredFields] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSubmit = async (event) => {
-
+  const handleSubmit = async event => {
     event.preventDefault();
 
     let missingFields = [];
 
     for (const [k, v] of Object.entries(loginInfo)) {
-
-      if (v === "") {
+      if (v === '') {
         missingFields.push(k);
       }
     }
@@ -82,180 +72,360 @@ function Login() {
     setLoading(true);
     const loginPayload = {
       user: loginInfo.user.toLowerCase(),
-      pass: loginInfo.pass
-    }
+      pass: loginInfo.pass,
+    };
     const results = await genericPostService(`${BASE_URL}/login`, loginPayload);
     setLoading(false);
 
     if (results[0] && results[0].access_token) {
-      // Save tokens to localStorage or sessionStorage based on "Recordar mis datos"
       tokenService.setTokens(
-        results[0].access_token, 
+        results[0].access_token,
         results[0].refresh_token,
-        rememberMe
+        rememberMe,
       );
-      
-      // Save user email for session restoration (only if remember me is checked)
+
       if (rememberMe) {
         localStorage.setItem('userEmail', loginInfo.user);
       } else {
         sessionStorage.setItem('userEmail', loginInfo.user);
       }
-      
+
       dispatch(
         login({
           userEmail: loginInfo.user,
           token: results[0].access_token,
           roles: results[0].roles,
           workfront: results[0].workfront,
-        })
+        }),
       );
 
       dispatch(
         setSelectedChurch({
           selectedChurchId: results[0].churchId,
-        })
+        }),
       );
 
-      setErrorMessage("");
-      return navigate("/dashboard");
-
+      setErrorMessage('');
+      return navigate('/dashboard');
     }
 
     if (results[0] && !results[0].access_token) {
-      setErrorMessage("Por favor verifique sus credenciales.")
+      setErrorMessage('Por favor verifique sus credenciales.');
       return;
     }
 
     if (!results[0]) {
-      setErrorMessage("Se ha presentado un error, por favor contacte al administrador")
+      setErrorMessage(
+        'Se ha presentado un error, por favor contacte al administrador',
+      );
       return;
     }
-
   };
 
-  const handleFormOnchange = (e) => {
-    const { name, value } = e.target
+  const handleFormOnchange = e => {
+    const { name, value } = e.target;
 
     if (errorMessage.length > 0) {
-      setErrorMessage("")
+      setErrorMessage('');
     }
     if (value) {
-      setMissingRequiredFields([])
+      setMissingRequiredFields([]);
     }
     setLoginInfo({ ...loginInfo, [name]: value });
-  }
+  };
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = event => {
     event.preventDefault();
   };
 
-  const handleRememberMeChange = (event) => {
+  const handleRememberMeChange = event => {
     setRememberMe(event.target.checked);
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        background:
+          'radial-gradient(at 0% 0%, hsla(253,100%,95%,1) 0px, transparent 50%), radial-gradient(at 100% 0%, hsla(225,100%,95%,1) 0px, transparent 50%), radial-gradient(at 100% 100%, hsla(253,100%,97%,1) 0px, transparent 50%), radial-gradient(at 0% 100%, hsla(225,100%,97%,1) 0px, transparent 50%)',
+        backgroundColor: '#faf8ff',
+      }}
+    >
+      <BackdropLoader show={loading} message="Validando los datos ingresados" />
+
+      <Box
+        component="nav"
+        sx={{
+          width: '100%',
+          px: { xs: 3, md: 6 },
+          py: 2,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          bgcolor: 'rgba(255, 255, 255, 0.3)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+          position: 'fixed',
+          top: 0,
+          zIndex: 50,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              bgcolor: 'primary.main',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+            }}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </Box>
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 600,
+              color: 'text.primary',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            SISTEMA DE GESTIÓN MI IGLESIA
+          </Typography>
+        </Box>
+
         <Box
           sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
+            display: { xs: 'none', md: 'flex' },
             alignItems: 'center',
+            gap: 4,
           }}
         >
+          <Link
+            component={RouterLink}
+            to="/manageBookings"
+            underline="none"
+            sx={{
+              fontSize: 14,
+              fontWeight: 500,
+              color: 'text.secondary',
+              '&:hover': { color: 'primary.main' },
+            }}
+          >
+            Gestionar Mis Reservas
+          </Link>
+        </Box>
+      </Box>
 
-          <BackdropLoader show={loading} message="Validando los datos ingresados" />
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Ingreso al sistema
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              id="user"
-              required
-              fullWidth
-              label="Correo eléctrónico"
-              name="user"
-              helperText={missingRequiredFields.indexOf("user") !== -1 ? "El campo es requerido" : ""}
-              error={missingRequiredFields.indexOf("user") !== -1 ? true : false}
-              autoFocus
-              onChange={handleFormOnchange}
-              value={loginInfo.user}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="pass"
-              name="pass"
-              label="Contraseña"
-              type={showPassword ? 'text' : 'password'}
-              onChange={handleFormOnchange}
-              value={loginInfo.pass}
-              helperText={missingRequiredFields.indexOf("pass") !== -1 ? "El campo es requerido" : ""}
-              error={missingRequiredFields.indexOf("pass") !== -1 ? true : false}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                )
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          px: 2,
+          pt: '80px',
+          pb: 6,
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: '440px',
+            bgcolor: 'background.paper',
+            borderRadius: '16px',
+            boxShadow:
+              '0 0 0 1px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025)',
+            border: '1px solid',
+            borderColor: 'divider',
+            p: { xs: 3, sm: 5 },
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 4,
+              background: theme =>
+                `linear-gradient(90deg, transparent, ${theme.palette.primary.main}4D, transparent)`,
+            }}
+          />
+
+          <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 5 } }}>
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 56,
+                height: 56,
+                borderRadius: '16px',
+                bgcolor: 'rgba(94, 57, 224, 0.1)',
+                color: 'primary.main',
+                mb: 3,
               }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox 
-                  checked={rememberMe}
-                  onChange={handleRememberMeChange}
-                  color="primary" 
-                />
-              }
-              label="Recordar mis datos"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
             >
-              Ingresar
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link to="/recoveryPassword" className='text-link'><LinkMu variant="body2">
-                  ¿Olvidó la contraseña?
-                </LinkMu>
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link to="/register" className='text-link'><LinkMu variant="body2" component={"span"}>Registrarse</LinkMu> </Link>
-              </Grid>
-            </Grid>
-            <div>
-              {errorMessage.length > 0 && <Alert severity="error">{errorMessage}</Alert>}
-            </div>
+              <LockOutlinedIcon sx={{ fontSize: 28 }} />
+            </Box>
+            <Typography variant="h3" sx={{ mb: 1 }}>
+              Ingreso al sistema
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Bienvenido de nuevo
+            </Typography>
+          </Box>
+
+          <Box component="form" onSubmit={handleSubmit} noValidate>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: { xs: 2.5, sm: 3 },
+              }}
+            >
+              <TextField
+                required
+                fullWidth
+                id="user"
+                name="user"
+                label="Correo electrónico"
+                placeholder="nombre@ejemplo.com"
+                autoFocus
+                value={loginInfo.user}
+                onChange={handleFormOnchange}
+                error={missingRequiredFields.indexOf('user') !== -1}
+                helperText={
+                  missingRequiredFields.indexOf('user') !== -1
+                    ? 'El campo es requerido'
+                    : ''
+                }
+              />
+
+              <Box>
+                <TextField
+                  required
+                  fullWidth
+                  id="pass"
+                  name="pass"
+                  label="Contraseña"
+                  placeholder="••••••••"
+                  type={showPassword ? 'text' : 'password'}
+                  value={loginInfo.pass}
+                  onChange={handleFormOnchange}
+                  error={missingRequiredFields.indexOf('pass') !== -1}
+                  helperText={
+                    missingRequiredFields.indexOf('pass') !== -1
+                      ? 'El campo es requerido'
+                      : ''
+                  }
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                          size="small"
+                        >
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <Box
+                  sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}
+                >
+                  <Link
+                    component={RouterLink}
+                    to="/recoveryPassword"
+                    variant="caption"
+                    sx={{ fontWeight: 500, color: 'primary.main' }}
+                    underline="hover"
+                  >
+                    ¿Olvidó la contraseña?
+                  </Link>
+                </Box>
+              </Box>
+
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={rememberMe}
+                    onChange={handleRememberMeChange}
+                    color="primary"
+                    size="small"
+                  />
+                }
+                label={
+                  <Typography variant="caption" color="text.secondary">
+                    Recordar mis datos
+                  </Typography>
+                }
+              />
+
+              <Button
+                type="submit"
+                fullWidth
+                size="large"
+                sx={{ py: 1.75, fontSize: 14, letterSpacing: '0.02em' }}
+              >
+                INGRESAR
+              </Button>
+
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="caption" color="text.secondary">
+                  ¿No tienes una cuenta?{' '}
+                  <Link
+                    component={RouterLink}
+                    to="/register"
+                    sx={{ fontWeight: 500, color: 'primary.main' }}
+                    underline="hover"
+                  >
+                    Registrarse
+                  </Link>
+                </Typography>
+              </Box>
+            </Box>
+
+            {errorMessage.length > 0 && (
+              <Alert severity="error" sx={{ mt: 3 }}>
+                {errorMessage}
+              </Alert>
+            )}
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
-    </ThemeProvider>
+      </Box>
+
+      <Copyright />
+    </Box>
   );
 }
 
