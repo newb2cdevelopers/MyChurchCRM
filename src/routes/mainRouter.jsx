@@ -5,6 +5,7 @@ import Login from '../components/login';
 import Register from '../components/register';
 import Aforo from '../components/aforo/index';
 import HomeUser from '../components/homeUser';
+import Dashboard from '../components/dashboard';
 import { ProtectedRoute } from './protectedRoute';
 import FormAforo from '../components/aforo/new people/Form';
 import EventsOptions from '../components/aforo/events';
@@ -45,6 +46,14 @@ const RoutesCollection = (
     />
     <Route
       path="/dashboard"
+      element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/modules"
       element={
         <ProtectedRoute>
           <HomeUser />
