@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import Button from '../../customComponents/button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Link as RouterLink } from 'react-router-dom';
 import { genericPostService } from '../../api/externalServices';
 import BackdropLoader from '../common/backdroploader';
@@ -20,6 +15,8 @@ import { login, setSelectedChurch } from '../../features/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { B2C_BASE_URL } from '../../constants';
 import * as tokenService from '../../services/tokenService';
+import TextField from '../shared/TextField';
+import PasswordField from '../shared/PasswordField';
 
 function Copyright() {
   return (
@@ -50,7 +47,6 @@ function Login() {
   const [missingRequiredFields, setMissingRequiredFields] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async event => {
@@ -132,14 +128,6 @@ function Login() {
       setMissingRequiredFields([]);
     }
     setLoginInfo({ ...loginInfo, [name]: value });
-  };
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = event => {
-    event.preventDefault();
   };
 
   const handleRememberMeChange = event => {
@@ -311,7 +299,6 @@ function Login() {
             >
               <TextField
                 required
-                fullWidth
                 id="user"
                 name="user"
                 label="Correo electrónico"
@@ -328,14 +315,12 @@ function Login() {
               />
 
               <Box>
-                <TextField
+                <PasswordField
                   required
-                  fullWidth
                   id="pass"
                   name="pass"
                   label="Contraseña"
                   placeholder="••••••••"
-                  type={showPassword ? 'text' : 'password'}
                   value={loginInfo.pass}
                   onChange={handleFormOnchange}
                   error={missingRequiredFields.indexOf('pass') !== -1}
@@ -344,21 +329,6 @@ function Login() {
                       ? 'El campo es requerido'
                       : ''
                   }
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                          size="small"
-                        >
-                          {showPassword ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
                 />
                 <Box
                   sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}

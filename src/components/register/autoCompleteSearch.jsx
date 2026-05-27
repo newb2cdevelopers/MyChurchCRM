@@ -1,19 +1,23 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 const filter = createFilterOptions();
 
-const AutoCompleteSearch = ({items, setSelectedChurchId, error, helperText}) => {
-const [value, setValue] = useState(null);
-
+const AutoCompleteSearch = ({
+  items,
+  setSelectedChurchId,
+  error,
+  helperText,
+}) => {
+  const [value, setValue] = useState(null);
 
   return (
     <Autocomplete
       value={value}
       onChange={(event, newValue) => {
-          setSelectedChurchId(newValue);
-          setValue(newValue);
+        setSelectedChurchId(newValue);
+        setValue(newValue);
       }}
       filterOptions={(options, params) => {
         const filtered = filter(options, params);
@@ -24,7 +28,7 @@ const [value, setValue] = useState(null);
       handleHomeEndKeys
       id="free-solo-with-text-demo"
       options={items}
-      getOptionLabel={(option) => {
+      getOptionLabel={option => {
         // Value selected with enter, right from the input
         if (typeof option === 'string') {
           return option;
@@ -39,10 +43,16 @@ const [value, setValue] = useState(null);
       renderOption={(props, option) => <li {...props}>{option.name}</li>}
       sx={{ width: '100%' }}
       freeSolo
-      renderInput={(params) => (
-        <TextField {...params} error={error} helperText={helperText} label="Seleccione el nombre de la iglesia" />
+      renderInput={params => (
+        <TextField
+          {...params}
+          required
+          error={error}
+          helperText={helperText}
+          label="Seleccione el nombre de la iglesia"
+        />
       )}
     />
-  )
-}
-  export default AutoCompleteSearch;
+  );
+};
+export default AutoCompleteSearch;

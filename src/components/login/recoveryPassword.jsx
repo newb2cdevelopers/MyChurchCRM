@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -12,6 +11,7 @@ import BackdropLoader from '../common/backdroploader';
 import showToast from '../../customComponents/toast/showToast';
 import { genericPostService } from '../../api/externalServices';
 import { B2C_BASE_URL } from '../../constants';
+import TextField from '../shared/TextField';
 
 const validationSchema = yup.object({
   email: yup
@@ -228,7 +228,6 @@ function RecoveryPassword() {
             >
               <TextField
                 required
-                fullWidth
                 id="email"
                 name="email"
                 label="Correo electrónico"
