@@ -1,9 +1,16 @@
 import { useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Card from '../Card';
 import styles from '../home/home.module.css';
 import { iconsProvider } from '../../utils/iconsProvider';
+import ModuleHeader from '../shared/ModuleHeader';
+
+const MODULE_DESCRIPTIONS = {
+  Aforo: 'Control de capacidad, registro de asistentes y gestión de eventos',
+  'Administrar Usuarios': 'Gestión de usuarios del sistema',
+  'Administrar Grupos Familiares':
+    'Administración de grupos familiares de la iglesia',
+};
 
 function HomeUser() {
   const user = useSelector(state => state.user);
@@ -22,6 +29,15 @@ function HomeUser() {
   }
 
   let cards = [];
+  let title =
+    selectedModuleRoutes.length > 0 && selectedModuleName
+      ? selectedModuleName
+      : 'Modulos';
+  let description =
+    selectedModuleRoutes.length > 0
+      ? MODULE_DESCRIPTIONS[selectedModuleName] ||
+        'Selecciona una funcionalidad para continuar.'
+      : 'Selecciona un modulo para ver sus funcionalidades.';
 
   if (selectedModuleRoutes.length > 0) {
     cards = selectedModuleRoutes.map(card => (
@@ -52,16 +68,7 @@ function HomeUser() {
 
   return (
     <Box>
-      <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
-        {selectedModuleRoutes.length > 0 && selectedModuleName
-          ? selectedModuleName
-          : 'Modulos'}
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        {selectedModuleRoutes.length > 0
-          ? 'Selecciona una funcionalidad para continuar.'
-          : 'Selecciona un modulo para ver sus funcionalidades.'}
-      </Typography>
+      <ModuleHeader title={title} description={description} />
 
       <div className={styles.containerHome} style={{ padding: 0 }}>
         {cards}

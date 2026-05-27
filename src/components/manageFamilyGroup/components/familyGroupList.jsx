@@ -18,6 +18,7 @@ import FamilyGroupAttendanceList from '../components/familyGroupAttendee/familyG
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import ModuleHeader from '../../shared/ModuleHeader';
 
 export default function FamilyGroupList() {
   const [open, setOpen] = useState(false);
@@ -51,7 +52,6 @@ export default function FamilyGroupList() {
     };
 
     fetchFamilyGroups().then(data => {
-
       if (data[0] && data[0].length > 0) {
         setFamilyGroups(data[0]);
         setFamilyGroupsList(data[0]);
@@ -104,7 +104,10 @@ export default function FamilyGroupList() {
 
   return (
     <div className={styles.MainContainer}>
-      <h1>Administrar grupos familiares</h1>
+      <ModuleHeader
+        title="Grupos Familiares"
+        description="Administración de grupos familiares de la iglesia"
+      />
       <div>
         <div style={{ display: 'inline-block' }}>
           <div>

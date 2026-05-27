@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import Box from '@mui/material/Box';
 import styles from './workfrontAssignment.module.css';
 import Button from '../../customComponents/button';
 import Dropdown from '../../customComponents/dropdown/dropdown';
@@ -10,6 +11,7 @@ import {
 } from '../../api/externalServices';
 import { B2C_BASE_URL } from '../../constants';
 import { useSelector } from 'react-redux';
+import ModuleHeader from '../shared/ModuleHeader';
 
 export default function WorkfrontAssignment() {
   const user = useSelector(state => state.user);
@@ -121,11 +123,13 @@ export default function WorkfrontAssignment() {
   };
 
   return (
-    <div>
+    <Box>
+      <ModuleHeader
+        title="Asignación de Frentes"
+        description="Asigna usuarios a los frentes o áreas de trabajo"
+      />
       {userList.length > 0 && frontList.length > 0 ? (
         <div>
-          <h1>Asignación de Frentes</h1>
-          <p> Frente al que desea asignar usuarios</p>
           <form>
             <Dropdown
               data={frontList}
@@ -173,6 +177,6 @@ export default function WorkfrontAssignment() {
       ) : (
         isError && <div>Hubo un error consultando los datos</div>
       )}
-    </div>
+    </Box>
   );
 }
