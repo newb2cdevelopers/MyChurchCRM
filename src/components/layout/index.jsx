@@ -15,12 +15,15 @@ function Layout() {
 
   const isCompanyDirectoryRoute = pathname.startsWith('/company-directory');
 
-  const isAuthRoute =
+  const isStandaloneRoute =
+    pathname === '/' ||
     pathname === '/login' ||
     pathname === '/register' ||
-    pathname === '/recoveryPassword';
+    pathname === '/recoveryPassword' ||
+    pathname === '/main' ||
+    pathname === '/public-events';
 
-  if (isAuthRoute) {
+  if (isStandaloneRoute || (!token && !isCompanyDirectoryRoute)) {
     return <>{RoutesCollection}</>;
   }
 

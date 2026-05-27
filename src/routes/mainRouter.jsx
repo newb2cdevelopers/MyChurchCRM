@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 
-import Home from '../components/home';
+import Landing from '../components/landing';
 import Login from '../components/login';
 import Register from '../components/register';
 import Aforo from '../components/aforo/index';
@@ -12,6 +12,8 @@ import EventsOptions from '../components/aforo/events';
 import VerifyAsistents from '../components/aforo/events/components/VerifyAsistents';
 import EventListView from '../components/aforo/events/components/index';
 import MainOptionsScreen from '../components/home/MainOptionsScreen';
+import PublicEvents from '../components/home/PublicEvents';
+import NotFound from '../components/notFound';
 import ConfirmBooking from '../components/aforo/events/bookings/confirmBooking';
 import Reservation from '../components/reservationEvents';
 import ManageBooking from '../components/aforo/events/bookings/ManageBookings';
@@ -31,10 +33,11 @@ import InternalCompanies from '../components/directoryCompanies/InternalCompanie
 
 const RoutesCollection = (
   <Routes>
-    <Route exact path="/" element={<Home />} />
+    <Route exact path="/" element={<Landing />} />
     <Route path="/login" element={<Login />} />
     <Route path="/recoveryPassword" element={<RecoveryPasswordRequest />} />
     <Route path="/main" element={<MainOptionsScreen />} />
+    <Route path="/public-events" element={<PublicEvents />} />
     <Route path="/register" element={<Register />} />
     <Route
       path="/aforo"
@@ -60,7 +63,7 @@ const RoutesCollection = (
         </ProtectedRoute>
       }
     />
-    <Route path="/*" element={<Aforo />} />
+    <Route path="*" element={<NotFound />} />
     <Route path="/new-people" element={<FormAforo />} />
     <Route path="/events-option" element={<EventsOptions />} />
     <Route

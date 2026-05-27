@@ -133,8 +133,6 @@ function SidebarContent({ onItemClick }) {
         sx={{
           px: 2.5,
           py: 2.5,
-          borderBottom: '1px solid',
-          borderColor: theme => alpha(theme.palette.divider, 0.3),
         }}
       >
         <Typography
