@@ -11,7 +11,6 @@ import {
 } from '../../api/externalServices';
 import { B2C_BASE_URL } from '../../constants';
 import { useSelector } from 'react-redux';
-import ModuleHeader from '../shared/ModuleHeader';
 
 export default function WorkfrontAssignment() {
   const user = useSelector(state => state.user);
@@ -124,10 +123,6 @@ export default function WorkfrontAssignment() {
 
   return (
     <Box>
-      <ModuleHeader
-        title="Asignación de Frentes"
-        description="Asigna usuarios a los frentes o áreas de trabajo"
-      />
       {userList.length > 0 && frontList.length > 0 ? (
         <div>
           <form>

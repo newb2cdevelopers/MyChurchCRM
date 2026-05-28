@@ -82,6 +82,12 @@ function SidebarContent({ onItemClick }) {
     closeIfNeeded();
   };
 
+  const getModuleSlug = role => {
+    const route = role.accesses?.[0]?.module?.route;
+    if (route && route !== 'test') return route;
+    return role.module.toLowerCase().replace(/\s+/g, '-');
+  };
+
   const handleSelectModule = role => {
     dispatch(
       setSelectedModule({
@@ -89,7 +95,7 @@ function SidebarContent({ onItemClick }) {
         selectedModuleRoutes: role.accesses || [],
       }),
     );
-    navigate('/modules');
+    navigate(`/module/${getModuleSlug(role)}`);
     closeIfNeeded();
   };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
@@ -8,6 +9,9 @@ import Button from '../../customComponents/button';
 import PublicHeader from '../shared/PublicHeader';
 
 function NotFound() {
+  const { token } = useSelector(state => state.user);
+  const homeRoute = token ? '/dashboard' : '/';
+
   return (
     <Box
       sx={{
@@ -90,7 +94,7 @@ function NotFound() {
             </Typography>
             <Button
               component={RouterLink}
-              to="/"
+              to={homeRoute}
               fullWidth
               size="large"
               sx={{ py: 1.75, fontSize: 14, letterSpacing: '0.02em' }}

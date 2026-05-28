@@ -5,7 +5,9 @@ import ModuleHeader from '../shared/ModuleHeader';
 import ModuleTabs from '../shared/ModuleTabs';
 import ROUTE_COMPONENTS from '../../utils/moduleComponentRegistry';
 
-function Aforo() {
+const MODULE_NAME = 'Administrar Grupos Familiares';
+
+function AdminGruposFamiliares() {
   const { roles } = useSelector(state => state.user);
   const [activeTab, setActiveTab] = useState(0);
 
@@ -13,7 +15,7 @@ function Aforo() {
     setActiveTab(newValue);
   };
 
-  const moduleRole = (roles || []).find(r => r.module === 'Aforo');
+  const moduleRole = (roles || []).find(r => r.module === MODULE_NAME);
   const accesses = moduleRole?.accesses || [];
 
   const tabs = accesses.map(acc => {
@@ -33,12 +35,12 @@ function Aforo() {
   return (
     <Box>
       <ModuleHeader
-        title="Aforo"
-        description="Control de capacidad, registro de asistentes y gestión de eventos"
+        title={MODULE_NAME}
+        description="Administración de grupos familiares de la iglesia"
       />
       <ModuleTabs tabs={tabs} value={activeTab} onChange={handleChange} />
     </Box>
   );
 }
 
-export default Aforo;
+export default AdminGruposFamiliares;

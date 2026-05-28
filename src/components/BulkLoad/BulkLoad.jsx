@@ -8,7 +8,6 @@ import { genericPostService } from '../../api/externalServices';
 import { B2C_BASE_URL } from '../../constants';
 import { isExcelFile } from '../../utils/validations';
 import { Alert } from '@mui/material';
-import ModuleHeader from '../shared/ModuleHeader';
 
 function BulkLoad() {
   const [excelData, setExcelData] = useState([]);
@@ -66,10 +65,6 @@ function BulkLoad() {
 
   return (
     <Box>
-      <ModuleHeader
-        title="Carga Masiva"
-        description="Carga de asistentes mediante plantilla de Excel"
-      />
       <div className={styles.wrapper}>
         <div className={styles.customMessage}>
           {message && (

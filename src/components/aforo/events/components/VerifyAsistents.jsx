@@ -7,7 +7,6 @@ import {
   getCurrentHour,
   getFormatedTodayDate,
 } from '../../../../utils/dateUtils';
-import ModuleHeader from '../../../shared/ModuleHeader';
 
 export default function VerifyAsistents() {
   const [document, setDocument] = useState('');
@@ -74,10 +73,6 @@ export default function VerifyAsistents() {
 
   return (
     <div className={styles.containerVerifyAsistents}>
-      <ModuleHeader
-        title="Asistencia"
-        description="Verificación de asistencia a eventos"
-      />
       <div className={styles.verifyAsistents}>
         <div className={styles.message}>
           {message && (

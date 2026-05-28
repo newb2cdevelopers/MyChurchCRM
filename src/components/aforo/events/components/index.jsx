@@ -13,7 +13,6 @@ import {
 import BackdropLoader from '../../../common/backdroploader';
 import { B2C_BASE_URL } from '../../../../constants';
 import EventDetail from './EventDetail';
-import ModuleHeader from '../../../shared/ModuleHeader';
 
 export default function Aforo() {
   const [open, setOpen] = useState(false);
@@ -66,6 +65,8 @@ export default function Aforo() {
   }, [isUpdateRequired]);
 
   useEffect(() => {
+    if (!user.selectedChurchId) return;
+
     getEvents().then(data => {
       setLoading(false);
       if (data[0]) {
@@ -75,14 +76,10 @@ export default function Aforo() {
 
       alert('Error');
     });
-  }, []);
+  }, [user.selectedChurchId]);
 
   return (
     <Box>
-      <ModuleHeader
-        title="Eventos"
-        description="Gestión y creación de eventos de la iglesia"
-      />
       <div className="aforoMainContainer">
         <div className="toolBarContainer">
           <Stack spacing={2} direction="row">

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import styles from '../styles.module.css';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -15,18 +15,12 @@ import { useSelector } from 'react-redux';
 import { selectedMemberData } from '../../../features/members/membersSlice';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import ModuleHeader from '../../shared/ModuleHeader';
 
 export default function ChurchMembersList() {
-  const [open, setOpen] = useState(false);
-  const [isUpdateRequired, setIsUpdateRequired] = useState(false);
   const [members, setMembers] = useState([]);
   const [membersList, setMembersList] = useState([]);
   const user = useSelector(state => state.user);
-  const handleOpen = () => {
-    setIsUpdateRequired(false);
-    setOpen(true);
-  };
+
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -99,10 +93,6 @@ export default function ChurchMembersList() {
 
   return (
     <Box>
-      <ModuleHeader
-        title="Miembros"
-        description="Consulta y administración de miembros registrados en la iglesia"
-      />
       <div className={styles.mainContainer}>
         <div className={styles.infoContainer}>
           <div class="mb-3">

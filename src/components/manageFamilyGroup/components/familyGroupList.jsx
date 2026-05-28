@@ -18,7 +18,6 @@ import FamilyGroupAttendanceList from '../components/familyGroupAttendee/familyG
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import ModuleHeader from '../../shared/ModuleHeader';
 
 export default function FamilyGroupList() {
   const [open, setOpen] = useState(false);
@@ -104,10 +103,6 @@ export default function FamilyGroupList() {
 
   return (
     <div className={styles.MainContainer}>
-      <ModuleHeader
-        title="Grupos Familiares"
-        description="Administración de grupos familiares de la iglesia"
-      />
       <div>
         <div style={{ display: 'inline-block' }}>
           <div>
