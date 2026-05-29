@@ -37,6 +37,8 @@ function AuthAwareLayout() {
           component="main"
           sx={{
             flexGrow: 1,
+            maxWidth: '100%',
+            overflowX: 'hidden',
             p: isCompanyDirectory ? 0 : { xs: 3, md: 6 },
             pb: isCompanyDirectory ? { xs: 12, md: 0 } : { xs: 12, md: 6 },
           }}

@@ -14,13 +14,13 @@ const QUICK_MODULE_PRIORITY = [
   'Aforo',
   'Fortalecimiento',
   'Administrar Usuarios',
-  'Administrar Grupos Familiares',
+  'Comunidad',
 ];
 
 const QUICK_MODULE_LABELS = {
   Fortalecimiento: 'Fortalec.',
   'Administrar Usuarios': 'Usuarios',
-  'Administrar Grupos Familiares': 'Grupos',
+  Comunidad: 'Comunidad',
 };
 
 function pickQuickModules(roles) {
@@ -103,17 +103,31 @@ function BottomNav({ onOpenMore }) {
   const { roles } = useSelector(state => state.user);
   const { selectedModuleName } = useSelector(state => state.navigation);
 
+  const getModuleSlug = role => {
+    const route = role.accesses?.[0]?.module?.route;
+    if (route && route !== 'test') return route;
+    return role.module.toLowerCase().replace(/\s+/g, '-');
+  };
+
   const quickModules = pickQuickModules(roles);
 
   const isInicioActive = pathname === '/dashboard';
+  const matchDynamicModule = pathname.match(/^\/module\/([^/]+)/);
+  const activeDynamicSlug = matchDynamicModule ? matchDynamicModule[1] : '';
   const activeModuleFromPath =
     roles?.find(r =>
       r.accesses?.some(
         a => pathname === a.route || pathname.startsWith(`${a.route}/`),
       ),
     )?.module || '';
+  const activeModuleFromDynamic =
+    activeDynamicSlug
+      ? roles?.find(r => r.accesses?.[0]?.module?.route === activeDynamicSlug)
+          ?.module || ''
+      : '';
   const activeModule =
     activeModuleFromPath ||
+    activeModuleFromDynamic ||
     (pathname.startsWith('/modules') ? selectedModuleName : '');
 
   const handleInicio = () => {
@@ -130,7 +144,7 @@ function BottomNav({ onOpenMore }) {
         selectedModuleRoutes: role.accesses || [],
       }),
     );
-    navigate('/modules');
+    navigate(`/module/${getModuleSlug(role)}`);
   };
 
   return (

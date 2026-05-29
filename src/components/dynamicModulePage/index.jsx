@@ -56,7 +56,7 @@ function DynamicModulePage() {
   });
 
   return (
-    <Box>
+    <Box sx={{ maxWidth: '100%' }}>
       <ModuleHeader title={title} description={description} />
       <ModuleTabs tabs={tabs} value={activeTab} onChange={handleChange} />
     </Box>

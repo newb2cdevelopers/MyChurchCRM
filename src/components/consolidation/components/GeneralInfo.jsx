@@ -26,7 +26,10 @@ const validationSchema = yup.object({
         .required('El número de celular es obligatorio'),
     email: yup
         .string('Ingrese el correo')
-        .email("El correo no es válido")
+        .email("El correo no es válido"),
+    workfront: yup
+        .string('Seleccione el frente de trabajo')
+        .required('El frente de trabajo es obligatorio')
 });
 
 export default function GeneralInfo() {

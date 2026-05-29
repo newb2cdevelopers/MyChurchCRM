@@ -1,241 +1,200 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
-import styles from '../styles.module.css';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import AddIcon from '@mui/icons-material/Add';
+import Button from '../../../customComponents/button';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   genericGetService,
   getAuthHeaders,
 } from '../../../api/externalServices';
 import { B2C_BASE_URL } from '../../../constants';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { useSelector } from 'react-redux';
 import { selectedMemberData } from '../../../features/members/membersSlice';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
+import DataTable from '../../shared/DataTable';
 
-export default function ChurchMembersList() {
-  const [members, setMembers] = useState([]);
-  const [membersList, setMembersList] = useState([]);
+const columns = [
+  {
+    id: 'documentNumber',
+    label: 'Identificación',
+    sortable: true,
+    accessor: row => row.documentNumber,
+  },
+  {
+    id: 'fullName',
+    label: 'Nombre completo',
+    sortable: true,
+    accessor: row => row.fullName?.toUpperCase() || '',
+  },
+  {
+    id: 'workfront',
+    label: 'Frente o área de trabajo',
+    accessor: row => (row.workfront ? row.workfront.name : ''),
+  },
+  {
+    id: 'address',
+    label: 'Dirección',
+    accessor: row => row.address || '',
+  },
+  {
+    id: 'phone',
+    label: 'Teléfono / Celular',
+    accessor: row => `${row.landLine || ''} ${row.mobilePhone || ''}`.trim(),
+  },
+  {
+    id: 'email',
+    label: 'Correo',
+    accessor: row => row.email || '',
+  },
+];
+
+function ChurchMembersList() {
   const user = useSelector(state => state.user);
-
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const BASE_URL = B2C_BASE_URL;
-
-  const getMembers = async () => {
-    const headers = getAuthHeaders(user.token);
-    //setLoading(true);
-    return await genericGetService(
-      `${BASE_URL}/member?churchId=${user.selectedChurchId}`,
-      headers,
-    );
-  };
+  const [members, setMembers] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
+  const [sort, setSort] = useState({ columnId: null, direction: 'asc' });
+  const [page, setPage] = useState(0);
+  const pageSize = 10;
 
   useEffect(() => {
-    dispatch(
-      selectedMemberData({
-        selectedMemberData: null,
-      }),
-    );
+    if (!user.selectedChurchId) return;
+    dispatch(selectedMemberData({ selectedMemberData: null }));
 
-    getMembers().then(data => {
-      //setLoading(false);
+    const headers = getAuthHeaders(user.token);
+    genericGetService(
+      `${B2C_BASE_URL}/member?churchId=${user.selectedChurchId}`,
+      headers,
+    ).then(data => {
       if (data[0]) {
         setMembers(data[0]);
-        setMembersList(data[0]);
         return;
       }
-      alert('Error');
     });
-  }, []);
+  }, [user.selectedChurchId, user.token, dispatch]);
 
-  const navigateToManageMembers = route => {
-    /*dispatch(selectedEventIdForBooking({
-          selectedEventId: eventId
-        }));*/
+  const filteredData = useMemo(() => {
+    let result = members;
 
-    return navigate(route);
+    if (searchInput.length >= 2) {
+      const query = searchInput.toLowerCase();
+      result = result.filter(
+        m =>
+          m.documentNumber.toString().includes(query) ||
+          m.fullName.toLowerCase().includes(query),
+      );
+    }
+
+    if (sort.columnId) {
+      result = [...result].sort((a, b) => {
+        const aVal =
+          columns.find(c => c.id === sort.columnId)?.accessor(a) || '';
+        const bVal =
+          columns.find(c => c.id === sort.columnId)?.accessor(b) || '';
+        const cmp = String(aVal).localeCompare(String(bVal), 'es', {
+          numeric: true,
+        });
+        return sort.direction === 'asc' ? cmp : -cmp;
+      });
+    }
+
+    return result;
+  }, [members, searchInput, sort]);
+
+  const paginatedData = useMemo(
+    () => filteredData.slice(page * pageSize, (page + 1) * pageSize),
+    [filteredData, page],
+  );
+
+  const handleSortChange = (columnId, direction) => {
+    setSort({ columnId, direction });
+  };
+
+  const handlePageChange = newPage => {
+    setPage(newPage);
+  };
+
+  const handleSearchChange = value => {
+    setSearchInput(value);
+    setPage(0);
   };
 
   const selectedMemberToEdit = (document, route) => {
-    let _selectedMember = members.filter(member => {
-      return member.documentNumber === document;
-    });
-
-    dispatch(
-      selectedMemberData({
-        selectedMemberData: _selectedMember[0],
-      }),
-    );
-
-    navigateToManageMembers(route);
+    const _selectedMember = members.find(m => m.documentNumber === document);
+    if (_selectedMember) {
+      dispatch(selectedMemberData({ selectedMemberData: _selectedMember }));
+    }
+    navigate(route);
   };
 
-  const searchMember = document => {
-    if (document !== '' && document.length >= 3) {
-      let _filteredMembers = members.filter(member => {
-        return (
-          member.documentNumber.toString().indexOf(document) >= 0 ||
-          member.fullName.toLowerCase().indexOf(document) >= 0 ||
-          member.fullName.toUpperCase().indexOf(document) >= 0
-        );
-      });
-
-      if (_filteredMembers && _filteredMembers.length > 0) {
-        setMembersList(_filteredMembers);
-      } else setMembersList(members);
-    } else setMembersList(members);
-  };
+  const rowActions = ({ row }) => (
+    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
+      <Tooltip title="Editar">
+        <IconButton
+          size="small"
+          onClick={() =>
+            selectedMemberToEdit(row.documentNumber, '/consolidation')
+          }
+        >
+          <ModeEditIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Ver detalle">
+        <IconButton
+          size="small"
+          onClick={() => selectedMemberToEdit(row.documentNumber, '/cv-member')}
+        >
+          <VisibilityIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  );
 
   return (
     <Box>
-      <div className={styles.mainContainer}>
-        <div className={styles.infoContainer}>
-          <div class="mb-3">
-            <label for="idTxtMember" class="form-label">
-              Buscar por número de documento o nombre:
-            </label>
-            <input
-              type="text"
-              class="form-control form-control-dark"
-              id="idTxtMember"
-              onChange={e => {
-                searchMember(e.target.value);
-              }}
-              placeholder={'Ingrese el # documento o nombre'}
-              style={{ border: '1px solid grey' }}
-            />
-          </div>
-          <div>
-            <label for="idTxtMember" class="form-label">
-              Cantidad de registros: {membersList.length}
-            </label>
-          </div>
-          <div className={styles.createNewMemberContainer}>
-            <div onClick={() => navigateToManageMembers('/consolidation')}>
-              <AddCircleIcon
-                style={{ height: '40px', width: '40px' }}
-              ></AddCircleIcon>
-            </div>
-          </div>
-        </div>
-        <div className={styles.tableContainer}>
-          <table
-            className={`${styles.table} table table-striped table-hover table-dark table-borderless`}
+      <DataTable
+        columns={columns}
+        data={paginatedData}
+        search={{
+          value: searchInput,
+          onChange: handleSearchChange,
+          placeholder: 'Buscar por documento o nombre…',
+        }}
+        sort={{
+          columnId: sort.columnId,
+          direction: sort.direction,
+          onSortChange: handleSortChange,
+        }}
+        pagination={{
+          page,
+          pageSize,
+          total: filteredData.length,
+          onPageChange: handlePageChange,
+        }}
+        toolbarActions={
+          <Button
+            variant="primary"
+            onClick={() => navigate('/consolidation')}
+            sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
           >
-            <thead>
-              <tr>
-                <th>
-                  <p>Acciones</p>
-                </th>
-                <th>
-                  <p>Identificación</p>
-                </th>
-                <th>
-                  <p>Nombre completo</p>
-                </th>
-                <th>
-                  <p>Frente o área de trabajo</p>
-                </th>
-                <th>
-                  <p>Dirección</p>
-                </th>
-                <th>
-                  <p>Teléfono / Celular</p>
-                </th>
-                <th>
-                  <p>Correo</p>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="table-group-divider">
-              {membersList && membersList.length > 0 ? (
-                membersList.map((member, index) => {
-                  return (
-                    <tr>
-                      <td>
-                        <div>
-                          <div
-                            onClick={e => {
-                              selectedMemberToEdit(
-                                member.documentNumber,
-                                '/consolidation',
-                              );
-                            }}
-                          >
-                            <ModeEditIcon />
-                          </div>
-                          <div
-                            onClick={e => {
-                              selectedMemberToEdit(
-                                member.documentNumber,
-                                '/cv-member',
-                              );
-                            }}
-                          >
-                            <VisibilityIcon />
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p>{member.documentNumber}</p>
-                      </td>
-                      <td>
-                        {
-                          /*member.fullName.split(' ').length === 2 ?
-                                                member.fullName.split(' ')[0].charAt(0).toUpperCase() +
-                                                member.fullName.split(' ')[0].slice(1) + ' ' +
-                                                member.fullName.split(' ')[1].charAt(0).toUpperCase() +
-                                                member.fullName.split(' ')[1].slice(1) :
-                                            member.fullName.split(' ').length === 3 ?
-                                                member.fullName.split(' ')[0].charAt(0).toUpperCase() +
-                                                member.fullName.split(' ')[0].slice(1) + ' ' +
-                                                member.fullName.split(' ')[1].charAt(0).toUpperCase() +
-                                                member.fullName.split(' ')[1].slice(1) + ' ' +
-                                                member.fullName.split(' ')[2].charAt(0).toUpperCase() +
-                                                member.fullName.split(' ')[2].slice(1) :
-                                            member.fullName.split(' ').length === 4 || member.fullName.split(' ').length === 5 ?
-                                                member.fullName.split(' ')[0].charAt(0).toUpperCase() + 
-                                                member.fullName.split(' ')[0].slice(1) + ' ' +
-                                                member.fullName.split(' ')[1].charAt(0).toUpperCase() +
-                                                member.fullName.split(' ')[1].slice(1) + ' ' +
-                                                member.fullName.split(' ')[2].charAt(0).toUpperCase() +
-                                                member.fullName.split(' ')[2].slice(1) + ' ' +
-                                                member.fullName.split(' ')[3].charAt(0).toUpperCase() +
-                                                member.fullName.split(' ')[3].slice(1) :*/
-                          member.fullName.toUpperCase()
-                        }
-                      </td>
-                      <td>
-                        <p>{member.workfront ? member.workfront.name : ''}</p>
-                      </td>
-                      <td>
-                        <p>{member.address}</p>
-                      </td>
-                      <td>
-                        <p>{`${member.landLine}  ${member.mobilePhone}`}</p>
-                      </td>
-                      <td>
-                        <p>{member.email}</p>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td style={{ textAlign: 'center' }}>
-                    <p>Sin resultados</p>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            <AddIcon sx={{ fontSize: 18 }} />
+            Nuevo miembro
+          </Button>
+        }
+        emptyState={{
+          message: searchInput
+            ? 'No se encontraron miembros con ese criterio de búsqueda.'
+            : 'No hay miembros registrados.',
+        }}
+        rowActions={rowActions}
+      />
     </Box>
   );
 }
+
+export default ChurchMembersList;

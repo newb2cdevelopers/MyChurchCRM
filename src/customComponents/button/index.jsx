@@ -28,12 +28,44 @@ const variantStyles = {
   },
 };
 
-function Button({ variant = 'primary', sx, children, ...props }) {
+const VALID_MUI_COLORS = [
+  'primary',
+  'secondary',
+  'success',
+  'error',
+  'info',
+  'warning',
+  'inherit',
+];
+
+function Button({
+  variant = 'primary',
+  sx,
+  children,
+  color,
+  buttonText,
+  ...props
+}) {
   const config = variantStyles[variant] || variantStyles.primary;
+  const isMuiColor = VALID_MUI_COLORS.includes(color);
 
   return (
-    <MuiButton variant={config.variant} sx={{ ...config.sx, ...sx }} {...props}>
-      {children}
+    <MuiButton
+      variant={config.variant}
+      color={isMuiColor ? color : undefined}
+      sx={{
+        ...config.sx,
+        ...(color && !isMuiColor
+          ? {
+              backgroundColor: color,
+              '&:hover': { backgroundColor: color },
+            }
+          : {}),
+        ...sx,
+      }}
+      {...props}
+    >
+      {children || buttonText}
     </MuiButton>
   );
 }

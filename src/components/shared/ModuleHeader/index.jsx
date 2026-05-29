@@ -12,14 +12,19 @@ function ModuleHeader({ title, description, primaryAction, actions, sx }) {
         alignItems: { xs: 'flex-start', sm: 'center' },
         justifyContent: 'space-between',
         gap: { xs: 2, sm: 4 },
-        mb: 4,
+        mb: { xs: 2, md: 4 },
         ...sx,
       }}
     >
-      <Box sx={{ minWidth: 0, flex: 1 }}>
+      <Box sx={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
         <Typography
           variant="h5"
-          sx={{ fontWeight: 700, lineHeight: 1.2, textAlign: 'left' }}
+          sx={{
+            fontWeight: 700,
+            lineHeight: 1.2,
+            textAlign: 'left',
+            wordBreak: 'break-word',
+          }}
         >
           {title}
         </Typography>
@@ -31,9 +36,10 @@ function ModuleHeader({ title, description, primaryAction, actions, sx }) {
               mt: 0.5,
               opacity: 0.7,
               fontWeight: 500,
-              textAlign: 'left !important',
+              textAlign: 'left',
               width: '100%',
               display: 'block',
+              wordBreak: 'break-word',
             }}
           >
             {description}
@@ -48,6 +54,7 @@ function ModuleHeader({ title, description, primaryAction, actions, sx }) {
             alignItems: 'center',
             gap: 1.5,
             flexShrink: 0,
+            flexWrap: 'wrap',
             alignSelf: { xs: 'stretch', sm: 'auto' },
           }}
         >
