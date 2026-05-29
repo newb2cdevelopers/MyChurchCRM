@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
@@ -15,6 +15,7 @@ import {
 import { B2C_BASE_URL } from '../../../constants';
 import { selectedMemberData } from '../../../features/members/membersSlice';
 import DataTable from '../../shared/DataTable';
+import CreateMemberStepper from '../../shared/CreateMemberStepper';
 
 const columns = [
   {
@@ -41,8 +42,8 @@ const columns = [
   },
   {
     id: 'phone',
-    label: 'Teléfono / Celular',
-    accessor: row => `${row.landLine || ''} ${row.mobilePhone || ''}`.trim(),
+    label: 'Celular',
+    accessor: row => row.mobilePhone || '',
   },
   {
     id: 'email',
@@ -60,12 +61,13 @@ function ChurchMembersList() {
   const [searchInput, setSearchInput] = useState('');
   const [sort, setSort] = useState({ columnId: null, direction: 'asc' });
   const [page, setPage] = useState(0);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [memberToEdit, setMemberToEdit] = useState(null);
   const pageSize = 10;
 
-  useEffect(() => {
+  const fetchMembers = useCallback(() => {
     if (!user.selectedChurchId) return;
-    dispatch(selectedMemberData({ selectedMemberData: null }));
-
     const headers = getAuthHeaders(user.token);
     genericGetService(
       `${B2C_BASE_URL}/member?churchId=${user.selectedChurchId}`,
@@ -73,10 +75,14 @@ function ChurchMembersList() {
     ).then(data => {
       if (data[0]) {
         setMembers(data[0]);
-        return;
       }
     });
-  }, [user.selectedChurchId, user.token, dispatch]);
+  }, [user.selectedChurchId, user.token]);
+
+  useEffect(() => {
+    dispatch(selectedMemberData({ selectedMemberData: null }));
+    fetchMembers();
+  }, [fetchMembers, dispatch]);
 
   const filteredData = useMemo(() => {
     let result = members;
@@ -124,6 +130,15 @@ function ChurchMembersList() {
     setPage(0);
   };
 
+  const handleEdit = document => {
+    const member = members.find(m => m.documentNumber === document);
+    if (member) {
+      dispatch(selectedMemberData({ selectedMemberData: member }));
+      setMemberToEdit(member);
+      setEditModalOpen(true);
+    }
+  };
+
   const selectedMemberToEdit = (document, route) => {
     const _selectedMember = members.find(m => m.documentNumber === document);
     if (_selectedMember) {
@@ -135,12 +150,7 @@ function ChurchMembersList() {
   const rowActions = ({ row }) => (
     <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
       <Tooltip title="Editar">
-        <IconButton
-          size="small"
-          onClick={() =>
-            selectedMemberToEdit(row.documentNumber, '/consolidation')
-          }
-        >
+        <IconButton size="small" onClick={() => handleEdit(row.documentNumber)}>
           <ModeEditIcon fontSize="small" />
         </IconButton>
       </Tooltip>
@@ -179,7 +189,7 @@ function ChurchMembersList() {
         toolbarActions={
           <Button
             variant="primary"
-            onClick={() => navigate('/consolidation')}
+            onClick={() => setCreateModalOpen(true)}
             sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
           >
             <AddIcon sx={{ fontSize: 18 }} />
@@ -192,6 +202,27 @@ function ChurchMembersList() {
             : 'No hay miembros registrados.',
         }}
         rowActions={rowActions}
+      />
+      <CreateMemberStepper
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onSuccess={() => {
+          setCreateModalOpen(false);
+          fetchMembers();
+        }}
+      />
+      <CreateMemberStepper
+        open={editModalOpen}
+        initialData={memberToEdit}
+        onClose={() => {
+          setEditModalOpen(false);
+          setMemberToEdit(null);
+        }}
+        onSuccess={() => {
+          setEditModalOpen(false);
+          setMemberToEdit(null);
+          fetchMembers();
+        }}
       />
     </Box>
   );
