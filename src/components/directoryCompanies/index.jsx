@@ -177,14 +177,14 @@ export default function DirectoryCompanies() {
           <p className={styles.filterLabel}>Filtrar por categorías:</p>
           <div className={styles.categoriesContainer}>
             {categories.map(category => (
-              <label key={category} className={styles.categoryOption}>
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.includes(category)}
-                  onChange={() => toggleCategory(category)}
-                />
-                <span>{category}</span>
-              </label>
+              <button
+                key={category}
+                type="button"
+                className={`${styles.categoryChip}${selectedCategories.includes(category) ? ` ${styles.categoryChipActive}` : ''}`}
+                onClick={() => toggleCategory(category)}
+              >
+                {category}
+              </button>
             ))}
           </div>
         </div>

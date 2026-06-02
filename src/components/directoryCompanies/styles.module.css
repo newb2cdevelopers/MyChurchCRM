@@ -104,6 +104,33 @@
   border-radius: 20px;
 }
 
+.categoryChip {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.categoryChip:hover {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.categoryChipActive {
+  background-color: #ede9fe;
+  color: #4c1d95;
+  font-weight: 600;
+}
+
+.categoryChipActive:hover {
+  background-color: #ddd6fe;
+}
+
 .grid {
   margin-top: 20px;
   display: grid;
