@@ -53,7 +53,7 @@ function Header() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        px: 6,
+        px: { xs: 2, md: 6 },
         borderBottom: '1px solid',
         borderColor: theme => alpha(theme.palette.divider, 0.3),
       }}

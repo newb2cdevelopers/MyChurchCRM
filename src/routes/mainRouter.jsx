@@ -3,7 +3,6 @@ import { Routes, Route } from 'react-router-dom';
 import Landing from '../components/landing';
 import Login from '../components/login';
 import Register from '../components/register';
-import HomeUser from '../components/homeUser';
 import Dashboard from '../components/dashboard';
 import { ProtectedRoute } from './protectedRoute';
 import FormAforo from '../components/aforo/new people/Form';
@@ -42,14 +41,6 @@ const RoutesCollection = (
         element={
           <ProtectedRoute>
             <Dashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/modules"
-        element={
-          <ProtectedRoute>
-            <HomeUser />
           </ProtectedRoute>
         }
       />
