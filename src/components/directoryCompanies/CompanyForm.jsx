@@ -16,6 +16,7 @@ const defaultSocialNetworks = {
   x: '',
   tiktok: '',
   linkedin: '',
+  whatsapp: '',
 };
 
 const normalizeSocialNetworks = rawSocialNetworks => {
@@ -94,6 +95,7 @@ export default function CompanyForm() {
     name: '',
     description: '',
     phone: '',
+    address: '',
     website: '',
     categories: [],
     socialNetworks: defaultSocialNetworks,
@@ -188,6 +190,12 @@ export default function CompanyForm() {
             companyPayload.Phone ||
             companyPayload.companyPhone ||
             companyPayload.CompanyPhone ||
+            '',
+          address:
+            companyPayload.address ||
+            companyPayload.Address ||
+            companyPayload.companyAddress ||
+            companyPayload.CompanyAddress ||
             '',
           website:
             companyPayload.website ||
@@ -316,6 +324,9 @@ export default function CompanyForm() {
       payload.append('name', formValues.name);
       payload.append('description', formValues.description);
       payload.append('phone', formValues.phone);
+      if (formValues.address) {
+        payload.append('address', formValues.address);
+      }
       if (formValues.website) {
         payload.append('website', formValues.website);
       }
@@ -425,6 +436,15 @@ export default function CompanyForm() {
             />
           </div>
 
+          <input
+            className={styles.input}
+            name="address"
+            value={formValues.address}
+            onChange={handleChange}
+            placeholder="Dirección"
+            disabled={isSaving || isLoadingCompany}
+          />
+
           <div>
             <p className={styles.sectionTitle}>Logo de la empresa</p>
             {isEditMode && currentLogoUrl ? (
@@ -511,6 +531,14 @@ export default function CompanyForm() {
                 value={formValues.socialNetworks.linkedin}
                 onChange={handleSocialNetworkChange}
                 placeholder="LinkedIn"
+                disabled={isSaving || isLoadingCompany}
+              />
+              <input
+                className={styles.input}
+                name="whatsapp"
+                value={formValues.socialNetworks.whatsapp}
+                onChange={handleSocialNetworkChange}
+                placeholder="WhatsApp (ej: 573001234567)"
                 disabled={isSaving || isLoadingCompany}
               />
             </div>
