@@ -5,17 +5,14 @@ import Tooltip from '@mui/material/Tooltip';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
-import Button from '../../../customComponents/button';
+import Button from '../../customComponents/button';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  genericGetService,
-  getAuthHeaders,
-} from '../../../api/externalServices';
-import { B2C_BASE_URL } from '../../../constants';
-import { selectedMemberData } from '../../../features/members/membersSlice';
-import DataTable from '../../shared/DataTable';
-import CreateMemberStepper from '../../shared/CreateMemberStepper';
+import { genericGetService, getAuthHeaders } from '../../api/externalServices';
+import { B2C_BASE_URL } from '../../constants';
+import { selectedMemberData } from '../../features/members/membersSlice';
+import DataTable from '../shared/DataTable';
+import CreateMemberStepper from '../shared/CreateMemberStepper';
 
 const columns = [
   {

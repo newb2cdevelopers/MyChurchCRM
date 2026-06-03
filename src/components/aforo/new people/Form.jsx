@@ -2,9 +2,13 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useSelector } from 'react-redux';
-import { genericPostService, getAuthHeaders, genericPutService } from '../../../api/externalServices';
+import {
+  genericPostService,
+  getAuthHeaders,
+  genericPutService,
+} from '../../../api/externalServices';
 import { B2C_BASE_URL } from '../../../constants';
-import styles from "../../consolidation/styles.module.css";
+import styles from './styles.module.css';
 
 const validationSchema = yup.object({
   documentNumber: yup
@@ -25,26 +29,19 @@ const validationSchema = yup.object({
   email: yup
     .string('Ingrese el correo')
     .required('El correo es obligatorio')
-    .email("El correo no es válido"),
-  birthDate: yup
-    .date()
-    .required('la fecha es obligatoria'),
+    .email('El correo no es válido'),
+  birthDate: yup.date().required('la fecha es obligatoria'),
   maritalStatus: yup
     .string('Seleccione el estado civil')
     .required('El estado civil es obligatorio'),
   occupation: yup
     .string('Ingrese la ocupación')
     .required('La ocupación es obligatoria'),
-  conversionyear: yup
-    .number()
-    .positive("El campo debe sere mayor a 0"),
-  yearInChurch: yup
-    .number()
-    .positive("El campo debe sere mayor a 0")
+  conversionyear: yup.number().positive('El campo debe sere mayor a 0'),
+  yearInChurch: yup.number().positive('El campo debe sere mayor a 0'),
 });
 
 export default function NewMember() {
-
   const user = useSelector(state => state.user);
 
   const initialValues = {
@@ -62,69 +59,73 @@ export default function NewMember() {
     occupation: '',
     conversionyear: 0,
     yearInChurch: 0,
-    isBaptised: false
+    isBaptised: false,
   };
 
   const formik = useFormik({
     initialValues: initialValues,
 
     validationSchema: validationSchema,
-    onSubmit: async (values) => {
-
+    onSubmit: async values => {
       var payload = { ...values, churchId: user.selectedChurchId };
-      const results = await genericPostService(`${B2C_BASE_URL}/member`, payload, getAuthHeaders(user.token));
+      const results = await genericPostService(
+        `${B2C_BASE_URL}/member`,
+        payload,
+        getAuthHeaders(user.token),
+      );
 
       if (results[1]) {
-        alert("Se ha presentado un error")
+        alert('Se ha presentado un error');
       } else {
         if (results[0].isSuccessful) {
-          alert("Se regitró un miembro nuevo exitosamente")
+          alert('Se regitró un miembro nuevo exitosamente');
         } else {
-          alert(results[0].message)
+          alert(results[0].message);
         }
       }
-
     },
   });
 
   return (
     <div className={styles.containerVerifyAsistents}>
-      <form onSubmit={formik.handleSubmit} >
+      <form onSubmit={formik.handleSubmit}>
         <div className={styles.tabContainer}>
           <div className={styles.entryIdTxtFullName}>
-            <label for='documentNumber'>Número de Documento:</label>
+            <label for="documentNumber">Número de Documento:</label>
             <input
-              name='documentNumber'
-              type='text'
+              name="documentNumber"
+              type="text"
               onChange={formik.handleChange}
               className={styles.inputDataIdTxtFullName}
               value={formik.values.documentNumber}
-              id='documentNumber'
+              id="documentNumber"
             />
           </div>
           {formik.errors.documentNumber && formik.touched.documentNumber ? (
-            <p className={styles.errorMessage}>{formik.errors.documentNumber}</p>
+            <p className={styles.errorMessage}>
+              {formik.errors.documentNumber}
+            </p>
           ) : null}
           <div className={styles.entryIdTxtFullName}>
-            <label for='fullName'>Nombre completo:</label>
+            <label for="fullName">Nombre completo:</label>
             <input
-              name='fullName'
-              type='text'
+              name="fullName"
+              type="text"
               onChange={formik.handleChange}
               className={styles.inputDataIdTxtFullName}
               value={formik.values.fullName}
-              id='fullName'
+              id="fullName"
             />
           </div>
           {formik.errors.fullName && formik.touched.fullName ? (
             <p className={styles.errorMessage}>{formik.errors.fullName}</p>
           ) : null}
           <div className={styles.entryIdTxtAddress}>
-            <label for='address'>Barrio:</label>
+            <label for="address">Barrio:</label>
             <input
-              name='address'
-              id='address'
-              type='text'
+              name="address"
+              id="address"
+              type="text"
               onChange={formik.handleChange}
               value={formik.values.address}
               className={styles.inputDataIdTxtAddress}
@@ -134,11 +135,11 @@ export default function NewMember() {
             <p className={styles.errorMessage}>{formik.errors.address}</p>
           ) : null}
           <div className={styles.entryIdTxtPhone}>
-            <label for='mobilePhone'>Teléfono / Celular:</label>
+            <label for="mobilePhone">Teléfono / Celular:</label>
             <input
-              id='mobilePhone'
-              name='mobilePhone'
-              type='text'
+              id="mobilePhone"
+              name="mobilePhone"
+              type="text"
               onChange={formik.handleChange}
               value={formik.values.mobilePhone}
               className={styles.inputDataIdTxtPhone}
@@ -149,9 +150,15 @@ export default function NewMember() {
           ) : null}
         </div>
         <div className={styles.buttonContainer}>
-          <button type="submit" disabled={!formik.dirty} className={styles.buttonClass}>Guardar</button>
+          <button
+            type="submit"
+            disabled={!formik.dirty}
+            className={styles.buttonClass}
+          >
+            Guardar
+          </button>
         </div>
       </form>
     </div>
-  )
+  );
 }

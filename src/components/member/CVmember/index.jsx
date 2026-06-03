@@ -16,13 +16,13 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import DescriptionIcon from '@mui/icons-material/Description';
 import WorkIcon from '@mui/icons-material/Work';
 import CallIcon from '@mui/icons-material/Call';
-import ModuleTabs from '../../../shared/ModuleTabs';
-import DataTable from '../../../shared/DataTable';
+import ModuleTabs from '../../shared/ModuleTabs';
+import DataTable from '../../shared/DataTable';
 import {
   genericGetService,
   getAuthHeaders,
-} from '../../../../api/externalServices';
-import { B2C_BASE_URL } from '../../../../constants';
+} from '../../../api/externalServices';
+import { B2C_BASE_URL } from '../../../constants';
 
 function formatDate(dateStr) {
   if (!dateStr) return '—';
