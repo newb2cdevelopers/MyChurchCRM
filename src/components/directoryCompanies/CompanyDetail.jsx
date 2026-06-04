@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -180,6 +181,21 @@ const normalizeSocialNetworks = company => {
   return defaultNetworks;
 };
 
+const normalizeProducts = company => {
+  const rawProducts =
+    company.Products || company.products || company.companyProducts || [];
+
+  if (!Array.isArray(rawProducts)) {
+    return [];
+  }
+
+  return rawProducts.map(p => ({
+    title: p.Title || p.title || '',
+    description: p.Description || p.description || '',
+    imageUrl: p.ImageUrl || p.imageUrl || '',
+  }));
+};
+
 const normalizeCompany = company => {
   return {
     id: String(
@@ -229,6 +245,7 @@ const normalizeCompany = company => {
       company.CompanyLogo ||
       '',
     companySocialNetworks: normalizeSocialNetworks(company),
+    companyProducts: normalizeProducts(company),
   };
 };
 
@@ -241,6 +258,10 @@ export default function CompanyDetail() {
   const [expanded, setExpanded] = useState(false);
   const descriptionRef = useRef(null);
   const [descriptionOverflows, setDescriptionOverflows] = useState(false);
+  const [currentProductPage, setCurrentProductPage] = useState(0);
+  const [isHoveringCarousel, setIsHoveringCarousel] = useState(false);
+  const [itemsPerView, setItemsPerView] = useState(3);
+  const [noTransition, setNoTransition] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -324,6 +345,68 @@ export default function CompanyDetail() {
     setExpanded(false);
   }, [company, loading]);
 
+  const getItemsPerView = useCallback(() => {
+    if (window.innerWidth < 768) return 1;
+    if (window.innerWidth < 1024) return 2;
+    return 3;
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerView(getItemsPerView());
+      setCurrentProductPage(0);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [getItemsPerView]);
+
+  const totalPositions = company ? company.companyProducts.length : 0;
+
+  const renderedProducts = useMemo(() => {
+    if (!company) return [];
+    const prods = company.companyProducts;
+    return [...prods, ...prods.slice(0, itemsPerView)];
+  }, [company, itemsPerView]);
+
+  const goToNextPage = useCallback(() => {
+    if (totalPositions <= 1) return;
+    if (currentProductPage >= totalPositions - 1) {
+      setNoTransition(true);
+      setCurrentProductPage(0);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setNoTransition(false);
+        });
+      });
+    } else {
+      setNoTransition(false);
+      setCurrentProductPage(prev => prev + 1);
+    }
+  }, [currentProductPage, totalPositions]);
+
+  const goToPrevPage = useCallback(() => {
+    if (totalPositions <= 1) return;
+    if (currentProductPage === 0) {
+      setNoTransition(true);
+      setCurrentProductPage(totalPositions - 1);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setNoTransition(false);
+        });
+      });
+    } else {
+      setNoTransition(false);
+      setCurrentProductPage(prev => prev - 1);
+    }
+  }, [currentProductPage, totalPositions]);
+
+  useEffect(() => {
+    if (isHoveringCarousel || totalPositions <= 1) return;
+    const interval = setInterval(goToNextPage, 3000);
+    return () => clearInterval(interval);
+  }, [isHoveringCarousel, totalPositions, goToNextPage]);
+
   const hasSocialNetworks = useMemo(() => {
     if (!company) {
       return false;
@@ -397,6 +480,110 @@ export default function CompanyDetail() {
             </button>
           ) : null}
         </div>
+
+        {company.companyProducts.length > 0 ? (
+          <div className={styles.carouselSection}>
+            <div className={styles.carouselHeader}>
+              <h2 className={styles.carouselTitle}>Productos destacados</h2>
+            </div>
+
+            <div
+              className={styles.carouselContainer}
+              onMouseEnter={() => setIsHoveringCarousel(true)}
+              onMouseLeave={() => setIsHoveringCarousel(false)}
+            >
+              <div
+                className={`${styles.carouselTrack}${noTransition ? ` ${styles.noTransition}` : ''}`}
+                style={{
+                  transform: `translateX(-${currentProductPage * (100 / itemsPerView)}%)`,
+                }}
+              >
+                {renderedProducts.map((product, index) => (
+                  <div
+                    key={`${product.title}-${index}`}
+                    className={styles.carouselCard}
+                  >
+                    <div className={styles.carouselCardInner}>
+                      {product.imageUrl ? (
+                        <div className={styles.carouselImageWrapper}>
+                          <img
+                            className={styles.carouselImage}
+                            src={product.imageUrl}
+                            alt={product.title}
+                            loading="lazy"
+                          />
+                        </div>
+                      ) : (
+                        <div className={styles.carouselImagePlaceholder}>
+                          <svg
+                            width="40"
+                            height="40"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#9ca3af"
+                            strokeWidth="1.5"
+                          >
+                            <rect
+                              x="3"
+                              y="3"
+                              width="18"
+                              height="18"
+                              rx="2"
+                              ry="2"
+                            />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                          </svg>
+                        </div>
+                      )}
+                      <div className={styles.carouselCardBody}>
+                        <p className={styles.carouselCardTitle}>
+                          {product.title}
+                        </p>
+                        {product.description ? (
+                          <p className={styles.carouselCardDescription}>
+                            {product.description}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {totalPositions > 1 ? (
+              <div className={styles.carouselControls}>
+                <button
+                  type="button"
+                  className={`${styles.carouselArrow} ${styles.carouselArrowPrev}`}
+                  onClick={goToPrevPage}
+                  aria-label="Anterior"
+                />
+                <div className={styles.carouselDots}>
+                  {Array.from({ length: totalPositions }, (_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={`${styles.carouselDot}${i === currentProductPage ? ` ${styles.carouselDotActive}` : ''}`}
+                      onClick={() => {
+                        setNoTransition(false);
+                        setCurrentProductPage(i);
+                      }}
+                      aria-label={`Ir a posición ${i + 1}`}
+                    />
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className={`${styles.carouselArrow} ${styles.carouselArrowNext}`}
+                  onClick={goToNextPage}
+                  aria-label="Siguiente"
+                />
+              </div>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className={styles.detailGrid}>
           <section className={styles.infoCard}>
