@@ -49,7 +49,7 @@ function InfoRow({ label, value }) {
       </Typography>
       <Typography
         variant="body2"
-        fontWeight={600}
+        fontWeight={400}
         color="text.primary"
         sx={{ textAlign: 'left', width: '100%' }}
       >
@@ -320,7 +320,7 @@ export default function CvMember() {
                     </Typography>
                     <Typography
                       variant="body2"
-                      fontWeight={600}
+                      fontWeight={400}
                       sx={{ textAlign: 'right' }}
                     >
                       {member.conversionyear || '—'}
@@ -363,7 +363,7 @@ export default function CvMember() {
                     </Typography>
                     <Typography
                       variant="body2"
-                      fontWeight={600}
+                      fontWeight={400}
                       sx={{ textAlign: 'right' }}
                     >
                       {member.workfront?.name || '—'}
@@ -385,7 +385,7 @@ export default function CvMember() {
                     </Typography>
                     <Typography
                       variant="body2"
-                      fontWeight={600}
+                      fontWeight={400}
                       sx={{ textAlign: 'right' }}
                     >
                       {member.yearInChurch || '—'}
