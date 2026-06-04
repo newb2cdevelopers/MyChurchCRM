@@ -14,13 +14,13 @@
   text-align: center;
 }
 
+.contentDetail {
+  padding-top: 0;
+}
+
 .detailHeader {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  text-align: center;
+  position: relative;
+  height: 160px;
 }
 
 .pageTitle {
@@ -28,10 +28,70 @@
   text-align: center;
 }
 
+.headerContent .pageTitle {
+  margin: 0;
+  text-align: left;
+}
+
+.headerTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-start;
+}
+
+.headerContent {
+  padding-top: 48px;
+}
+
 .descriptionText {
   margin-top: 8px;
   color: #666;
-  text-align: justify;
+  text-align: left;
+}
+
+.companyBanner {
+  position: absolute;
+  top: 0;
+  left: -24px;
+  right: -24px;
+  height: 160px;
+  background-color: #7F77DD;
+  border-radius: 12px 12px 0 0;
+}
+
+.companyLogoWrapper {
+  position: absolute;
+  bottom: -32px;
+  left: 0;
+  z-index: 1;
+  width: 120px;
+  height: 120px;
+  border-radius: 14px;
+  border: 3px solid #fff;
+  overflow: hidden;
+  background: #f3f4f6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.companyLogoWrapperEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.companyLogo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.emptyLogoState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .content > .descriptionText {
@@ -304,6 +364,7 @@
 
 .detailBlock {
   margin-top: 16px;
+  text-align: left;
 }
 
 .clampedDescription {
@@ -340,12 +401,18 @@
 .detailGrid {
   margin-top: 18px;
   display: grid;
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 1fr;
   gap: 16px;
 }
 
 .detailGridSocial {
   margin-top: 16px;
+}
+
+@media (min-width: 769px) {
+  .detailGrid {
+    grid-template-columns: 2fr 3fr;
+  }
 }
 
 .detailLabel {

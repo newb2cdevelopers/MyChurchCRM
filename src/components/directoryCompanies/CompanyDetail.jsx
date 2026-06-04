@@ -445,40 +445,76 @@ export default function CompanyDetail() {
 
   return (
     <div className={styles.page}>
-      <section className={styles.content}>
+      <section className={`${styles.content} ${styles.contentDetail}`}>
         <div className={styles.detailHeader}>
-          {company.companyLogo ? (
-            <img
-              className={styles.companyLogo}
-              src={company.companyLogo}
-              alt={`Logo de ${company.companyName}`}
-            />
-          ) : (
-            <div className={styles.emptyLogoState}>No hay logo registrado</div>
-          )}
+          <div className={styles.companyBanner} />
 
-          <div>
-            <h1 className={styles.pageTitle}>{company.companyName}</h1>
-          </div>
+          {company.companyLogo ? (
+            <div className={styles.companyLogoWrapper}>
+              <img
+                className={styles.companyLogo}
+                src={company.companyLogo}
+                alt={`Logo de ${company.companyName}`}
+              />
+            </div>
+          ) : (
+            <div
+              className={`${styles.companyLogoWrapper} ${styles.companyLogoWrapperEmpty}`}
+            >
+              <div className={styles.emptyLogoState}>
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#9ca3af"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="4" y="2" width="16" height="20" rx="1" />
+                  <line x1="9" y1="6" x2="9" y2="8" />
+                  <line x1="15" y1="6" x2="15" y2="8" />
+                  <line x1="9" y1="14" x2="9" y2="16" />
+                  <line x1="15" y1="14" x2="15" y2="16" />
+                  <path d="M4 10h16" />
+                  <path d="M4 18h16" />
+                </svg>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className={styles.detailBlock}>
-          <p className={styles.detailLabel}>Descripción</p>
-          <p
-            ref={descriptionRef}
-            className={`${styles.descriptionText}${!expanded ? ` ${styles.clampedDescription}` : ''}`}
-          >
-            {company.companyDescription}
-          </p>
-          {descriptionOverflows ? (
-            <button
-              type="button"
-              className={styles.toggleDescriptionButton}
-              onClick={() => setExpanded(previous => !previous)}
-            >
-              {expanded ? 'Ver menos' : 'Ver más'}
-            </button>
+        <div className={styles.headerContent}>
+          <h1 className={styles.pageTitle}>{company.companyName}</h1>
+
+          {company.companyCategories.length > 0 ? (
+            <div className={styles.headerTags}>
+              {company.companyCategories.map(category => (
+                <span key={`${company.id}-${category}`} className={styles.tag}>
+                  {category}
+                </span>
+              ))}
+            </div>
           ) : null}
+
+          <div className={styles.detailBlock}>
+            <p
+              ref={descriptionRef}
+              className={`${styles.descriptionText}${!expanded ? ` ${styles.clampedDescription}` : ''}`}
+            >
+              {company.companyDescription}
+            </p>
+            {descriptionOverflows ? (
+              <button
+                type="button"
+                className={styles.toggleDescriptionButton}
+                onClick={() => setExpanded(previous => !previous)}
+              >
+                {expanded ? 'Ver menos' : 'Ver más'}
+              </button>
+            ) : null}
+          </div>
         </div>
 
         {company.companyProducts.length > 0 ? (
@@ -599,19 +635,6 @@ export default function CompanyDetail() {
             ) : null}
           </section>
 
-          <section className={styles.infoCard}>
-            <p className={styles.detailLabel}>Categorías</p>
-            <div className={styles.cardTags}>
-              {company.companyCategories.map(category => (
-                <span key={`${company.id}-${category}`} className={styles.tag}>
-                  {category}
-                </span>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <div className={styles.detailGridSocial}>
           <section className={styles.infoCard}>
             <p className={styles.detailLabel}>Redes Sociales</p>
 
