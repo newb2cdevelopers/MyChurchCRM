@@ -463,8 +463,8 @@ export default function CompanyDetail() {
             >
               <div className={styles.emptyLogoState}>
                 <svg
-                  width="48"
-                  height="48"
+                  width="72"
+                  height="72"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="#9ca3af"

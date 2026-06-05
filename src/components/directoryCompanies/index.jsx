@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Link } from 'react-router-dom';
 import styles from './styles.module.css';
 import { B2C_BASE_URL } from '../../constants';
@@ -79,6 +85,9 @@ export default function DirectoryCompanies() {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [categorySearch, setCategorySearch] = useState('');
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -155,6 +164,32 @@ export default function DirectoryCompanies() {
     });
   };
 
+  const filteredCategoriesForDropdown = useMemo(() => {
+    return categories.filter(category =>
+      category.toLowerCase().includes(categorySearch.toLowerCase()),
+    );
+  }, [categories, categorySearch]);
+
+  const toggleDropdown = useCallback(() => {
+    setIsDropdownOpen(prev => {
+      if (prev) {
+        setCategorySearch('');
+      }
+      return !prev;
+    });
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+        setCategorySearch('');
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <div className={styles.page}>
       <section className={styles.content}>
@@ -163,29 +198,98 @@ export default function DirectoryCompanies() {
           Consulta, filtra y explora empresas de la comunidad.
         </p>
 
-        <div className={styles.searchRow}>
-          <input
-            className={styles.searchInput}
-            type="text"
-            placeholder="Buscar por nombre de empresa"
-            value={searchTerm}
-            onChange={event => setSearchTerm(event.target.value)}
-          />
-        </div>
+        <div className={styles.searchFilterRow}>
+          <div className={styles.searchRow}>
+            <input
+              className={styles.searchInput}
+              type="text"
+              placeholder="Buscar por nombre de empresa"
+              value={searchTerm}
+              onChange={event => setSearchTerm(event.target.value)}
+            />
+          </div>
 
-        <div className={styles.filtersContainer}>
-          <p className={styles.filterLabel}>Filtrar por categorías:</p>
-          <div className={styles.categoriesContainer}>
-            {categories.map(category => (
-              <button
-                key={category}
-                type="button"
-                className={`${styles.categoryChip}${selectedCategories.includes(category) ? ` ${styles.categoryChipActive}` : ''}`}
-                onClick={() => toggleCategory(category)}
+          <div className={styles.filterDropdown} ref={dropdownRef}>
+            <button
+              type="button"
+              className={styles.filterDropdownToggle}
+              onClick={toggleDropdown}
+            >
+              <span>
+                {selectedCategories.length > 0
+                  ? `Categorías (${selectedCategories.length})`
+                  : 'Categorías'}
+              </span>
+              <svg
+                className={`${styles.filterDropdownArrow}${isDropdownOpen ? ` ${styles.filterDropdownArrowOpen}` : ''}`}
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                {category}
-              </button>
-            ))}
+                <path d="M4 6l4 4 4-4" />
+              </svg>
+            </button>
+
+            {selectedCategories.length > 0 ? (
+              <div className={styles.filterDropdownChips}>
+                {selectedCategories.map(category => (
+                  <button
+                    key={category}
+                    type="button"
+                    className={`${styles.categoryChip} ${styles.categoryChipActive}`}
+                    onClick={() => toggleCategory(category)}
+                  >
+                    {category}
+                    <svg
+                      className={styles.chipCloseIcon}
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M2.5 2.5l7 7M9.5 2.5l-7 7" />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            {isDropdownOpen ? (
+              <div className={styles.filterDropdownMenu}>
+                <input
+                  className={styles.filterDropdownSearch}
+                  type="text"
+                  placeholder="Buscar categoría..."
+                  value={categorySearch}
+                  onChange={event => setCategorySearch(event.target.value)}
+                  autoFocus
+                />
+                <div className={styles.filterDropdownList}>
+                  {filteredCategoriesForDropdown.map(category => (
+                    <button
+                      key={category}
+                      type="button"
+                      className={`${styles.categoryChip}${selectedCategories.includes(category) ? ` ${styles.categoryChipActive}` : ''}`}
+                      onClick={() => toggleCategory(category)}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                  {filteredCategoriesForDropdown.length === 0 ? (
+                    <p className={styles.filterDropdownEmpty}>Sin resultados</p>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
 
