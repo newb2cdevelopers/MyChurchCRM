@@ -261,28 +261,6 @@
   margin: 0 0 12px;
 }
 
-.companyLogo {
-  display: block;
-  width: 140px;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 999px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
-}
-
-.emptyLogoState {
-  width: 140px;
-  height: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-  font-size: 13px;
-  border-radius: 999px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
-  text-align: center;
-}
-
 .menuOption {
   display: block;
   width: 100%;
