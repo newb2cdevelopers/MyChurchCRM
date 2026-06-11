@@ -9,6 +9,7 @@ import React, {
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from './styles.module.css';
 import { B2C_BASE_URL } from '../../constants';
+import heroBanner from '../../images/expoferia-cfe.jpeg';
 
 const parseCategoryName = category => {
   if (!category) {
@@ -295,13 +296,10 @@ export default function CompanyDetail() {
         const companyPayload =
           data?.data && typeof data.data === 'object' ? data.data : data;
 
-        // Fire-and-forget: record visit without blocking the render.
         fetch(`${B2C_BASE_URL}/companyDirectories/${id}/register-view`, {
           method: 'POST',
           headers: { Accept: 'application/json' },
-        }).catch(() => {
-          // Do not interrupt the user experience if the visit registration fails.
-        });
+        }).catch(() => {});
 
         setCompany(normalizeCompany(companyPayload));
       } catch (requestError) {
@@ -447,7 +445,14 @@ export default function CompanyDetail() {
     <div className={styles.page}>
       <section className={`${styles.content} ${styles.contentDetail}`}>
         <div className={styles.detailHeader}>
-          <div className={styles.companyBanner} />
+          <div className={styles.companyBanner}>
+            <img
+              className={styles.companyBannerImage}
+              src={heroBanner}
+              alt="ExpoFeria CFE"
+            />
+            <div className={styles.heroOverlay} />
+          </div>
 
           {company.companyLogo ? (
             <div className={styles.companyLogoWrapper}>
@@ -463,11 +468,11 @@ export default function CompanyDetail() {
             >
               <div className={styles.emptyLogoState}>
                 <svg
-                  width="72"
-                  height="72"
+                  width="48"
+                  height="48"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#9ca3af"
+                  stroke="#5a6a5a"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -556,7 +561,7 @@ export default function CompanyDetail() {
                             height="40"
                             viewBox="0 0 24 24"
                             fill="none"
-                            stroke="#9ca3af"
+                            stroke="#5a6a5a"
                             strokeWidth="1.5"
                           >
                             <rect
@@ -732,6 +737,12 @@ export default function CompanyDetail() {
           </button>
         </div>
       </section>
+
+      <footer className={styles.footer}>
+        <div className={styles.footerInner}>
+          <p className={styles.footerCopy}>&copy; 2026 ExpoFeria CFE</p>
+        </div>
+      </footer>
     </div>
   );
 }

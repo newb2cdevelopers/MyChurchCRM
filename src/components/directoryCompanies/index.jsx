@@ -8,6 +8,7 @@ import React, {
 import { Link } from 'react-router-dom';
 import styles from './styles.module.css';
 import { B2C_BASE_URL } from '../../constants';
+import heroBanner from '../../images/expoferia-cfe.jpeg';
 
 const parseCategoryName = category => {
   if (!category) {
@@ -192,12 +193,27 @@ export default function DirectoryCompanies() {
 
   return (
     <div className={styles.page}>
-      <section className={styles.content}>
-        <h1 className={styles.pageTitle}>Directorio de Empresas</h1>
-        <p className={styles.descriptionText}>
-          Consulta, filtra y explora empresas de la comunidad.
-        </p>
+      {/* Hero Banner */}
+      <section className={styles.heroSection}>
+        <img
+          className={styles.heroImage}
+          src={heroBanner}
+          alt="ExpoFeria CFE"
+        />
+        <div className={styles.heroOverlay} />
+      </section>
 
+      {/* Directory Header */}
+      <div className={styles.content}>
+        <header className={styles.directoryHeader}>
+          <h2 className={styles.directoryTitle}>Directorio de Empresas</h2>
+          <p className={styles.directorySubtitle}>
+            Consulta, filtra y explora empresas de la comunidad enfocadas en la
+            innovación y el desarrollo sostenible.
+          </p>
+        </header>
+
+        {/* Search & Filter (kept existing) */}
         <div className={styles.searchFilterRow}>
           <div className={styles.searchRow}>
             <input
@@ -293,12 +309,13 @@ export default function DirectoryCompanies() {
           </div>
         </div>
 
+        {/* Loading / Error */}
         {loading ? (
           <p className={styles.emptyState}>Cargando empresas...</p>
         ) : null}
-
         {!loading && error ? <p className={styles.errorText}>{error}</p> : null}
 
+        {/* Company Cards */}
         {!loading && !error && filteredCompanies.length > 0 ? (
           <div className={styles.grid}>
             {filteredCompanies.map(company => (
@@ -307,15 +324,17 @@ export default function DirectoryCompanies() {
                 to={`/company-directory/${company.id}`}
                 className={styles.card}
               >
-                <h3 className={styles.cardTitle}>{company.companyName}</h3>
-                <p className={styles.cardDescription}>
-                  {company.companyDescription}
-                </p>
+                <div>
+                  <h3 className={styles.cardTitle}>{company.companyName}</h3>
+                  <p className={styles.cardDescription}>
+                    {company.companyDescription}
+                  </p>
+                </div>
                 <div className={styles.cardTags}>
                   {company.companyCategories.map(category => (
                     <span
                       key={`${company.id}-${category}`}
-                      className={styles.tag}
+                      className={styles.gradientChip}
                     >
                       {category}
                     </span>
@@ -331,14 +350,14 @@ export default function DirectoryCompanies() {
             No hay resultados con los filtros seleccionados.
           </p>
         ) : null}
-      </section>
+      </div>
 
-      {/* <aside className={styles.rightMenu}>
-        <h3 className={styles.menuTitle}>Opciones</h3>
-        <button className={styles.menuOption} type="button">
-          Directorio Empresas
-        </button>
-      </aside> */}
+      {/* Footer */}
+      <footer className={styles.footer}>
+        <div className={styles.footerInner}>
+          <p className={styles.footerCopy}>&copy; 2026 ExpoFeria CFE</p>
+        </div>
+      </footer>
     </div>
   );
 }
