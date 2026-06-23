@@ -1233,17 +1233,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #00c853 0%, #005db7 100%);
+  background: none;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   z-index: 1;
   transition: opacity 0.2s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .productModalClose:hover {
-  opacity: 0.85;
+  opacity: 0.7;
   border: none;
 }
 
