@@ -624,11 +624,12 @@
   margin: 0;
   font-size: 12px;
   color: #bbcbb8;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  line-clamp: 2;
+  text-align: justify;
+  line-height: 1.5;
+  max-height: 6em;
   overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
 }
 
 .carouselControls {
@@ -1203,6 +1204,88 @@
   font-weight: 600;
 }
 
+/* ── Product Modal ── */
+
+.productModal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  max-height: 85vh;
+  background-color: #1e2020;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  outline: none;
+}
+
+.productModalClose {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #00c853 0%, #005db7 100%);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1;
+  transition: opacity 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.productModalClose:hover {
+  opacity: 0.85;
+  border: none;
+}
+
+.productModalImage {
+  width: 100%;
+  height: 240px;
+  object-fit: contain;
+  display: block;
+  border-radius: 12px 12px 0 0;
+  background-color: #000;
+}
+
+.productModalImagePlaceholder {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1a1c1c;
+  border-radius: 12px 12px 0 0;
+}
+
+.productModalBody {
+  padding: 24px;
+}
+
+.productModalTitle {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #e2e2e2;
+}
+
+.productModalDescription {
+  margin: 0;
+  font-size: 14px;
+  color: #bbcbb8;
+  text-align: justify;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
 /* ── Responsive ── */
 
 @media (max-width: 900px) {
@@ -1251,6 +1334,14 @@
 
   .footerInner {
     padding: 0 16px;
+  }
+
+  .productModal {
+    width: 95%;
+  }
+
+  .productModalImage {
+    height: 180px;
   }
 }
 

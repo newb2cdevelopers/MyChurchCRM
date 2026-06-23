@@ -7,6 +7,8 @@ import React, {
   useState,
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
 import styles from './styles.module.css';
 import { B2C_BASE_URL } from '../../constants';
 import heroBanner from '../../images/expoferia-cfe.jpeg';
@@ -257,6 +259,7 @@ export default function CompanyDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [expanded, setExpanded] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const descriptionRef = useRef(null);
   const [descriptionOverflows, setDescriptionOverflows] = useState(false);
   const [currentProductPage, setCurrentProductPage] = useState(0);
@@ -543,6 +546,8 @@ export default function CompanyDetail() {
                   <div
                     key={`${product.title}-${index}`}
                     className={styles.carouselCard}
+                    onClick={() => setSelectedProduct(product)}
+                    style={{ cursor: 'pointer' }}
                   >
                     <div className={styles.carouselCardInner}>
                       {product.imageUrl ? (
@@ -743,6 +748,68 @@ export default function CompanyDetail() {
           <p className={styles.footerCopy}>&copy; 2026 ExpoFeria CFE</p>
         </div>
       </footer>
+
+      <Modal
+        open={Boolean(selectedProduct)}
+        onClose={() => setSelectedProduct(null)}
+      >
+        <Box className={styles.productModal}>
+          <button
+            className={styles.productModalClose}
+            onClick={() => setSelectedProduct(null)}
+            aria-label="Cerrar"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#fff"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+          {selectedProduct && (
+            <>
+              {selectedProduct.imageUrl ? (
+                <img
+                  className={styles.productModalImage}
+                  src={selectedProduct.imageUrl}
+                  alt={selectedProduct.title}
+                />
+              ) : (
+                <div className={styles.productModalImagePlaceholder}>
+                  <svg
+                    width="60"
+                    height="60"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#5a6a5a"
+                    strokeWidth="1.5"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
+                  </svg>
+                </div>
+              )}
+              <div className={styles.productModalBody}>
+                <h3 className={styles.productModalTitle}>
+                  {selectedProduct.title}
+                </h3>
+                {selectedProduct.description ? (
+                  <p className={styles.productModalDescription}>
+                    {selectedProduct.description}
+                  </p>
+                ) : null}
+              </div>
+            </>
+          )}
+        </Box>
+      </Modal>
     </div>
   );
 }
