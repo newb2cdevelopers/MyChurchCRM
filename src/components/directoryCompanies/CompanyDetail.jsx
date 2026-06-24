@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -6,8 +7,11 @@ import React, {
   useState,
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
 import styles from './styles.module.css';
 import { B2C_BASE_URL } from '../../constants';
+import heroBanner from '../../images/expoferia-cfe.jpeg';
 
 const parseCategoryName = category => {
   if (!category) {
@@ -180,6 +184,21 @@ const normalizeSocialNetworks = company => {
   return defaultNetworks;
 };
 
+const normalizeProducts = company => {
+  const rawProducts =
+    company.Products || company.products || company.companyProducts || [];
+
+  if (!Array.isArray(rawProducts)) {
+    return [];
+  }
+
+  return rawProducts.map(p => ({
+    title: p.Title || p.title || '',
+    description: p.Description || p.description || '',
+    imageUrl: p.ImageUrl || p.imageUrl || '',
+  }));
+};
+
 const normalizeCompany = company => {
   return {
     id: String(
@@ -229,6 +248,7 @@ const normalizeCompany = company => {
       company.CompanyLogo ||
       '',
     companySocialNetworks: normalizeSocialNetworks(company),
+    companyProducts: normalizeProducts(company),
   };
 };
 
@@ -239,8 +259,13 @@ export default function CompanyDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [expanded, setExpanded] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const descriptionRef = useRef(null);
   const [descriptionOverflows, setDescriptionOverflows] = useState(false);
+  const [currentProductPage, setCurrentProductPage] = useState(0);
+  const [isHoveringCarousel, setIsHoveringCarousel] = useState(false);
+  const [itemsPerView, setItemsPerView] = useState(3);
+  const [noTransition, setNoTransition] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -274,13 +299,10 @@ export default function CompanyDetail() {
         const companyPayload =
           data?.data && typeof data.data === 'object' ? data.data : data;
 
-        // Fire-and-forget: record visit without blocking the render.
         fetch(`${B2C_BASE_URL}/companyDirectories/${id}/register-view`, {
           method: 'POST',
           headers: { Accept: 'application/json' },
-        }).catch(() => {
-          // Do not interrupt the user experience if the visit registration fails.
-        });
+        }).catch(() => {});
 
         setCompany(normalizeCompany(companyPayload));
       } catch (requestError) {
@@ -324,6 +346,68 @@ export default function CompanyDetail() {
     setExpanded(false);
   }, [company, loading]);
 
+  const getItemsPerView = useCallback(() => {
+    if (window.innerWidth < 768) return 1;
+    if (window.innerWidth < 1024) return 2;
+    return 3;
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerView(getItemsPerView());
+      setCurrentProductPage(0);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [getItemsPerView]);
+
+  const totalPositions = company ? company.companyProducts.length : 0;
+
+  const renderedProducts = useMemo(() => {
+    if (!company) return [];
+    const prods = company.companyProducts;
+    return [...prods, ...prods.slice(0, itemsPerView)];
+  }, [company, itemsPerView]);
+
+  const goToNextPage = useCallback(() => {
+    if (totalPositions <= 1) return;
+    if (currentProductPage >= totalPositions - 1) {
+      setNoTransition(true);
+      setCurrentProductPage(0);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setNoTransition(false);
+        });
+      });
+    } else {
+      setNoTransition(false);
+      setCurrentProductPage(prev => prev + 1);
+    }
+  }, [currentProductPage, totalPositions]);
+
+  const goToPrevPage = useCallback(() => {
+    if (totalPositions <= 1) return;
+    if (currentProductPage === 0) {
+      setNoTransition(true);
+      setCurrentProductPage(totalPositions - 1);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setNoTransition(false);
+        });
+      });
+    } else {
+      setNoTransition(false);
+      setCurrentProductPage(prev => prev - 1);
+    }
+  }, [currentProductPage, totalPositions]);
+
+  useEffect(() => {
+    if (isHoveringCarousel || totalPositions <= 1) return;
+    const interval = setInterval(goToNextPage, 3000);
+    return () => clearInterval(interval);
+  }, [isHoveringCarousel, totalPositions, goToNextPage]);
+
   const hasSocialNetworks = useMemo(() => {
     if (!company) {
       return false;
@@ -362,41 +446,190 @@ export default function CompanyDetail() {
 
   return (
     <div className={styles.page}>
-      <section className={styles.content}>
+      <section className={`${styles.content} ${styles.contentDetail}`}>
         <div className={styles.detailHeader}>
-          {company.companyLogo ? (
+          <div className={styles.companyBanner}>
             <img
-              className={styles.companyLogo}
-              src={company.companyLogo}
-              alt={`Logo de ${company.companyName}`}
+              className={styles.companyBannerImage}
+              src={heroBanner}
+              alt="ExpoFeria CFE"
             />
-          ) : (
-            <div className={styles.emptyLogoState}>No hay logo registrado</div>
-          )}
+            <div className={styles.heroOverlay} />
+          </div>
 
-          <div>
-            <h1 className={styles.pageTitle}>{company.companyName}</h1>
+          {company.companyLogo ? (
+            <div className={styles.companyLogoWrapper}>
+              <img
+                className={styles.companyLogo}
+                src={company.companyLogo}
+                alt={`Logo de ${company.companyName}`}
+              />
+            </div>
+          ) : (
+            <div
+              className={`${styles.companyLogoWrapper} ${styles.companyLogoWrapperEmpty}`}
+            >
+              <div className={styles.emptyLogoState}>
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#5a6a5a"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="4" y="2" width="16" height="20" rx="1" />
+                  <line x1="9" y1="6" x2="9" y2="8" />
+                  <line x1="15" y1="6" x2="15" y2="8" />
+                  <line x1="9" y1="14" x2="9" y2="16" />
+                  <line x1="15" y1="14" x2="15" y2="16" />
+                  <path d="M4 10h16" />
+                  <path d="M4 18h16" />
+                </svg>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.headerContent}>
+          <h1 className={styles.pageTitle}>{company.companyName}</h1>
+
+          {company.companyCategories.length > 0 ? (
+            <div className={styles.headerTags}>
+              {company.companyCategories.map(category => (
+                <span key={`${company.id}-${category}`} className={styles.tag}>
+                  {category}
+                </span>
+              ))}
+            </div>
+          ) : null}
+
+          <div className={styles.detailBlock}>
+            <p
+              ref={descriptionRef}
+              className={`${styles.descriptionText}${!expanded ? ` ${styles.clampedDescription}` : ''}`}
+            >
+              {company.companyDescription}
+            </p>
+            {descriptionOverflows ? (
+              <button
+                type="button"
+                className={styles.toggleDescriptionButton}
+                onClick={() => setExpanded(previous => !previous)}
+              >
+                {expanded ? 'Ver menos' : 'Ver más'}
+              </button>
+            ) : null}
           </div>
         </div>
 
-        <div className={styles.detailBlock}>
-          <p className={styles.detailLabel}>Descripción</p>
-          <p
-            ref={descriptionRef}
-            className={`${styles.descriptionText}${!expanded ? ` ${styles.clampedDescription}` : ''}`}
-          >
-            {company.companyDescription}
-          </p>
-          {descriptionOverflows ? (
-            <button
-              type="button"
-              className={styles.toggleDescriptionButton}
-              onClick={() => setExpanded(previous => !previous)}
+        {company.companyProducts.length > 0 ? (
+          <div className={styles.carouselSection}>
+            <div className={styles.carouselHeader}>
+              <h2 className={styles.carouselTitle}>Productos destacados</h2>
+            </div>
+
+            <div
+              className={styles.carouselContainer}
+              onMouseEnter={() => setIsHoveringCarousel(true)}
+              onMouseLeave={() => setIsHoveringCarousel(false)}
             >
-              {expanded ? 'Ver menos' : 'Ver más'}
-            </button>
-          ) : null}
-        </div>
+              <div
+                className={`${styles.carouselTrack}${noTransition ? ` ${styles.noTransition}` : ''}`}
+                style={{
+                  transform: `translateX(-${currentProductPage * (100 / itemsPerView)}%)`,
+                }}
+              >
+                {renderedProducts.map((product, index) => (
+                  <div
+                    key={`${product.title}-${index}`}
+                    className={styles.carouselCard}
+                    onClick={() => setSelectedProduct(product)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className={styles.carouselCardInner}>
+                      {product.imageUrl ? (
+                        <div className={styles.carouselImageWrapper}>
+                          <img
+                            className={styles.carouselImage}
+                            src={product.imageUrl}
+                            alt={product.title}
+                            loading="lazy"
+                          />
+                        </div>
+                      ) : (
+                        <div className={styles.carouselImagePlaceholder}>
+                          <svg
+                            width="40"
+                            height="40"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#5a6a5a"
+                            strokeWidth="1.5"
+                          >
+                            <rect
+                              x="3"
+                              y="3"
+                              width="18"
+                              height="18"
+                              rx="2"
+                              ry="2"
+                            />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                          </svg>
+                        </div>
+                      )}
+                      <div className={styles.carouselCardBody}>
+                        <p className={styles.carouselCardTitle}>
+                          {product.title}
+                        </p>
+                        {product.description ? (
+                          <p className={styles.carouselCardDescription}>
+                            {product.description}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {totalPositions > 1 ? (
+              <div className={styles.carouselControls}>
+                <button
+                  type="button"
+                  className={`${styles.carouselArrow} ${styles.carouselArrowPrev}`}
+                  onClick={goToPrevPage}
+                  aria-label="Anterior"
+                />
+                <div className={styles.carouselDots}>
+                  {Array.from({ length: totalPositions }, (_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={`${styles.carouselDot}${i === currentProductPage ? ` ${styles.carouselDotActive}` : ''}`}
+                      onClick={() => {
+                        setNoTransition(false);
+                        setCurrentProductPage(i);
+                      }}
+                      aria-label={`Ir a posición ${i + 1}`}
+                    />
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className={`${styles.carouselArrow} ${styles.carouselArrowNext}`}
+                  onClick={goToNextPage}
+                  aria-label="Siguiente"
+                />
+              </div>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className={styles.detailGrid}>
           <section className={styles.infoCard}>
@@ -412,19 +645,6 @@ export default function CompanyDetail() {
             ) : null}
           </section>
 
-          <section className={styles.infoCard}>
-            <p className={styles.detailLabel}>Categorías</p>
-            <div className={styles.cardTags}>
-              {company.companyCategories.map(category => (
-                <span key={`${company.id}-${category}`} className={styles.tag}>
-                  {category}
-                </span>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <div className={styles.detailGridSocial}>
           <section className={styles.infoCard}>
             <p className={styles.detailLabel}>Redes Sociales</p>
 
@@ -522,6 +742,74 @@ export default function CompanyDetail() {
           </button>
         </div>
       </section>
+
+      <footer className={styles.footer}>
+        <div className={styles.footerInner}>
+          <p className={styles.footerCopy}>&copy; 2026 ExpoFeria CFE</p>
+        </div>
+      </footer>
+
+      <Modal
+        open={Boolean(selectedProduct)}
+        onClose={() => setSelectedProduct(null)}
+      >
+        <Box className={styles.productModal}>
+          <button
+            className={styles.productModalClose}
+            onClick={() => setSelectedProduct(null)}
+            aria-label="Cerrar"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#fff"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+          {selectedProduct && (
+            <>
+              {selectedProduct.imageUrl ? (
+                <img
+                  className={styles.productModalImage}
+                  src={selectedProduct.imageUrl}
+                  alt={selectedProduct.title}
+                />
+              ) : (
+                <div className={styles.productModalImagePlaceholder}>
+                  <svg
+                    width="60"
+                    height="60"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#5a6a5a"
+                    strokeWidth="1.5"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
+                  </svg>
+                </div>
+              )}
+              <div className={styles.productModalBody}>
+                <h3 className={styles.productModalTitle}>
+                  {selectedProduct.title}
+                </h3>
+                {selectedProduct.description ? (
+                  <p className={styles.productModalDescription}>
+                    {selectedProduct.description}
+                  </p>
+                ) : null}
+              </div>
+            </>
+          )}
+        </Box>
+      </Modal>
     </div>
   );
 }

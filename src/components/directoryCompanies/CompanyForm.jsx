@@ -100,6 +100,13 @@ export default function CompanyForm() {
     categories: [],
     socialNetworks: defaultSocialNetworks,
   });
+  const [products, setProducts] = useState([]);
+  const [pendingProducts, setPendingProducts] = useState([]);
+  const [newProductTitle, setNewProductTitle] = useState('');
+  const [newProductDescription, setNewProductDescription] = useState('');
+  const [newProductImage, setNewProductImage] = useState(null);
+  const [newProductPreviewUrl, setNewProductPreviewUrl] = useState('');
+  const [isAddingProduct, setIsAddingProduct] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -219,6 +226,10 @@ export default function CompanyForm() {
         if (existingLogoUrl) {
           setLogoFileName('Logo actual cargado');
         }
+
+        const existingProducts =
+          companyPayload.Products || companyPayload.products || [];
+        setProducts(existingProducts);
       } catch (requestError) {
         if (requestError.name === 'AbortError') {
           return;
@@ -289,6 +300,140 @@ export default function CompanyForm() {
     setLogoFileName(selectedFile.name);
     setLogoFile(selectedFile);
     setError('');
+  };
+
+  const handleNewProductImageChange = event => {
+    const selectedFile = event.target.files?.[0];
+
+    if (!selectedFile) {
+      setNewProductImage(null);
+      setNewProductPreviewUrl('');
+      return;
+    }
+
+    if (!selectedFile.type.startsWith('image/')) {
+      toast.error('El archivo debe ser una imagen.');
+      event.target.value = '';
+      return;
+    }
+
+    if (newProductPreviewUrl) {
+      URL.revokeObjectURL(newProductPreviewUrl);
+    }
+
+    setNewProductImage(selectedFile);
+    setNewProductPreviewUrl(URL.createObjectURL(selectedFile));
+  };
+
+  const handleAddProduct = async () => {
+    if (!newProductTitle || !newProductImage) {
+      toast.error('Título e imagen son obligatorios.');
+      return;
+    }
+
+    if (isEditMode) {
+      setIsAddingProduct(true);
+
+      try {
+        const payload = new FormData();
+        payload.append('title', newProductTitle);
+        payload.append('image', newProductImage);
+
+        if (newProductDescription) {
+          payload.append('description', newProductDescription);
+        }
+
+        const response = await fetch(
+          `${B2C_BASE_URL}/companyDirectories/${id}/products`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            body: payload,
+          },
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData?.message || 'Error al agregar producto');
+        }
+
+        const updatedCompany = await response.json();
+        const companyData = updatedCompany?.data || updatedCompany;
+
+        setProducts(companyData?.Products || companyData?.products || []);
+      } catch (error) {
+        toast.error(error.message || 'No fue posible agregar el producto.');
+        setIsAddingProduct(false);
+        return;
+      }
+    } else {
+      setPendingProducts(prev => [
+        ...prev,
+        {
+          title: newProductTitle,
+          description: newProductDescription,
+          image: newProductImage,
+          previewUrl: newProductPreviewUrl,
+        },
+      ]);
+    }
+
+    setNewProductTitle('');
+    setNewProductDescription('');
+    setNewProductImage(null);
+
+    if (newProductPreviewUrl) {
+      URL.revokeObjectURL(newProductPreviewUrl);
+    }
+
+    setNewProductPreviewUrl('');
+
+    if (isEditMode) {
+      setIsAddingProduct(false);
+      toast.success('Producto agregado exitosamente.');
+    }
+  };
+
+  const handleDeleteProduct = async index => {
+    if (isEditMode) {
+      setIsAddingProduct(true);
+
+      try {
+        const response = await fetch(
+          `${B2C_BASE_URL}/companyDirectories/${id}/products/${index}`,
+          {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error('Error al eliminar producto');
+        }
+
+        const updatedCompany = await response.json();
+        const companyData = updatedCompany?.data || updatedCompany;
+
+        setProducts(companyData?.Products || companyData?.products || []);
+        toast.success('Producto eliminado exitosamente.');
+      } catch (error) {
+        toast.error(error.message || 'No fue posible eliminar el producto.');
+      } finally {
+        setIsAddingProduct(false);
+      }
+    } else {
+      const removed = pendingProducts[index];
+
+      if (removed?.previewUrl) {
+        URL.revokeObjectURL(removed.previewUrl);
+      }
+
+      setPendingProducts(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
   const submitForm = async event => {
@@ -370,12 +515,52 @@ export default function CompanyForm() {
           toast.error('Se ha presentado un error al guardar la empresa.');
         }
       } else {
-        toast.success(
-          isEditMode
-            ? 'Empresa actualizada exitosamente.'
-            : 'Empresa guardada exitosamente.',
-        );
-        navigate('/company-directory/internal');
+        if (!isEditMode) {
+          const responseData = results[0]?.data || results[0];
+          const newId = responseData?.Id || responseData?.id;
+
+          if (newId && pendingProducts.length > 0) {
+            for (const product of pendingProducts) {
+              const productPayload = new FormData();
+              productPayload.append('title', product.title);
+              productPayload.append('image', product.image);
+
+              if (product.description) {
+                productPayload.append('description', product.description);
+              }
+
+              try {
+                await fetch(
+                  `${B2C_BASE_URL}/companyDirectories/${newId}/products`,
+                  {
+                    method: 'POST',
+                    headers: {
+                      Authorization: `Bearer ${user.token}`,
+                    },
+                    body: productPayload,
+                  },
+                );
+              } catch {
+                toast.warn(
+                  `No se pudo subir el producto "${product.title}". Puedes agregarlo después.`,
+                );
+              }
+            }
+
+            setPendingProducts([]);
+          }
+
+          toast.success('Empresa guardada exitosamente.');
+
+          if (newId) {
+            navigate(`/company-directory/${newId}/edit`);
+          } else {
+            navigate('/company-directory/internal');
+          }
+        } else {
+          toast.success('Empresa actualizada exitosamente.');
+          navigate('/company-directory/internal');
+        }
       }
     } finally {
       setIsSaving(false);
@@ -542,6 +727,118 @@ export default function CompanyForm() {
                 disabled={isSaving || isLoadingCompany}
               />
             </div>
+          </div>
+
+          <div className={styles.productSection}>
+            <p className={styles.sectionTitle}>Productos destacados</p>
+
+            {(() => {
+              const displayProducts = isEditMode ? products : pendingProducts;
+
+              return (
+                <>
+                  {displayProducts.length > 0 ? (
+                    <div className={styles.productList}>
+                      {displayProducts.map((product, index) => (
+                        <div key={index} className={styles.productCard}>
+                          <div className={styles.productImagePreview}>
+                            <img
+                              src={
+                                product.ImageUrl ||
+                                product.imageUrl ||
+                                product.previewUrl
+                              }
+                              alt={product.Title || product.title}
+                            />
+                          </div>
+                          <div className={styles.productInfo}>
+                            <p className={styles.productInfoTitle}>
+                              {product.Title || product.title}
+                            </p>
+                            {product.Description || product.description ? (
+                              <p className={styles.productInfoDescription}>
+                                {product.Description || product.description}
+                              </p>
+                            ) : null}
+                          </div>
+                          <button
+                            type="button"
+                            className={styles.productDeleteButton}
+                            onClick={() => handleDeleteProduct(index)}
+                            disabled={isAddingProduct || isSaving}
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  {displayProducts.length >= 5 ? (
+                    <p className={styles.productLimitMessage}>
+                      Has alcanzado el límite de 5 productos
+                    </p>
+                  ) : (
+                    <div className={styles.addProductForm}>
+                      <p className={styles.helperText}>
+                        Agregar nuevo producto
+                      </p>
+
+                      <div className={styles.addProductPreview}>
+                        {newProductPreviewUrl ? (
+                          <img
+                            src={newProductPreviewUrl}
+                            alt="Vista previa del producto"
+                          />
+                        ) : (
+                          <span className={styles.addProductPreviewPlaceholder}>
+                            Imagen del producto
+                          </span>
+                        )}
+                      </div>
+
+                      <input
+                        className={styles.input}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleNewProductImageChange}
+                        disabled={isAddingProduct || isSaving}
+                      />
+
+                      <input
+                        className={styles.input}
+                        placeholder="Título del producto"
+                        value={newProductTitle}
+                        onChange={e => setNewProductTitle(e.target.value)}
+                        disabled={isAddingProduct || isSaving}
+                      />
+
+                      <textarea
+                        className={styles.textarea}
+                        placeholder="Descripción (opcional)"
+                        value={newProductDescription}
+                        onChange={e => setNewProductDescription(e.target.value)}
+                        disabled={isAddingProduct || isSaving}
+                      />
+
+                      <button
+                        type="button"
+                        className={styles.primaryButton}
+                        onClick={handleAddProduct}
+                        disabled={
+                          isAddingProduct ||
+                          isSaving ||
+                          !newProductTitle ||
+                          !newProductImage
+                        }
+                      >
+                        {isAddingProduct ? 'Agregando...' : 'Agregar producto'}
+                      </button>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
 
           {error ? <p className={styles.errorText}>{error}</p> : null}

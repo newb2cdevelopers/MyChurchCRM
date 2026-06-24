@@ -1,7 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Link } from 'react-router-dom';
 import styles from './styles.module.css';
 import { B2C_BASE_URL } from '../../constants';
+import heroBanner from '../../images/expoferia-cfe.jpeg';
 
 const parseCategoryName = category => {
   if (!category) {
@@ -79,6 +86,9 @@ export default function DirectoryCompanies() {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [categorySearch, setCategorySearch] = useState('');
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -155,46 +165,157 @@ export default function DirectoryCompanies() {
     });
   };
 
+  const filteredCategoriesForDropdown = useMemo(() => {
+    return categories.filter(category =>
+      category.toLowerCase().includes(categorySearch.toLowerCase()),
+    );
+  }, [categories, categorySearch]);
+
+  const toggleDropdown = useCallback(() => {
+    setIsDropdownOpen(prev => {
+      if (prev) {
+        setCategorySearch('');
+      }
+      return !prev;
+    });
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+        setCategorySearch('');
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <div className={styles.page}>
-      <section className={styles.content}>
-        <h1 className={styles.pageTitle}>Directorio de Empresas</h1>
-        <p className={styles.descriptionText}>
-          Consulta, filtra y explora empresas de la comunidad.
-        </p>
+      {/* Hero Banner */}
+      <section className={styles.heroSection}>
+        <img
+          className={styles.heroImage}
+          src={heroBanner}
+          alt="ExpoFeria CFE"
+        />
+        <div className={styles.heroOverlay} />
+      </section>
 
-        <div className={styles.searchRow}>
-          <input
-            className={styles.searchInput}
-            type="text"
-            placeholder="Buscar por nombre de empresa"
-            value={searchTerm}
-            onChange={event => setSearchTerm(event.target.value)}
-          />
-        </div>
+      {/* Directory Header */}
+      <div className={styles.content}>
+        <header className={styles.directoryHeader}>
+          <h2 className={styles.directoryTitle}>Directorio de Empresas</h2>
+          <p className={styles.directorySubtitle}>
+            Consulta, filtra y explora empresas de la comunidad enfocadas en la
+            innovación y el desarrollo sostenible.
+          </p>
+        </header>
 
-        <div className={styles.filtersContainer}>
-          <p className={styles.filterLabel}>Filtrar por categorías:</p>
-          <div className={styles.categoriesContainer}>
-            {categories.map(category => (
-              <button
-                key={category}
-                type="button"
-                className={`${styles.categoryChip}${selectedCategories.includes(category) ? ` ${styles.categoryChipActive}` : ''}`}
-                onClick={() => toggleCategory(category)}
+        {/* Search & Filter (kept existing) */}
+        <div className={styles.searchFilterRow}>
+          <div className={styles.searchRow}>
+            <input
+              className={styles.searchInput}
+              type="text"
+              placeholder="Buscar por nombre de empresa"
+              value={searchTerm}
+              onChange={event => setSearchTerm(event.target.value)}
+            />
+          </div>
+
+          <div className={styles.filterDropdown} ref={dropdownRef}>
+            <button
+              type="button"
+              className={styles.filterDropdownToggle}
+              onClick={toggleDropdown}
+            >
+              <span>
+                {selectedCategories.length > 0
+                  ? `Categorías (${selectedCategories.length})`
+                  : 'Categorías'}
+              </span>
+              <svg
+                className={`${styles.filterDropdownArrow}${isDropdownOpen ? ` ${styles.filterDropdownArrowOpen}` : ''}`}
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                {category}
-              </button>
-            ))}
+                <path d="M4 6l4 4 4-4" />
+              </svg>
+            </button>
+
+            {selectedCategories.length > 0 ? (
+              <div className={styles.filterDropdownChips}>
+                {selectedCategories.map(category => (
+                  <button
+                    key={category}
+                    type="button"
+                    className={`${styles.categoryChip} ${styles.categoryChipActive}`}
+                    onClick={() => toggleCategory(category)}
+                  >
+                    {category}
+                    <svg
+                      className={styles.chipCloseIcon}
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M2.5 2.5l7 7M9.5 2.5l-7 7" />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            {isDropdownOpen ? (
+              <div className={styles.filterDropdownMenu}>
+                <input
+                  className={styles.filterDropdownSearch}
+                  type="text"
+                  placeholder="Buscar categoría..."
+                  value={categorySearch}
+                  onChange={event => setCategorySearch(event.target.value)}
+                  autoFocus
+                />
+                <div className={styles.filterDropdownList}>
+                  {filteredCategoriesForDropdown.map(category => (
+                    <button
+                      key={category}
+                      type="button"
+                      className={`${styles.categoryChip}${selectedCategories.includes(category) ? ` ${styles.categoryChipActive}` : ''}`}
+                      onClick={() => toggleCategory(category)}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                  {filteredCategoriesForDropdown.length === 0 ? (
+                    <p className={styles.filterDropdownEmpty}>Sin resultados</p>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
 
+        {/* Loading / Error */}
         {loading ? (
           <p className={styles.emptyState}>Cargando empresas...</p>
         ) : null}
-
         {!loading && error ? <p className={styles.errorText}>{error}</p> : null}
 
+        {/* Company Cards */}
         {!loading && !error && filteredCompanies.length > 0 ? (
           <div className={styles.grid}>
             {filteredCompanies.map(company => (
@@ -203,15 +324,17 @@ export default function DirectoryCompanies() {
                 to={`/company-directory/${company.id}`}
                 className={styles.card}
               >
-                <h3 className={styles.cardTitle}>{company.companyName}</h3>
-                <p className={styles.cardDescription}>
-                  {company.companyDescription}
-                </p>
+                <div>
+                  <h3 className={styles.cardTitle}>{company.companyName}</h3>
+                  <p className={styles.cardDescription}>
+                    {company.companyDescription}
+                  </p>
+                </div>
                 <div className={styles.cardTags}>
                   {company.companyCategories.map(category => (
                     <span
                       key={`${company.id}-${category}`}
-                      className={styles.tag}
+                      className={styles.gradientChip}
                     >
                       {category}
                     </span>
@@ -227,14 +350,14 @@ export default function DirectoryCompanies() {
             No hay resultados con los filtros seleccionados.
           </p>
         ) : null}
-      </section>
+      </div>
 
-      {/* <aside className={styles.rightMenu}>
-        <h3 className={styles.menuTitle}>Opciones</h3>
-        <button className={styles.menuOption} type="button">
-          Directorio Empresas
-        </button>
-      </aside> */}
+      {/* Footer */}
+      <footer className={styles.footer}>
+        <div className={styles.footerInner}>
+          <p className={styles.footerCopy}>&copy; 2026 ExpoFeria CFE</p>
+        </div>
+      </footer>
     </div>
   );
 }
