@@ -18,7 +18,7 @@ function AuthAwareLayout() {
   }
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', height: '100vh' }}>
       <Sidebar
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
@@ -26,26 +26,29 @@ function AuthAwareLayout() {
       <Box
         sx={{
           flexGrow: 1,
-          minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
           bgcolor: 'background.default',
+          overflow: 'hidden',
         }}
       >
-        <Header />
+        <Box sx={{ flexShrink: 0 }}>
+          <Header />
+        </Box>
         <Box
           component="main"
           sx={{
             flexGrow: 1,
-            maxWidth: '100%',
-            overflowX: 'hidden',
-            p: isCompanyDirectory ? 0 : { xs: 3, md: 6 },
-            pb: isCompanyDirectory ? { xs: 12, md: 0 } : { xs: 12, md: 6 },
+            overflow: 'auto',
+            p: isCompanyDirectory ? 0 : { xs: 2, md: 2.5 },
+            pb: isCompanyDirectory ? { xs: 12, md: 0 } : { xs: 12, md: 2 },
           }}
         >
           <Outlet />
         </Box>
-        <BottomNav onOpenMore={() => setMobileOpen(true)} />
+        <Box sx={{ flexShrink: 0 }}>
+          <BottomNav onOpenMore={() => setMobileOpen(true)} />
+        </Box>
       </Box>
     </Box>
   );

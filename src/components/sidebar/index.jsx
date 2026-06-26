@@ -137,8 +137,8 @@ function SidebarContent({ onItemClick }) {
     >
       <Box
         sx={{
-          px: 2.5,
-          py: 2.5,
+          px: 2,
+          py: 2,
         }}
       >
         <Typography
@@ -188,7 +188,7 @@ function SidebarContent({ onItemClick }) {
           onClick={handleLogout}
           sx={{
             borderRadius: 1,
-            py: 1,
+          py: 0.75,
             '&:hover': {
               bgcolor: theme => alpha(theme.palette.primary.main, 0.06),
             },

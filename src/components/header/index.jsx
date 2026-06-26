@@ -53,7 +53,7 @@ function Header() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        px: { xs: 2, md: 6 },
+        px: { xs: 2, md: 2 },
         borderBottom: '1px solid',
         borderColor: theme => alpha(theme.palette.divider, 0.3),
       }}
@@ -88,7 +88,7 @@ function Header() {
             pr: 2,
             py: 0.75,
             bgcolor: theme => alpha(theme.palette.primary.main, 0.06),
-            borderRadius: '9999px',
+            borderRadius: 1,
             fontSize: '0.875rem',
             color: 'text.primary',
             transition: theme =>

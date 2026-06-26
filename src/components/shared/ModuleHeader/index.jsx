@@ -12,7 +12,7 @@ function ModuleHeader({ title, description, primaryAction, actions, sx }) {
         alignItems: { xs: 'flex-start', sm: 'center' },
         justifyContent: 'space-between',
         gap: { xs: 2, sm: 4 },
-        mb: { xs: 2, md: 4 },
+        mb: { xs: 1.5, md: 2 },
         ...sx,
       }}
     >
@@ -20,7 +20,7 @@ function ModuleHeader({ title, description, primaryAction, actions, sx }) {
         <Typography
           variant="h5"
           sx={{
-            fontWeight: 700,
+            fontWeight: 600,
             lineHeight: 1.2,
             textAlign: 'left',
             wordBreak: 'break-word',

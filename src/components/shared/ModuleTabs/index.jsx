@@ -20,7 +20,7 @@ function TabPanel({ children, value, index, ...other }) {
       aria-labelledby={`module-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
+      {value === index && <Box sx={{ pt: 2 }}>{children}</Box>}
     </div>
   );
 }

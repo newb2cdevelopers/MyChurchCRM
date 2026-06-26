@@ -49,7 +49,7 @@ function DataTable({
             display: 'flex',
             alignItems: 'center',
             gap: 2,
-            p: { xs: 2, md: 3 },
+            p: { xs: 1.5, md: 2 },
             pb: 2,
             flexWrap: 'wrap',
           }}
@@ -62,16 +62,11 @@ function DataTable({
                 onChange={e => search.onChange(e.target.value)}
                 size="small"
                 hiddenLabel
-              sx={{
-                minWidth: { xs: 0, sm: 300 },
-                flex: { xs: '1 1 100%', sm: '0 1 auto' },
-                '& .MuiOutlinedInput-notchedOutline legend': {
-                  display: 'none',
-                },
-              }}
-                inputProps={{
-                  sx: {
-                    textOverflow: 'ellipsis',
+                sx={{
+                  minWidth: { xs: 0, sm: 300 },
+                  flex: { xs: '1 1 100%', sm: '0 1 auto' },
+                  '& .MuiOutlinedInput-notchedOutline legend': {
+                    display: 'none',
                   },
                 }}
                 InputProps={{
@@ -82,6 +77,12 @@ function DataTable({
                       />
                     </InputAdornment>
                   ),
+                }}
+                inputProps={{
+                  sx: {
+                    py: '7px',
+                    textOverflow: 'ellipsis',
+                  },
                 }}
               />
             </Tooltip>

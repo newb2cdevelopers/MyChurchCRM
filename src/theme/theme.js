@@ -63,14 +63,14 @@ const theme = createTheme({
       lineHeight: '28px',
     },
     body1: {
-      fontSize: '18px',
-      fontWeight: 400,
-      lineHeight: '28px',
-    },
-    body2: {
       fontSize: '16px',
       fontWeight: 400,
       lineHeight: '24px',
+    },
+    body2: {
+      fontSize: '14px',
+      fontWeight: 400,
+      lineHeight: '20px',
     },
     caption: {
       fontSize: '14px',
@@ -127,7 +127,7 @@ const theme = createTheme({
           borderRadius: 8,
           textTransform: 'none',
           fontWeight: 500,
-          padding: '10px 20px',
+          padding: '8px 20px',
         },
         containedPrimary: {
           boxShadow: 'none',
