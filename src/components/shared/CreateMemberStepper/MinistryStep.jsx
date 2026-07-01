@@ -39,7 +39,6 @@ const cellEllipsis = {
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  maxWidth: 160,
 };
 
 const MinistryStep = forwardRef(function MinistryStep(
@@ -192,7 +191,7 @@ const MinistryStep = forwardRef(function MinistryStep(
   }));
 
   return (
-    <Box sx={{ maxWidth: 560, mx: 'auto' }}>
+    <Box sx={{ maxWidth: { xs: '100%', md: 560 }, mx: 'auto' }}>
       <Typography
         sx={{
           fontSize: 13,
@@ -306,7 +305,13 @@ const MinistryStep = forwardRef(function MinistryStep(
             required
           />
 
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+              gap: 2,
+            }}
+          >
             <DateInput
               label="Fecha inicio"
               value={form.startDate}

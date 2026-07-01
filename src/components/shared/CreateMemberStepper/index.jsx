@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useMediaQuery, useTheme } from '@mui/material';
 import StepperModal from '../StepperModal';
 import {
   genericPostService,
@@ -183,10 +184,14 @@ export default function CreateMemberStepper({
     onSuccess?.();
   }, [onSuccess]);
 
+  const theme = useTheme();
+  const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
     <StepperModal
       open={open}
       onClose={handleClose}
+      fullScreen={isMdDown}
       title={isEditing ? 'Editar miembro' : 'Nuevo miembro'}
       description={
         isEditing

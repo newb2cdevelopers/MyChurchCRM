@@ -211,98 +211,111 @@ function StepperModal({
     >
       <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {/* Sidebar */}
-        <Box
-          sx={{
-            width: 280,
-            flexShrink: 0,
-            bgcolor: '#f2f3ff',
-            borderRight: '1px solid',
-            borderColor: 'divider',
-            p: 3,
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Box sx={{ mb: 3 }}>
-            <Typography
+        {!fullScreen && (
+          <Box
+            sx={{
+              width: 280,
+              flexShrink: 0,
+              bgcolor: '#f2f3ff',
+              borderRight: '1px solid',
+              borderColor: 'divider',
+              p: 3,
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Box sx={{ mb: 3 }}>
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  color: 'text.secondary',
+                  mb: 0.5,
+                }}
+              >
+                {title}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: 13,
+                  lineHeight: '18px',
+                  color: 'text.secondary',
+                }}
+              >
+                {description}
+              </Typography>
+            </Box>
+
+            <Box
               sx={{
-                fontSize: 12,
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                color: 'text.secondary',
-                mb: 0.5,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 3,
+                flex: 1,
               }}
             >
-              {title}
-            </Typography>
-            <Typography
-              sx={{ fontSize: 13, lineHeight: '18px', color: 'text.secondary' }}
-            >
-              {description}
-            </Typography>
-          </Box>
+              {steps.map((step, index) => {
+                let status = INACTIVE;
+                if (index === activeStep) status = ACTIVE;
+                else if (index < activeStep) status = COMPLETED;
 
-          <Box
-            sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1 }}
-          >
-            {steps.map((step, index) => {
-              let status = INACTIVE;
-              if (index === activeStep) status = ACTIVE;
-              else if (index < activeStep) status = COMPLETED;
+                const canClick = status !== ACTIVE && !isLoading;
 
-              const canClick = status !== ACTIVE && !isLoading;
-
-              return (
-                <Box
-                  key={step.id}
-                  onClick={canClick ? () => handleStepClick(index) : undefined}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: 2,
-                    opacity: status === INACTIVE ? 0.6 : 1,
-                    transition: 'opacity 0.3s',
-                    cursor: canClick ? 'pointer' : 'default',
-                  }}
-                >
-                  <StepIcon status={status} number={index + 1} />
-                  <Box sx={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
-                    <Typography
-                      sx={{
-                        fontSize: 14,
-                        fontWeight: status === ACTIVE ? 700 : 500,
-                        color:
-                          status === ACTIVE ? 'primary.main' : 'text.primary',
-                        lineHeight: '20px',
-                        mb: 0.25,
-                        textAlign: 'left',
-                        wordBreak: 'break-word',
-                      }}
-                    >
-                      {step.title}
-                    </Typography>
-                    {step.description && (
+                return (
+                  <Box
+                    key={step.id}
+                    onClick={
+                      canClick ? () => handleStepClick(index) : undefined
+                    }
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 2,
+                      opacity: status === INACTIVE ? 0.6 : 1,
+                      transition: 'opacity 0.3s',
+                      cursor: canClick ? 'pointer' : 'default',
+                    }}
+                  >
+                    <StepIcon status={status} number={index + 1} />
+                    <Box sx={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
                       <Typography
                         sx={{
-                          fontSize: 13,
-                          lineHeight: '18px',
-                          color: 'text.secondary',
-                          display: 'block',
+                          fontSize: 14,
+                          fontWeight: status === ACTIVE ? 700 : 500,
+                          color:
+                            status === ACTIVE ? 'primary.main' : 'text.primary',
+                          lineHeight: '20px',
+                          mb: 0.25,
                           textAlign: 'left',
-                          width: '100%',
                           wordBreak: 'break-word',
                         }}
                       >
-                        {step.description}
+                        {step.title}
                       </Typography>
-                    )}
+                      {step.description && (
+                        <Typography
+                          sx={{
+                            fontSize: 13,
+                            lineHeight: '18px',
+                            color: 'text.secondary',
+                            display: 'block',
+                            textAlign: 'left',
+                            width: '100%',
+                            wordBreak: 'break-word',
+                          }}
+                        >
+                          {step.description}
+                        </Typography>
+                      )}
+                    </Box>
                   </Box>
-                </Box>
-              );
-            })}
+                );
+              })}
+            </Box>
           </Box>
-        </Box>
+        )}
 
         {/* Content */}
         <Box
@@ -314,18 +327,43 @@ function StepperModal({
             bgcolor: '#ffffff',
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              px: 3,
-              py: 2,
-              borderBottom: '1px solid',
-              borderColor: 'divider',
-            }}
-          >
-            <Box sx={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+          {fullScreen ? (
+            <Box
+              sx={{
+                px: { xs: 2, md: 3 },
+                py: { xs: 1.5, md: 2 },
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+                flexShrink: 0,
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  mb: 0.5,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: 'text.secondary',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  Paso {activeStep + 1} de {steps.length}
+                </Typography>
+                <IconButton
+                  onClick={handleClose}
+                  size="small"
+                  disabled={isLoading}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Box>
               <Typography
                 sx={{
                   fontWeight: 600,
@@ -336,25 +374,83 @@ function StepperModal({
               >
                 {currentStep?.title}
               </Typography>
-              {currentStep?.description && (
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                px: 3,
+                py: 2,
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+              }}
+            >
+              <Box sx={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                 <Typography
                   sx={{
-                    fontSize: 13,
-                    lineHeight: '18px',
-                    color: 'text.secondary',
-                    mt: 0.25,
+                    fontWeight: 600,
+                    fontSize: 20,
+                    lineHeight: '28px',
                     textAlign: 'left',
-                    width: '100%',
                   }}
                 >
-                  {currentStep.description}
+                  {currentStep?.title}
                 </Typography>
-              )}
+                {currentStep?.description && (
+                  <Typography
+                    sx={{
+                      fontSize: 13,
+                      lineHeight: '18px',
+                      color: 'text.secondary',
+                      mt: 0.25,
+                      textAlign: 'left',
+                      width: '100%',
+                    }}
+                  >
+                    {currentStep.description}
+                  </Typography>
+                )}
+              </Box>
+              <IconButton
+                onClick={handleClose}
+                size="small"
+                disabled={isLoading}
+              >
+                <CloseIcon />
+              </IconButton>
             </Box>
-            <IconButton onClick={handleClose} size="small" disabled={isLoading}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
+          )}
+
+          {fullScreen && (
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 0.5,
+                px: { xs: 2, md: 3 },
+                pt: 1.5,
+                pb: 0.5,
+                flexShrink: 0,
+              }}
+            >
+              {steps.map((_, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    height: 4,
+                    flex: 1,
+                    borderRadius: 2,
+                    bgcolor:
+                      index <= activeStep
+                        ? 'primary.main'
+                        : 'surface-container-high',
+                    transition: 'background-color 0.3s',
+                  }}
+                />
+              ))}
+            </Box>
+          )}
 
           <Box
             sx={{
@@ -380,7 +476,7 @@ function StepperModal({
       <Box
         sx={{
           height: 72,
-          px: 3,
+          px: { xs: 1.5, md: 3 },
           borderTop: '1px solid',
           borderColor: 'divider',
           display: 'flex',
@@ -390,9 +486,11 @@ function StepperModal({
           flexShrink: 0,
         }}
       >
-        <ProgressDots total={steps.length} active={activeStep} />
+        {!fullScreen && (
+          <ProgressDots total={steps.length} active={activeStep} />
+        )}
 
-        <Box sx={{ display: 'flex', gap: 1.5 }}>
+        <Box sx={{ display: 'flex', gap: { xs: 0.5, md: 1.5 } }}>
           <Button
             variant="text"
             onClick={handleClose}
@@ -407,8 +505,9 @@ function StepperModal({
               onClick={handleBack}
               disabled={isLoading}
               startIcon={<ArrowBackIcon />}
+              aria-label="Anterior"
             >
-              Anterior
+              {fullScreen ? null : 'Anterior'}
             </Button>
           )}
           <Button

@@ -35,7 +35,6 @@ const cellEllipsis = {
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  maxWidth: 160,
 };
 
 const AcademicStep = forwardRef(function AcademicStep(
@@ -209,7 +208,7 @@ const AcademicStep = forwardRef(function AcademicStep(
   }));
 
   return (
-    <Box sx={{ maxWidth: 560, mx: 'auto' }}>
+    <Box sx={{ maxWidth: { xs: '100%', md: 560 }, mx: 'auto' }}>
       <Typography
         sx={{
           fontSize: 13,

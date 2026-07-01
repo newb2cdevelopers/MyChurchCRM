@@ -44,7 +44,6 @@ const cellEllipsis = {
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  maxWidth: 160,
 };
 
 const FamilyStep = forwardRef(function FamilyStep(
@@ -195,7 +194,7 @@ const FamilyStep = forwardRef(function FamilyStep(
   }));
 
   return (
-    <Box sx={{ maxWidth: 560, mx: 'auto' }}>
+    <Box sx={{ maxWidth: { xs: '100%', md: 560 }, mx: 'auto' }}>
       <Typography
         sx={{
           fontSize: 13,
@@ -296,7 +295,13 @@ const FamilyStep = forwardRef(function FamilyStep(
             {editIndex !== null ? 'Editar familiar' : 'Nuevo familiar'}
           </Typography>
 
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+              gap: 2,
+            }}
+          >
             <TextField
               size="small"
               label="Nombre"
@@ -327,7 +332,13 @@ const FamilyStep = forwardRef(function FamilyStep(
             onChange={handleFormChange}
           />
 
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+              gap: 2,
+            }}
+          >
             <TextField
               size="small"
               label="Celular"
@@ -345,7 +356,13 @@ const FamilyStep = forwardRef(function FamilyStep(
             />
           </Box>
 
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+              gap: 2,
+            }}
+          >
             <DateInput
               label="Fecha de nacimiento"
               value={form.birthDate}

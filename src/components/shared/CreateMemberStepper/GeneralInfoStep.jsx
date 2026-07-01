@@ -151,7 +151,7 @@ const GeneralInfoStep = forwardRef(function GeneralInfoStep(
   }));
 
   return (
-    <Box sx={{ maxWidth: 520, mx: 'auto' }}>
+    <Box sx={{ maxWidth: { xs: '100%', md: 520 }, mx: 'auto' }}>
       <Box sx={{ display: 'grid', gap: 2.5 }}>
         <Typography
           sx={{ fontSize: 13, lineHeight: '18px', color: 'text.secondary' }}
@@ -213,7 +213,13 @@ const GeneralInfoStep = forwardRef(function GeneralInfoStep(
           required
         />
 
-        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+            gap: 2,
+          }}
+        >
           <TextField
             size="small"
             label="Teléfono fijo"
