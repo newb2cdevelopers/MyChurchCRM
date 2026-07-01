@@ -1,5 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -26,12 +27,43 @@ function DataTable({
   emptyState,
   onRowClick,
   rowActions,
+  selection,
 }) {
   const handleSort = columnId => {
     if (!sort) return;
     const isAsc = sort.columnId === columnId && sort.direction === 'asc';
     sort.onSortChange(columnId, isAsc ? 'desc' : 'asc');
   };
+
+  const handleSelectAll = checked => {
+    if (checked) {
+      const allIds = data.map(row => selection.getRowId(row));
+      selection.onSelectionChange(allIds);
+    } else {
+      selection.onSelectionChange([]);
+    }
+  };
+
+  const handleSelectRow = (row, checked) => {
+    const rowId = selection.getRowId(row);
+    if (checked) {
+      selection.onSelectionChange([...selection.selected, rowId]);
+    } else {
+      selection.onSelectionChange(
+        selection.selected.filter(id => id !== rowId),
+      );
+    }
+  };
+
+  const allSelected =
+    selection &&
+    data.length > 0 &&
+    data.every(row => selection.selected.includes(selection.getRowId(row)));
+  const someSelected =
+    selection &&
+    data.some(row => selection.selected.includes(selection.getRowId(row)));
+  const colSpanBase =
+    columns.length + (selection ? 1 : 0) + (rowActions ? 1 : 0);
 
   return (
     <Box
@@ -99,6 +131,19 @@ function DataTable({
         <Table>
           <TableHead>
             <TableRow>
+              {selection && (
+                <TableCell
+                  padding="checkbox"
+                  sx={{ color: 'text.secondary', fontWeight: 600 }}
+                >
+                  <Checkbox
+                    indeterminate={someSelected && !allSelected}
+                    checked={allSelected}
+                    onChange={e => handleSelectAll(e.target.checked)}
+                    sx={{ color: 'text.secondary' }}
+                  />
+                </TableCell>
+              )}
               {columns.map(col => (
                 <TableCell
                   key={col.id}
@@ -143,6 +188,11 @@ function DataTable({
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={`skeleton-${i}`}>
+                  {selection && (
+                    <TableCell padding="checkbox">
+                      <Skeleton variant="circular" width={32} height={32} />
+                    </TableCell>
+                  )}
                   {columns.map(col => (
                     <TableCell key={col.id}>
                       <Skeleton variant="text" width="80%" />
@@ -157,11 +207,7 @@ function DataTable({
               ))
             ) : data.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length + (rowActions ? 1 : 0)}
-                  align="center"
-                  sx={{ py: 6 }}
-                >
+                <TableCell colSpan={colSpanBase} align="center" sx={{ py: 6 }}>
                   {emptyState ? (
                     <Box>
                       {emptyState.icon && (
@@ -194,6 +240,20 @@ function DataTable({
                     '&:last-child td': { borderBottom: 0 },
                   }}
                 >
+                  {selection && (
+                    <TableCell
+                      padding="checkbox"
+                      onClick={e => e.stopPropagation()}
+                    >
+                      <Checkbox
+                        checked={selection.selected.includes(
+                          selection.getRowId(row),
+                        )}
+                        onChange={(e, checked) => handleSelectRow(row, checked)}
+                        sx={{ color: 'text.secondary' }}
+                      />
+                    </TableCell>
+                  )}
                   {columns.map(col => (
                     <TableCell key={col.id} align={col.align || 'left'}>
                       {col.accessor(row)}

@@ -147,7 +147,7 @@ function PublicEvents() {
       <PublicHeader>
         <Link
           component={RouterLink}
-          to="/manageBookings"
+          to="/manage-bookings"
           underline="none"
           sx={{
             fontSize: 14,

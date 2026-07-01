@@ -1,14 +1,15 @@
 import { useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import InputBase from '@mui/material/InputBase';
+import Divider from '@mui/material/Divider';
 import { alpha } from '@mui/material/styles';
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import SearchIcon from '@mui/icons-material/Search';
+import BusinessIcon from '@mui/icons-material/Business';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import DropdownButton from '../shared/DropdownButton';
 
 const HEADER_HEIGHT = 64;
 
@@ -108,48 +109,50 @@ function Header() {
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <IconButton
-          size="small"
-          sx={{
-            color: 'text.secondary',
-            '&:hover': {
-              bgcolor: theme => alpha(theme.palette.primary.main, 0.06),
+        <DropdownButton
+          label="Páginas Públicas"
+          hideLabelOnMobile
+          items={[
+            {
+              label: 'Directorio de Empresas',
+              icon: (
+                <BusinessIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
+              ),
+              onClick: () =>
+                window.open(
+                  '/company-directory',
+                  '_blank',
+                  'noopener,noreferrer',
+                ),
             },
-          }}
-        >
-          <NotificationsNoneOutlinedIcon sx={{ fontSize: 22 }} />
-        </IconButton>
-        <IconButton
-          size="small"
-          sx={{
-            color: 'text.secondary',
-            '&:hover': {
-              bgcolor: theme => alpha(theme.palette.primary.main, 0.06),
+            {
+              label: 'Eventos',
+              icon: (
+                <CalendarMonthIcon
+                  sx={{ fontSize: 20, color: 'text.secondary' }}
+                />
+              ),
+              onClick: () =>
+                window.open('/public-events', '_blank', 'noopener,noreferrer'),
             },
-          }}
-        >
-          <ChatBubbleOutlineOutlinedIcon sx={{ fontSize: 22 }} />
-        </IconButton>
-        <IconButton
-          size="small"
-          sx={{
-            color: 'text.secondary',
-            '&:hover': {
-              bgcolor: theme => alpha(theme.palette.primary.main, 0.06),
+            {
+              label: 'Reservas',
+              icon: (
+                <EventAvailableIcon
+                  sx={{ fontSize: 20, color: 'text.secondary' }}
+                />
+              ),
+              onClick: () =>
+                window.open(
+                  '/manage-bookings',
+                  '_blank',
+                  'noopener,noreferrer',
+                ),
             },
-          }}
-        >
-          <SettingsOutlinedIcon sx={{ fontSize: 22 }} />
-        </IconButton>
-
-        <Box
-          sx={{
-            width: '1px',
-            height: 28,
-            bgcolor: theme => alpha(theme.palette.divider, 0.3),
-            mx: 0.5,
-          }}
+          ]}
         />
+
+        <Divider orientation="vertical" flexItem sx={{ height: 28, mx: 0.5 }} />
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box

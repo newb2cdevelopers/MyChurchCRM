@@ -63,7 +63,7 @@ function Navbar() {
           <Divider />
           <List>
             <Link
-              to="/manageBookings"
+              to="/manage-bookings"
               className={styles.textLink}
               onClick={handleDrawer}
             >
@@ -126,7 +126,7 @@ function Navbar() {
             Sistema de gestión Mi Iglesia
           </Button>{' '}
         </Link>
-        <Link to="/manageBookings" className={styles.textLink}>
+        <Link to="/manage-bookings" className={styles.textLink}>
           <Button className={styles.navButton} color="inherit">
             Gestionar mis reservas
           </Button>{' '}

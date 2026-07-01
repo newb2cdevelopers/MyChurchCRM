@@ -31,7 +31,7 @@ function Landing() {
         </Link>
         <Link
           component={RouterLink}
-          to="/manageBookings"
+          to="/manage-bookings"
           underline="none"
           sx={{
             fontSize: 14,
@@ -247,7 +247,7 @@ function Landing() {
 
             <Box
               component={RouterLink}
-              to="/manageBookings"
+              to="/manage-bookings"
               sx={{
                 textDecoration: 'none',
                 bgcolor: 'background.paper',

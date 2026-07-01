@@ -62,7 +62,7 @@ const RoutesCollection = (
       <Route path="/new-people" element={<FormAforo />} />
       <Route path="/events-option" element={<EventsOptions />} />
       <Route path="/reservation" element={<Reservation />} />
-      <Route path="/manageBookings" element={<ManageBooking />} />
+      <Route path="/manage-bookings" element={<ManageBooking />} />
       <Route path="/cv-member" element={<CvMember />} />
       <Route
         path="/IntegrantesGruposFamiliares"

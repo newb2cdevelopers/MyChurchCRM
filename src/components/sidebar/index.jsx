@@ -11,7 +11,6 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { alpha } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import BusinessIcon from '@mui/icons-material/Business';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { setSelectedModule } from '../../features/navigation/navigationSlice';
 import * as authService from '../../services/authService';
@@ -99,12 +98,6 @@ function SidebarContent({ onItemClick }) {
     closeIfNeeded();
   };
 
-  const handleCompanyDirectory = () => {
-    clearSelectedModule();
-    navigate('/company-directory');
-    closeIfNeeded();
-  };
-
   const handleLogout = async () => {
     await authService.logout(dispatch, navigate);
     clearSelectedModule();
@@ -123,8 +116,6 @@ function SidebarContent({ onItemClick }) {
   const activeModule =
     activeModuleFromPath ||
     (pathname.startsWith('/modules') ? selectedModuleName : '');
-
-  const isCompanyDirectoryActive = pathname.startsWith('/company-directory');
 
   return (
     <Box
@@ -172,13 +163,6 @@ function SidebarContent({ onItemClick }) {
             onClick={() => handleSelectModule(role)}
           />
         ))}
-
-        <SidebarItem
-          label="Directorio Empresas"
-          icon={<BusinessIcon />}
-          selected={isCompanyDirectoryActive}
-          onClick={handleCompanyDirectory}
-        />
       </List>
 
       <Divider />
@@ -188,7 +172,7 @@ function SidebarContent({ onItemClick }) {
           onClick={handleLogout}
           sx={{
             borderRadius: 1,
-          py: 0.75,
+            py: 0.75,
             '&:hover': {
               bgcolor: theme => alpha(theme.palette.primary.main, 0.06),
             },
