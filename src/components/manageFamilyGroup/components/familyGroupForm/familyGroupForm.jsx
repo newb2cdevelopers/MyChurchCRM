@@ -71,10 +71,10 @@ export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
   const getMembers = useCallback(async () => {
     const headers = getAuthHeaders(user.token);
     return await genericGetService(
-      `${B2C_BASE_URL}/member?churchId=${user.selectedChurchId}&limit=99999`,
+      `${B2C_BASE_URL}/member?limit=99999`,
       headers,
     );
-  }, [user.token, user.selectedChurchId]);
+  }, [user.token]);
 
   const getZones = useCallback(async () => {
     return await genericGetService(`${B2C_BASE_URL}/zone`);
@@ -178,12 +178,14 @@ export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
       day,
       status,
       created_by: '62b5eb1ab5f08f33e6de2c28',
-      _id: isEditing ? selectedItem._id : null,
     };
 
     setLoading(true);
     const service = isEditing ? genericPutService : genericPostService;
-    const [data, error] = await service(`${B2C_BASE_URL}/familyGroup`, payload);
+    const url = isEditing
+      ? `${B2C_BASE_URL}/familyGroup/${selectedItem._id}`
+      : `${B2C_BASE_URL}/familyGroup`;
+    const [data, error] = await service(url, payload);
     setLoading(false);
 
     if (error || data?.isSuccessful === false) {

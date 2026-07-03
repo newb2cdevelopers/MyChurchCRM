@@ -30,9 +30,9 @@ export default function WorkfrontAssignment() {
   const [submitting, setSubmitting] = useState(false);
   const [search, setSearch] = useState('');
 
-  const getAssignmentData = useCallback(async (churchId, token) => {
+  const getAssignmentData = useCallback(async token => {
     return await genericGetService(
-      `${B2C_BASE_URL}/workfront/assignmentData/${churchId}`,
+      `${B2C_BASE_URL}/workfront/assignmentData`,
       getAuthHeaders(token),
     );
   }, []);
@@ -46,7 +46,7 @@ export default function WorkfrontAssignment() {
 
     setIsLoading(true);
 
-    getAssignmentData(user.selectedChurchId, user.token).then(data => {
+    getAssignmentData(user.token).then(data => {
       if (!isMounted) return;
 
       setIsLoading(false);

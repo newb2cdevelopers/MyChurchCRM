@@ -91,7 +91,7 @@ export default function AttendeeList({ familyGroupId }) {
 
   const handleSave = async () => {
     const payload = {
-      _id: editingMember?._id || null,
+      memberId: editingMember?._id || null,
       name,
       documentNumber,
       documentType,

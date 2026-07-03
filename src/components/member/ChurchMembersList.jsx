@@ -70,7 +70,6 @@ function ChurchMembersList() {
       setLoading(true);
       const headers = getAuthHeaders(user.token);
       const params = new URLSearchParams({
-        churchId: user.selectedChurchId,
         page: String(pageNum + 1),
         limit: String(pageSize),
       });
