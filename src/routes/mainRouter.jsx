@@ -14,8 +14,7 @@ import Reservation from '../components/reservationEvents';
 import ManageBooking from '../components/aforo/events/bookings/ManageBookings';
 import CvMember from '../components/member/CVmember';
 import RecoveryPasswordRequest from './../components/login/recoveryPasswordRequest';
-import FamilyGroupAttendeeList from '../components/manageFamilyGroup/components/familyGroupAttendee/familyGroupAttendeeList';
-import FamilyGroupAttendanceList from '../components/manageFamilyGroup/components/familyGroupAttendee/familyGroupAttendanceList';
+import FamilyGroupDetail from '../components/manageFamilyGroup/components/familyGroupDetail';
 import DirectoryCompanies from '../components/directoryCompanies';
 import CompanyForm from '../components/directoryCompanies/CompanyForm';
 import CompanyDetail from '../components/directoryCompanies/CompanyDetail';
@@ -65,18 +64,10 @@ const RoutesCollection = (
       <Route path="/manage-bookings" element={<ManageBooking />} />
       <Route path="/cv-member" element={<CvMember />} />
       <Route
-        path="/IntegrantesGruposFamiliares"
+        path="/manage-family-groups/:id"
         element={
           <ProtectedRoute>
-            <FamilyGroupAttendeeList />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/AsistenciaGruposFamiliares"
-        element={
-          <ProtectedRoute>
-            <FamilyGroupAttendanceList />
+            <FamilyGroupDetail />
           </ProtectedRoute>
         }
       />

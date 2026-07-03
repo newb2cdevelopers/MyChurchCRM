@@ -1,0 +1,276 @@
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Select from '../../shared/Select';
+import MenuItem from '@mui/material/MenuItem';
+import DateInput from '../../shared/DateInput';
+import { useSelector } from 'react-redux';
+import {
+  genericGetService,
+  genericPostService,
+  getAuthHeaders,
+} from '../../../api/externalServices';
+import { B2C_BASE_URL } from '../../../constants';
+import DataTable from '../../shared/DataTable';
+
+const DOCUMENT_TYPES = ['CC', 'CE', 'NIT', 'Pasaporte'];
+
+export default function AttendeeList({ familyGroupId }) {
+  const user = useSelector(state => state.user);
+  const [members, setMembers] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingMember, setEditingMember] = useState(null);
+
+  const [name, setName] = useState('');
+  const [documentNumber, setDocumentNumber] = useState('');
+  const [documentType, setDocumentType] = useState('CC');
+  const [address, setAddress] = useState('');
+  const [mobilePhone, setMobilePhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [birthDate, setBirthDate] = useState('');
+  const [startingDate, setStartingDate] = useState('');
+  const [comments, setComments] = useState('');
+
+  const fetchMembers = useCallback(async () => {
+    const headers = getAuthHeaders(user.token);
+    const [data] = await genericGetService(
+      `${B2C_BASE_URL}/familyGroup/${familyGroupId}`,
+      headers,
+    );
+    if (data) setMembers(data.members || []);
+  }, [familyGroupId, user.token]);
+
+  useEffect(() => {
+    if (familyGroupId) fetchMembers();
+  }, [familyGroupId, fetchMembers]);
+
+  const filteredData = useMemo(() => {
+    if (!searchInput) return members;
+    const q = searchInput.toLowerCase();
+    return members.filter(m => m.name?.toLowerCase().includes(q));
+  }, [members, searchInput]);
+
+  const openCreate = () => {
+    setEditingMember(null);
+    setName('');
+    setDocumentNumber('');
+    setDocumentType('CC');
+    setAddress('');
+    setMobilePhone('');
+    setEmail('');
+    setBirthDate('');
+    setStartingDate('');
+    setComments('');
+    setFormOpen(true);
+  };
+
+  const openEdit = member => {
+    setEditingMember(member);
+    setName(member.name || '');
+    setDocumentNumber(member.documentNumber || '');
+    setDocumentType(member.documentType || 'CC');
+    setAddress(member.address || '');
+    setMobilePhone(member.mobilePhone || '');
+    setEmail(member.email || '');
+    setBirthDate(member.birthDate || '');
+    setStartingDate(member.startingDate || '');
+    setComments(member.comments || '');
+    setFormOpen(true);
+  };
+
+  const handleSave = async () => {
+    const payload = {
+      _id: editingMember?._id || null,
+      name,
+      documentNumber,
+      documentType,
+      address,
+      mobilePhone,
+      email,
+      birthDate,
+      startingDate,
+      comments,
+    };
+
+    const headers = getAuthHeaders(user.token);
+    const [data, error] = await genericPostService(
+      `${B2C_BASE_URL}/familyGroup/registerFamilyGroupMember/${familyGroupId}`,
+      payload,
+      headers,
+    );
+
+    if (error || data?.isSuccessful === false) {
+      alert(data?.message || 'Error al guardar');
+      return;
+    }
+
+    if (data?.data?.members) setMembers(data.data.members);
+    setFormOpen(false);
+  };
+
+  const columns = [
+    {
+      id: 'name',
+      label: 'Nombre',
+      accessor: row => row.name || '—',
+    },
+    {
+      id: 'documentNumber',
+      label: 'Identificación',
+      accessor: row => row.documentNumber || '—',
+    },
+    {
+      id: 'mobilePhone',
+      label: 'Celular',
+      accessor: row => row.mobilePhone || '—',
+    },
+    {
+      id: 'email',
+      label: 'Correo',
+      accessor: row => row.email || '—',
+    },
+    {
+      id: 'birthDate',
+      label: 'Fecha de nacimiento',
+      accessor: row => row.birthDate || '—',
+    },
+  ];
+
+  const rowActions = ({ row }) => (
+    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
+      <Tooltip title="Editar">
+        <IconButton size="small" onClick={() => openEdit(row)}>
+          <ModeEditIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Eliminar">
+        <IconButton size="small" onClick={() => {}}>
+          <DeleteIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  );
+
+  return (
+    <Box>
+      <DataTable
+        columns={columns}
+        data={filteredData}
+        search={{
+          value: searchInput,
+          onChange: setSearchInput,
+          placeholder: 'Buscar por nombre...',
+        }}
+        rowActions={rowActions}
+        toolbarActions={
+          <Button
+            variant="contained"
+            onClick={openCreate}
+            sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+          >
+            <AddIcon sx={{ fontSize: 18 }} />
+            Agregar integrante
+          </Button>
+        }
+        emptyState="No hay integrantes registrados"
+      />
+
+      <Dialog
+        open={formOpen}
+        onClose={() => setFormOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          {editingMember ? 'Editar Integrante' : 'Nuevo Integrante'}
+        </DialogTitle>
+        <DialogContent dividers>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+            <TextField
+              label="Nombre"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              size="small"
+              required
+            />
+            <TextField
+              label="Número de documento"
+              value={documentNumber}
+              onChange={e => setDocumentNumber(e.target.value)}
+              size="small"
+              required
+            />
+            <Select
+              label="Tipo de documento"
+              value={documentType}
+              onChange={e => setDocumentType(e.target.value)}
+              size="small"
+            >
+              {DOCUMENT_TYPES.map(dt => (
+                <MenuItem key={dt} value={dt}>
+                  {dt}
+                </MenuItem>
+              ))}
+            </Select>
+            <TextField
+              label="Dirección"
+              value={address}
+              onChange={e => setAddress(e.target.value)}
+              size="small"
+            />
+            <TextField
+              label="Celular"
+              value={mobilePhone}
+              onChange={e => setMobilePhone(e.target.value)}
+              size="small"
+            />
+            <TextField
+              label="Correo"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              size="small"
+              type="email"
+            />
+            <DateInput
+              label="Fecha de nacimiento"
+              value={birthDate}
+              onChange={setBirthDate}
+            />
+            <DateInput
+              label="Fecha de inicio"
+              value={startingDate}
+              onChange={setStartingDate}
+            />
+            <TextField
+              label="Comentarios"
+              value={comments}
+              onChange={e => setComments(e.target.value)}
+              size="small"
+              multiline
+              rows={2}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setFormOpen(false)} color="inherit">
+            Cancelar
+          </Button>
+          <Button onClick={handleSave} variant="contained">
+            Guardar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+}

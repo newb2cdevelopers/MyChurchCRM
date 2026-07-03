@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
@@ -55,77 +55,43 @@ function ChurchMembersList() {
   const dispatch = useDispatch();
 
   const [members, setMembers] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
-  const [sort, setSort] = useState({ columnId: null, direction: 'asc' });
   const [page, setPage] = useState(0);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [memberToEdit, setMemberToEdit] = useState(null);
   const pageSize = 10;
 
-  const fetchMembers = useCallback(() => {
-    if (!user.selectedChurchId) return;
-    const headers = getAuthHeaders(user.token);
-    genericGetService(
-      `${B2C_BASE_URL}/member?churchId=${user.selectedChurchId}`,
-      headers,
-    ).then(data => {
-      if (data[0]) {
-        setMembers(data[0]);
-      }
-    });
-  }, [user.selectedChurchId, user.token]);
+  const fetchMembers = useCallback(
+    (pageNum, search) => {
+      if (!user.selectedChurchId) return;
+      setLoading(true);
+      const headers = getAuthHeaders(user.token);
+      const params = new URLSearchParams({
+        churchId: user.selectedChurchId,
+        page: String(pageNum + 1),
+        limit: String(pageSize),
+      });
+      if (search) params.set('search', search);
+      genericGetService(`${B2C_BASE_URL}/member?${params}`, headers).then(
+        data => {
+          if (data[0]) {
+            setMembers(data[0].data || []);
+            setTotalRecords(data[0].metadata?.totalRecords || 0);
+          }
+          setLoading(false);
+        },
+      );
+    },
+    [user.selectedChurchId, user.token],
+  );
 
   useEffect(() => {
     dispatch(selectedMemberData({ selectedMemberData: null }));
-    fetchMembers();
-  }, [fetchMembers, dispatch]);
-
-  const filteredData = useMemo(() => {
-    let result = members;
-
-    if (searchInput.length >= 2) {
-      const query = searchInput.toLowerCase();
-      result = result.filter(
-        m =>
-          m.documentNumber.toString().includes(query) ||
-          m.fullName.toLowerCase().includes(query),
-      );
-    }
-
-    if (sort.columnId) {
-      result = [...result].sort((a, b) => {
-        const aVal =
-          columns.find(c => c.id === sort.columnId)?.accessor(a) || '';
-        const bVal =
-          columns.find(c => c.id === sort.columnId)?.accessor(b) || '';
-        const cmp = String(aVal).localeCompare(String(bVal), 'es', {
-          numeric: true,
-        });
-        return sort.direction === 'asc' ? cmp : -cmp;
-      });
-    }
-
-    return result;
-  }, [members, searchInput, sort]);
-
-  const paginatedData = useMemo(
-    () => filteredData.slice(page * pageSize, (page + 1) * pageSize),
-    [filteredData, page],
-  );
-
-  const handleSortChange = (columnId, direction) => {
-    setSort({ columnId, direction });
-  };
-
-  const handlePageChange = newPage => {
-    setPage(newPage);
-  };
-
-  const handleSearchChange = value => {
-    setSearchInput(value);
-    setPage(0);
-  };
+    fetchMembers(page, searchInput);
+  }, [fetchMembers, page, searchInput, dispatch]);
 
   const handleEdit = document => {
     const member = members.find(m => m.documentNumber === document);
@@ -142,6 +108,11 @@ function ChurchMembersList() {
       dispatch(selectedMemberData({ selectedMemberData: _selectedMember }));
     }
     navigate(route);
+  };
+
+  const handleSearchChange = value => {
+    setSearchInput(value);
+    setPage(0);
   };
 
   const rowActions = ({ row }) => (
@@ -166,22 +137,17 @@ function ChurchMembersList() {
     <Box>
       <DataTable
         columns={columns}
-        data={paginatedData}
+        data={members}
         search={{
           value: searchInput,
           onChange: handleSearchChange,
           placeholder: 'Buscar por documento o nombre…',
         }}
-        sort={{
-          columnId: sort.columnId,
-          direction: sort.direction,
-          onSortChange: handleSortChange,
-        }}
         pagination={{
           page,
           pageSize,
-          total: filteredData.length,
-          onPageChange: handlePageChange,
+          total: totalRecords,
+          onPageChange: setPage,
         }}
         toolbarActions={
           <Button
@@ -199,13 +165,14 @@ function ChurchMembersList() {
             : 'No hay miembros registrados.',
         }}
         rowActions={rowActions}
+        isLoading={loading}
       />
       <CreateMemberStepper
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onSuccess={() => {
           setCreateModalOpen(false);
-          fetchMembers();
+          fetchMembers(page, searchInput);
         }}
       />
       <CreateMemberStepper
@@ -218,7 +185,7 @@ function ChurchMembersList() {
         onSuccess={() => {
           setEditModalOpen(false);
           setMemberToEdit(null);
-          fetchMembers();
+          fetchMembers(page, searchInput);
         }}
       />
     </Box>
