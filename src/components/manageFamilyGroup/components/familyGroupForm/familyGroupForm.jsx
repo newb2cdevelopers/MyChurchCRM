@@ -43,7 +43,12 @@ const TIMES = [
 
 const STATUSES = ['Activo', 'Suspendido', 'Cancelado'];
 
-export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
+export default function FamilyGroupForm({
+  open,
+  setOpen,
+  selectedItem,
+  onSuccess,
+}) {
   const isEditing = selectedItem !== null;
   const user = useSelector(state => state.user);
 
@@ -177,7 +182,6 @@ export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
       time,
       day,
       status,
-      created_by: '62b5eb1ab5f08f33e6de2c28',
     };
 
     setLoading(true);
@@ -193,7 +197,7 @@ export default function FamilyGroupForm({ open, setOpen, selectedItem }) {
       return;
     }
     alert('Guardado exitoso');
-    setOpen(false);
+    onSuccess?.();
   };
 
   const handleClose = () => setOpen(false);

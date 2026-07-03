@@ -165,9 +165,8 @@ export default function CvMember() {
       navigate('/', { replace: true });
       return;
     }
-    const isSearchById = Boolean(selectedMember?._id);
     genericGetService(
-      `${B2C_BASE_URL}/member/getMemberByIdentifier/${isSearchById}/${identifier}`,
+      `${B2C_BASE_URL}/member/${identifier}`,
       getAuthHeaders(user.token),
     )
       .then(([data]) => {

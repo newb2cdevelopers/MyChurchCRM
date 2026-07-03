@@ -39,11 +39,11 @@ export default function AttendanceForm({
     const fetchData = async () => {
       const headers = getAuthHeaders(user.token);
       const data = await genericGetService(
-        `${B2C_BASE_URL}/familyGroup`,
+        `${B2C_BASE_URL}/familyGroup/${familyGroupId}`,
         headers,
       );
-      if (data[0] && data[0].length > 0) {
-        const group = data[0].find(g => g._id === familyGroupId);
+      if (data[0]) {
+        const group = data[0];
         if (group?.members) {
           setMembers(group.members);
           const map = {};

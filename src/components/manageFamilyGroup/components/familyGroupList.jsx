@@ -101,12 +101,6 @@ function FamilyGroupList() {
     fetchFamilyGroups(page, searchInput);
   }, [fetchFamilyGroups, page, searchInput]);
 
-  useEffect(() => {
-    if (!formOpen) return;
-    setPage(0);
-    fetchFamilyGroups(0, searchInput);
-  }, [formOpen, fetchFamilyGroups, searchInput]);
-
   const handleCreate = () => {
     setSelectedItem(null);
     setFormOpen(true);
@@ -115,6 +109,11 @@ function FamilyGroupList() {
   const handleEdit = row => {
     setSelectedItem(row);
     setFormOpen(true);
+  };
+
+  const handleFormSuccess = () => {
+    setFormOpen(false);
+    fetchFamilyGroups(page, searchInput);
   };
 
   const handleView = row => {
@@ -175,6 +174,7 @@ function FamilyGroupList() {
         open={formOpen}
         setOpen={setFormOpen}
         selectedItem={selectedItem}
+        onSuccess={handleFormSuccess}
       />
     </Box>
   );
