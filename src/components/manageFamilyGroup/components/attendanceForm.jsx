@@ -6,8 +6,8 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
+import Autocomplete from '@mui/material/Autocomplete';
 import Typography from '@mui/material/Typography';
 import DateInput from '../../shared/DateInput';
 import { useSelector } from 'react-redux';
@@ -27,10 +27,10 @@ export default function AttendanceForm({
   const user = useSelector(state => state.user);
 
   const [members, setMembers] = useState([]);
+  const [selectedMembers, setSelectedMembers] = useState([]);
   const [date, setDate] = useState('');
   const [lessonName, setLessonName] = useState('');
   const [comments, setComments] = useState('');
-  const [attendanceMap, setAttendanceMap] = useState({});
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -38,21 +38,14 @@ export default function AttendanceForm({
 
     const fetchData = async () => {
       const headers = getAuthHeaders(user.token);
-      const data = await genericGetService(
+      const [data] = await genericGetService(
         `${B2C_BASE_URL}/familyGroup/${familyGroupId}`,
         headers,
       );
-      if (data[0]) {
-        const group = data[0];
-        if (group?.members) {
-          setMembers(group.members);
-          const map = {};
-          group.members.forEach(m => {
-            map[m._id || m.documentNumber] = true;
-          });
-          setAttendanceMap(map);
-        }
+      if (data?.members) {
+        setMembers(data.members);
       }
+      setSelectedMembers([]);
       setDate('');
       setLessonName('');
       setComments('');
@@ -60,19 +53,16 @@ export default function AttendanceForm({
     fetchData();
   }, [open, familyGroupId, user.token]);
 
-  const toggleAttendance = memberId => {
-    setAttendanceMap(prev => ({ ...prev, [memberId]: !prev[memberId] }));
-  };
-
   const handleSave = async () => {
     if (!date || !lessonName) {
       alert('Fecha y nombre de la clase son obligatorios');
       return;
     }
 
+    const selectedIds = new Set(selectedMembers.map(m => m._id));
     const membersAttendance = members.map(m => ({
       familyGroupmember: m._id,
-      hasAttended: !!attendanceMap[m._id || m.documentNumber],
+      hasAttended: selectedIds.has(m._id),
     }));
 
     const payload = {
@@ -126,24 +116,39 @@ export default function AttendanceForm({
           <Typography variant="subtitle2" fontWeight={600} sx={{ mt: 1 }}>
             Asistentes
           </Typography>
-          {members.length === 0 && (
+          {members.length === 0 ? (
             <Typography variant="body2" color="text.secondary">
               No hay integrantes registrados en este grupo
             </Typography>
-          )}
-          {members.map(m => (
-            <FormControlLabel
-              key={m._id || m.documentNumber}
-              control={
-                <Checkbox
-                  checked={!!attendanceMap[m._id || m.documentNumber]}
-                  onChange={() => toggleAttendance(m._id || m.documentNumber)}
+          ) : (
+            <Autocomplete
+              multiple
+              options={members}
+              value={selectedMembers}
+              onChange={(e, newValue) => setSelectedMembers(newValue)}
+              getOptionLabel={option => option.name || ''}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  placeholder="Buscar y seleccionar asistentes..."
                   size="small"
                 />
+              )}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    label={option.name}
+                    size="small"
+                    {...getTagProps({ index })}
+                    key={option._id}
+                  />
+                ))
               }
-              label={m.name}
+              noOptionsText="Sin resultados"
+              fullWidth
             />
-          ))}
+          )}
         </Box>
       </DialogContent>
       <DialogActions>
