@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import Select from '../../../shared/Select';
 import MenuItem from '@mui/material/MenuItem';
 import DateInput from '../../../shared/DateInput';
+import showToast from '../../../../customComponents/toast/showToast';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
@@ -30,16 +31,9 @@ const DAYS = [
   'Domingo',
 ];
 
-const TIMES = [
-  '13:00',
-  '14:00',
-  '15:00',
-  '16:00',
-  '17:00',
-  '18:00',
-  '19:00',
-  '20:00',
-];
+const TIMES = Array.from({ length: 24 }, (_, i) =>
+  `${String(i).padStart(2, '0')}:00`,
+);
 
 const STATUSES = ['Activo', 'Suspendido', 'Cancelado'];
 
@@ -161,8 +155,10 @@ export default function FamilyGroupForm({
     if (!code) errs.code = 'El código es obligatorio';
     if (!address) errs.address = 'La dirección es obligatoria';
     if (!startDate) errs.startDate = 'La fecha de inicio es obligatoria';
-    if (!leader) errs.leader = 'Seleccione un líder';
+    if (!zoneBind) errs.zoneBind = 'Seleccione una zona';
+    if (!locality) errs.locality = 'Seleccione una localidad';
     if (!neighborhood) errs.neighborhood = 'Seleccione un barrio';
+    if (!leader) errs.leader = 'Seleccione un líder';
     if (!day) errs.day = 'Seleccione un día';
     if (!time) errs.time = 'Seleccione una hora';
     if (!status) errs.status = 'Seleccione un estado';
@@ -193,10 +189,10 @@ export default function FamilyGroupForm({
     setLoading(false);
 
     if (error || data?.isSuccessful === false) {
-      alert(data?.message || 'Se ha presentado un error');
+      showToast.error('Error', data?.message || 'Se ha presentado un error');
       return;
     }
-    alert('Guardado exitoso');
+    showToast.success('Guardado exitoso', 'El grupo familiar se ha guardado correctamente');
     onSuccess?.();
   };
 
@@ -268,6 +264,8 @@ export default function FamilyGroupForm({
             label="Zona"
             value={zoneBind}
             onChange={handleChangeZone}
+            error={!!errors.zoneBind}
+            helperText={errors.zoneBind}
             size="small"
           >
             <MenuItem value="">
@@ -285,6 +283,8 @@ export default function FamilyGroupForm({
             label="Comuna / Localidad"
             value={locality}
             onChange={handleChangeLocality}
+            error={!!errors.locality}
+            helperText={errors.locality}
             size="small"
           >
             <MenuItem value="">

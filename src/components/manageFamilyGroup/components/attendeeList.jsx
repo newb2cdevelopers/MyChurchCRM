@@ -21,6 +21,7 @@ import {
   getAuthHeaders,
 } from '../../../api/externalServices';
 import { B2C_BASE_URL } from '../../../constants';
+import showToast from '../../../customComponents/toast/showToast';
 import DataTable from '../../shared/DataTable';
 
 const DOCUMENT_TYPES = ['CC', 'CE', 'NIT', 'Pasaporte'];
@@ -33,14 +34,15 @@ export default function AttendeeList({ familyGroupId }) {
   const [editingMember, setEditingMember] = useState(null);
 
   const [name, setName] = useState('');
-  const [documentNumber, setDocumentNumber] = useState('');
   const [documentType, setDocumentType] = useState('CC');
+  const [documentNumber, setDocumentNumber] = useState('');
   const [address, setAddress] = useState('');
   const [mobilePhone, setMobilePhone] = useState('');
   const [email, setEmail] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [startingDate, setStartingDate] = useState('');
   const [comments, setComments] = useState('');
+  const [errors, setErrors] = useState({});
 
   const fetchMembers = useCallback(async () => {
     const headers = getAuthHeaders(user.token);
@@ -64,35 +66,55 @@ export default function AttendeeList({ familyGroupId }) {
   const openCreate = () => {
     setEditingMember(null);
     setName('');
-    setDocumentNumber('');
     setDocumentType('CC');
+    setDocumentNumber('');
     setAddress('');
     setMobilePhone('');
     setEmail('');
     setBirthDate('');
     setStartingDate('');
     setComments('');
+    setErrors({});
     setFormOpen(true);
   };
 
   const openEdit = member => {
     setEditingMember(member);
     setName(member.name || '');
-    setDocumentNumber(member.documentNumber || '');
     setDocumentType(member.documentType || 'CC');
+    setDocumentNumber(member.documentNumber || '');
     setAddress(member.address || '');
     setMobilePhone(member.mobilePhone || '');
     setEmail(member.email || '');
     setBirthDate(member.birthDate || '');
     setStartingDate(member.startingDate || '');
     setComments(member.comments || '');
+    setErrors({});
     setFormOpen(true);
   };
 
+  const validate = () => {
+    const errs = {};
+    if (!name.trim()) errs.name = 'El nombre es obligatorio';
+    if (!documentType) errs.documentType = 'Seleccione un tipo de documento';
+    if (!documentNumber.trim()) {
+      errs.documentNumber = 'El número de documento es obligatorio';
+    } else if (!/^\d+$/.test(documentNumber)) {
+      errs.documentNumber = 'Solo se permiten números';
+    }
+    if (mobilePhone && !/^\d+$/.test(mobilePhone)) {
+      errs.mobilePhone = 'Solo se permiten números';
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const handleSave = async () => {
+    if (!validate()) return;
+
     const payload = {
       memberId: editingMember?._id || null,
-      name,
+      name: name.trim(),
       documentNumber,
       documentType,
       address,
@@ -111,7 +133,7 @@ export default function AttendeeList({ familyGroupId }) {
     );
 
     if (error || data?.isSuccessful === false) {
-      alert(data?.message || 'Error al guardar');
+      showToast.error('Error', data?.message || 'Error al guardar');
       return;
     }
 
@@ -201,13 +223,8 @@ export default function AttendeeList({ familyGroupId }) {
               label="Nombre"
               value={name}
               onChange={e => setName(e.target.value)}
-              size="small"
-              required
-            />
-            <TextField
-              label="Número de documento"
-              value={documentNumber}
-              onChange={e => setDocumentNumber(e.target.value)}
+              error={!!errors.name}
+              helperText={errors.name}
               size="small"
               required
             />
@@ -215,6 +232,8 @@ export default function AttendeeList({ familyGroupId }) {
               label="Tipo de documento"
               value={documentType}
               onChange={e => setDocumentType(e.target.value)}
+              error={!!errors.documentType}
+              helperText={errors.documentType}
               size="small"
             >
               {DOCUMENT_TYPES.map(dt => (
@@ -224,6 +243,18 @@ export default function AttendeeList({ familyGroupId }) {
               ))}
             </Select>
             <TextField
+              label="Número de documento"
+              value={documentNumber}
+              onChange={e =>
+                setDocumentNumber(e.target.value.replace(/\D/g, ''))
+              }
+              error={!!errors.documentNumber}
+              helperText={errors.documentNumber}
+              size="small"
+              required
+              inputProps={{ inputMode: 'numeric' }}
+            />
+            <TextField
               label="Dirección"
               value={address}
               onChange={e => setAddress(e.target.value)}
@@ -232,8 +263,13 @@ export default function AttendeeList({ familyGroupId }) {
             <TextField
               label="Celular"
               value={mobilePhone}
-              onChange={e => setMobilePhone(e.target.value)}
+              onChange={e =>
+                setMobilePhone(e.target.value.replace(/\D/g, ''))
+              }
+              error={!!errors.mobilePhone}
+              helperText={errors.mobilePhone}
               size="small"
+              inputProps={{ inputMode: 'numeric' }}
             />
             <TextField
               label="Correo"

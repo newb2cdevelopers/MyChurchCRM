@@ -10,6 +10,7 @@ import Chip from '@mui/material/Chip';
 import Autocomplete from '@mui/material/Autocomplete';
 import Typography from '@mui/material/Typography';
 import DateInput from '../../shared/DateInput';
+import showToast from '../../../customComponents/toast/showToast';
 import { useSelector } from 'react-redux';
 import {
   genericGetService,
@@ -55,7 +56,7 @@ export default function AttendanceForm({
 
   const handleSave = async () => {
     if (!date || !lessonName) {
-      alert('Fecha y nombre de la clase son obligatorios');
+      showToast.warning('Campos obligatorios', 'Fecha y nombre de la clase son obligatorios');
       return;
     }
 
@@ -83,11 +84,11 @@ export default function AttendanceForm({
     setSaving(false);
 
     if (error || data?.isSuccessful === false) {
-      alert(data?.message || 'Error al registrar asistencia');
+      showToast.error('Error', data?.message || 'Error al registrar asistencia');
       return;
     }
 
-    alert('Asistencia registrada exitosamente');
+    showToast.success('Asistencia registrada', 'La asistencia se ha registrado exitosamente');
     setOpen(false);
     if (onSave) onSave();
   };
