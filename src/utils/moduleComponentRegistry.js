@@ -5,6 +5,7 @@ import BulkLoad from '../components/BulkLoad/BulkLoad';
 import ChurchMembersList from '../components/member/ChurchMembersList';
 import WorkfrontAssignment from '../components/workfrontAssignments/workfrontAssignment';
 import FamilyGroupList from '../components/manageFamilyGroup/components/familyGroupList';
+import ManageUsers from '../components/manageUsers';
 
 const ROUTE_COMPONENTS = {
   '/create-events': EventListView,
@@ -14,6 +15,7 @@ const ROUTE_COMPONENTS = {
   '/members': ChurchMembersList,
   '/front-assignment': WorkfrontAssignment,
   '/family-groups': FamilyGroupList,
+  '/manage-users': ManageUsers,
 };
 
 export default ROUTE_COMPONENTS;

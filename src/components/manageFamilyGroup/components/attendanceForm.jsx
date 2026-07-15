@@ -6,10 +6,9 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Autocomplete from '@mui/material/Autocomplete';
 import Typography from '@mui/material/Typography';
 import DateInput from '../../shared/DateInput';
+import MultiSelect from '../../shared/MultiSelect';
 import showToast from '../../../customComponents/toast/showToast';
 import { useSelector } from 'react-redux';
 import {
@@ -56,7 +55,10 @@ export default function AttendanceForm({
 
   const handleSave = async () => {
     if (!date || !lessonName) {
-      showToast.warning('Campos obligatorios', 'Fecha y nombre de la clase son obligatorios');
+      showToast.warning(
+        'Campos obligatorios',
+        'Fecha y nombre de la clase son obligatorios',
+      );
       return;
     }
 
@@ -84,11 +86,17 @@ export default function AttendanceForm({
     setSaving(false);
 
     if (error || data?.isSuccessful === false) {
-      showToast.error('Error', data?.message || 'Error al registrar asistencia');
+      showToast.error(
+        'Error',
+        data?.message || 'Error al registrar asistencia',
+      );
       return;
     }
 
-    showToast.success('Asistencia registrada', 'La asistencia se ha registrado exitosamente');
+    showToast.success(
+      'Asistencia registrada',
+      'La asistencia se ha registrado exitosamente',
+    );
     setOpen(false);
     if (onSave) onSave();
   };
@@ -122,32 +130,12 @@ export default function AttendanceForm({
               No hay integrantes registrados en este grupo
             </Typography>
           ) : (
-            <Autocomplete
-              multiple
+            <MultiSelect
               options={members}
               value={selectedMembers}
-              onChange={(e, newValue) => setSelectedMembers(newValue)}
+              onChange={setSelectedMembers}
               getOptionLabel={option => option.name || ''}
-              isOptionEqualToValue={(option, value) => option._id === value._id}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  placeholder="Buscar y seleccionar asistentes..."
-                  size="small"
-                />
-              )}
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    label={option.name}
-                    size="small"
-                    {...getTagProps({ index })}
-                    key={option._id}
-                  />
-                ))
-              }
-              noOptionsText="Sin resultados"
-              fullWidth
+              placeholder="Buscar y seleccionar asistentes..."
             />
           )}
         </Box>
