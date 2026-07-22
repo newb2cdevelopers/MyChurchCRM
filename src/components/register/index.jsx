@@ -2,16 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Link as RouterLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import showToast from '../../customComponents/toast/showToast';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useDispatch } from 'react-redux';
-import { login, setSelectedChurch } from '../../features/user/userSlice';
-import * as tokenService from '../../services/tokenService';
+
 import {
   genericGetService,
   genericPostService,
@@ -69,18 +66,8 @@ function Register() {
   const [errorInfo, setErrorInfo] = useState('');
   const [churches, setChurches] = useState([]);
   const [selectedChurchId, setSelectedChurchId] = useState('');
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    severity: 'info',
-  });
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
 
   const formik = useFormik({
     initialValues: {
@@ -105,37 +92,13 @@ function Register() {
       const results = await genericPostService(`${BASE_URL}/user`, payload);
       setLoading(false);
 
-      if (results[0] && results[0].access_token) {
-        tokenService.setTokens(
-          results[0].access_token,
-          results[0].refresh_token,
-          false,
+      if (results[0] && !results[1]) {
+        showToast.success(
+          'Registro exitoso',
+          'Usuario registrado exitosamente. Su cuenta está pendiente de activación.',
         );
 
-        sessionStorage.setItem('userEmail', values.email.toLowerCase());
-
-        dispatch(
-          login({
-            userEmail: values.email.toLowerCase(),
-            token: results[0].access_token,
-            roles: results[0].roles,
-            workfront: results[0].workfront,
-          }),
-        );
-
-        dispatch(
-          setSelectedChurch({
-            selectedChurchId: results[0].churchId,
-          }),
-        );
-
-        setSnackbar({
-          open: true,
-          message: 'Usuario registrado exitosamente. Bienvenido!',
-          severity: 'success',
-        });
-
-        setTimeout(() => navigate('/dashboard'), 1500);
+        setTimeout(() => navigate('/login'), 2000);
         return;
       }
 
@@ -163,11 +126,7 @@ function Register() {
             'Se ha presentado un error registrando el usuario. Por favor intente nuevamente';
         }
 
-        setSnackbar({
-          open: true,
-          message: errorMsg,
-          severity: 'error',
-        });
+        showToast.error('Error', errorMsg);
       }
     },
   });
@@ -396,21 +355,6 @@ function Register() {
       </Box>
 
       <Copyright />
-
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

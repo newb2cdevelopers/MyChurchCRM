@@ -5,8 +5,8 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import Alert from '@mui/material/Alert';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import showToast from '../../customComponents/toast/showToast';
 import { Link as RouterLink } from 'react-router-dom';
 import { genericPostService } from '../../api/externalServices';
 import BackdropLoader from '../common/backdroploader';
@@ -47,7 +47,6 @@ function Login() {
   const [loginInfo, setLoginInfo] = useState(initialFormState);
   const [missingRequiredFields, setMissingRequiredFields] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async event => {
@@ -102,17 +101,17 @@ function Login() {
         }),
       );
 
-      setErrorMessage('');
       return navigate('/dashboard');
     }
 
     if (results[0] && !results[0].access_token) {
-      setErrorMessage('Por favor verifique sus credenciales.');
+      showToast.error('Error', 'Por favor verifique sus credenciales.');
       return;
     }
 
     if (!results[0]) {
-      setErrorMessage(
+      showToast.error(
+        'Error',
         'Se ha presentado un error, por favor contacte al administrador',
       );
       return;
@@ -122,9 +121,6 @@ function Login() {
   const handleFormOnchange = e => {
     const { name, value } = e.target;
 
-    if (errorMessage.length > 0) {
-      setErrorMessage('');
-    }
     if (value) {
       setMissingRequiredFields([]);
     }
@@ -308,12 +304,6 @@ function Login() {
                 </Typography>
               </Box>
             </Box>
-
-            {errorMessage.length > 0 && (
-              <Alert severity="error" sx={{ mt: 3 }}>
-                {errorMessage}
-              </Alert>
-            )}
           </Box>
         </Box>
       </Box>

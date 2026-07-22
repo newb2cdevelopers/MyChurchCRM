@@ -3,9 +3,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
+import showToast from '../../customComponents/toast/showToast';
 import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
 import Visibility from '@mui/icons-material/Visibility';
@@ -64,11 +63,6 @@ const getStrengthText = strength => {
 function CreateNewPassword() {
   const BASE_URL = B2C_BASE_URL;
   const [loading, setLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    severity: 'info',
-  });
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
@@ -100,11 +94,10 @@ function CreateNewPassword() {
       setLoading(false);
 
       if (results[0] && results[0].isSuccessful) {
-        setSnackbar({
-          open: true,
-          message: 'Su contraseña ha sido restablecida exitosamente',
-          severity: 'success',
-        });
+        showToast.success(
+          'Contraseña actualizada',
+          'Su contraseña ha sido restablecida exitosamente',
+        );
         setTimeout(() => navigate('/login'), 3000);
         return;
       }
@@ -117,21 +110,16 @@ function CreateNewPassword() {
               ? 'Usuario no encontrado en el sistema'
               : 'Se ha presentado un error al restablecer la contraseña';
 
-        setSnackbar({ open: true, message: errorMsg, severity: 'error' });
+        showToast.error('Error', errorMsg);
         return;
       }
 
-      setSnackbar({
-        open: true,
-        message: 'Se ha presentado un error. Por favor intente nuevamente',
-        severity: 'error',
-      });
+      showToast.error(
+        'Error',
+        'Se ha presentado un error. Por favor intente nuevamente',
+      );
     },
   });
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
 
   const handlePasswordChange = e => {
     const newPassword = e.target.value;
@@ -361,21 +349,6 @@ function CreateNewPassword() {
           {'.'}
         </Typography>
       </Box>
-
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }
