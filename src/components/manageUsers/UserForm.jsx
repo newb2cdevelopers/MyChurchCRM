@@ -142,6 +142,18 @@ export default function UserForm({ open, setOpen, selectedItem, onSuccess }) {
             size="small"
             disabled
           />
+          <TextField
+            label="Tipo de documento"
+            value={selectedItem?.documentType || ''}
+            size="small"
+            disabled
+          />
+          <TextField
+            label="Número de documento"
+            value={selectedItem?.documentNumber || ''}
+            size="small"
+            disabled
+          />
           <FormControlLabel
             control={
               <Switch

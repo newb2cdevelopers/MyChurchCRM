@@ -15,9 +15,11 @@ import {
 } from '../../api/externalServices';
 import AutoCompleteSearch from './autoCompleteSearch';
 import BackdropLoader from '../common/backdroploader';
-import { B2C_BASE_URL } from '../../constants';
+import { B2C_BASE_URL, DOCUMENT_TYPES } from '../../constants';
 import Button from '../../customComponents/button';
 import TextField from '../shared/TextField';
+import Select from '../shared/Select';
+import MenuItem from '@mui/material/MenuItem';
 import PasswordField from '../shared/PasswordField';
 import PublicHeader from '../shared/PublicHeader';
 
@@ -37,6 +39,10 @@ const validationSchema = yup.object({
   names: yup.string().required('Este campo es obligatorio'),
   lastNames: yup.string().required('Este campo es obligatorio'),
   selectedChurchId: yup.string().required('Debe seleccionar una iglesia'),
+  documentType: yup.string().required('El tipo de documento es obligatorio'),
+  documentNumber: yup
+    .string()
+    .required('El número de documento es obligatorio'),
   passwordConfirm: yup.string().when('password', {
     is: val => (val && val.length > 0 ? true : false),
     then: yup
@@ -76,6 +82,8 @@ function Register() {
       passwordConfirm: '',
       names: '',
       lastNames: '',
+      documentType: '',
+      documentNumber: '',
       selectedChurchId: '',
     },
     validationSchema: validationSchema,
@@ -84,6 +92,8 @@ function Register() {
         email: values.email.toLowerCase(),
         name: values.names,
         lastName: values.lastNames,
+        documentType: values.documentType,
+        documentNumber: values.documentNumber,
         password: values.password,
         churchId: values.selectedChurchId,
       };
@@ -272,6 +282,46 @@ function Register() {
                   }
                 />
               </Box>
+
+              <Select
+                label="Tipo de documento"
+                value={formik.values.documentType}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                name="documentType"
+                error={
+                  formik.touched.documentType &&
+                  Boolean(formik.errors.documentType)
+                }
+                helperText={
+                  formik.touched.documentType && formik.errors.documentType
+                }
+                size="medium"
+                required
+              >
+                <MenuItem value="">
+                  <em>Seleccione...</em>
+                </MenuItem>
+                {DOCUMENT_TYPES.map(dt => (
+                  <MenuItem key={dt} value={dt}>
+                    {dt}
+                  </MenuItem>
+                ))}
+              </Select>
+              <TextField
+                required
+                name="documentNumber"
+                label="Número de documento"
+                value={formik.values.documentNumber}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.documentNumber &&
+                  Boolean(formik.errors.documentNumber)
+                }
+                helperText={
+                  formik.touched.documentNumber && formik.errors.documentNumber
+                }
+              />
 
               <AutoCompleteSearch
                 setSelectedChurchId={setSelectedChurchId}

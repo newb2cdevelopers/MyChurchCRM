@@ -20,11 +20,9 @@ import {
   genericPostService,
   getAuthHeaders,
 } from '../../../api/externalServices';
-import { B2C_BASE_URL } from '../../../constants';
+import { B2C_BASE_URL, DOCUMENT_TYPES } from '../../../constants';
 import showToast from '../../../customComponents/toast/showToast';
 import DataTable from '../../shared/DataTable';
-
-const DOCUMENT_TYPES = ['CC', 'CE', 'NIT', 'Pasaporte'];
 
 export default function AttendeeList({ familyGroupId }) {
   const user = useSelector(state => state.user);
@@ -263,9 +261,7 @@ export default function AttendeeList({ familyGroupId }) {
             <TextField
               label="Celular"
               value={mobilePhone}
-              onChange={e =>
-                setMobilePhone(e.target.value.replace(/\D/g, ''))
-              }
+              onChange={e => setMobilePhone(e.target.value.replace(/\D/g, ''))}
               error={!!errors.mobilePhone}
               helperText={errors.mobilePhone}
               size="small"

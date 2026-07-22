@@ -12,10 +12,16 @@ function Select({
   error,
   helperText,
   fullWidth = true,
+  required,
   ...props
 }) {
   return (
-    <FormControl fullWidth={fullWidth} error={error} size={size}>
+    <FormControl
+      fullWidth={fullWidth}
+      error={error}
+      size={size}
+      required={required}
+    >
       {label && <InputLabel>{label}</InputLabel>}
       <MuiSelect variant={variant} label={label} size={size} sx={sx} {...props}>
         {children}

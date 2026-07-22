@@ -6,3 +6,5 @@ export const B2C_BASE_URL =
 // export const B2C_BASE_URL = "http://localhost:4000";
 // export const B2C_BASE_URL = "https://mychurchcrm.azurewebsites.net/api";
 // export const B2C_BASE_URL = "https://b2c-back.herokuapp.com";
+
+export const DOCUMENT_TYPES = ['CC', 'CE', 'NIT', 'Pasaporte'];
