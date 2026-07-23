@@ -124,8 +124,7 @@ const GeneralInfoStep = forwardRef(function GeneralInfoStep(
       newErrors.mobilePhone = 'El número de celular es obligatorio';
     if (!values.workfront)
       newErrors.workfront = 'El frente de trabajo es obligatorio';
-    if (!values.email.trim()) newErrors.email = 'El correo es obligatorio';
-    else if (!/\S+@\S+\.\S+/.test(values.email))
+    if (values.email.trim() && !/\S+@\S+\.\S+/.test(values.email))
       newErrors.email = 'El correo no es válido';
     if (!values.birthDate)
       newErrors.birthDate = 'La fecha de nacimiento es obligatoria';
@@ -248,7 +247,6 @@ const GeneralInfoStep = forwardRef(function GeneralInfoStep(
           onChange={handleChange}
           error={!!errors.email}
           helperText={errors.email}
-          required
         />
 
         <DateInput

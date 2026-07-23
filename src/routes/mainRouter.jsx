@@ -5,7 +5,6 @@ import Login from '../components/login';
 import Register from '../components/register';
 import Dashboard from '../components/dashboard';
 import { ProtectedRoute } from './protectedRoute';
-import FormAforo from '../components/aforo/new people/Form';
 import EventsOptions from '../components/aforo/events';
 import MainOptionsScreen from '../components/home/MainOptionsScreen';
 import PublicEvents from '../components/home/PublicEvents';
@@ -58,7 +57,6 @@ const RoutesCollection = (
           </ProtectedRoute>
         }
       />
-      <Route path="/new-people" element={<FormAforo />} />
       <Route path="/events-option" element={<EventsOptions />} />
       <Route path="/reservation" element={<Reservation />} />
       <Route path="/manage-bookings" element={<ManageBooking />} />
