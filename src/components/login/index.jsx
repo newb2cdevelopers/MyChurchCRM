@@ -67,7 +67,9 @@ function Login() {
 
     setLoading(true);
     const loginPayload = {
-      user: loginInfo.user.toLowerCase(),
+      user: loginInfo.user.includes('@')
+        ? loginInfo.user.toLowerCase()
+        : loginInfo.user,
       pass: loginInfo.pass,
     };
     const results = await genericPostService(`${BASE_URL}/login`, loginPayload);
@@ -81,14 +83,14 @@ function Login() {
       );
 
       if (rememberMe) {
-        localStorage.setItem('userEmail', loginInfo.user);
+        localStorage.setItem('userEmail', results[0].email);
       } else {
-        sessionStorage.setItem('userEmail', loginInfo.user);
+        sessionStorage.setItem('userEmail', results[0].email);
       }
 
       dispatch(
         login({
-          userEmail: loginInfo.user,
+          userEmail: results[0].email,
           token: results[0].access_token,
           roles: results[0].roles,
           workfront: results[0].workfront,
@@ -104,18 +106,12 @@ function Login() {
       return navigate('/dashboard');
     }
 
-    if (results[0] && !results[0].access_token) {
-      showToast.error('Error', 'Por favor verifique sus credenciales.');
-      return;
-    }
-
-    if (!results[0]) {
-      showToast.error(
-        'Error',
-        'Se ha presentado un error, por favor contacte al administrador',
-      );
-      return;
-    }
+    const error = results[1];
+    const message =
+      error?.statusCode === 401
+        ? 'Por favor verifique sus credenciales.'
+        : 'Se ha presentado un error, por favor contacte al administrador';
+    showToast.error('Error', message);
   };
 
   const handleFormOnchange = e => {
@@ -221,8 +217,8 @@ function Login() {
                 required
                 id="user"
                 name="user"
-                label="Correo electrónico"
-                placeholder="nombre@ejemplo.com"
+                label="Correo electrónico o Número de documento"
+                placeholder="nombre@ejemplo.com o 123456789"
                 autoFocus
                 value={loginInfo.user}
                 onChange={handleFormOnchange}

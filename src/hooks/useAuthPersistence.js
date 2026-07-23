@@ -34,28 +34,31 @@ export const useAuthPersistence = () => {
 
           if (response.ok) {
             const data = await response.json();
-            
+
             // Update access token in the same storage (localStorage or sessionStorage)
             tokenService.setAccessToken(data.access_token);
-            
-            // Get user email from localStorage or sessionStorage
-            const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail') || '';
-            
-            // Restore Redux state
+
+            // Update the stored email with the real email from backend
+            if (data.email) {
+              localStorage.setItem('userEmail', data.email);
+              sessionStorage.setItem('userEmail', data.email);
+            }
+
+            // Restore Redux state with email from the backend
             dispatch(
               login({
-                userEmail,
+                userEmail: data.email || '',
                 token: data.access_token,
                 roles: data.roles || [],
                 workfront: data.workfront || null,
-              })
+              }),
             );
 
             if (data.churchId) {
               dispatch(
                 setSelectedChurch({
                   selectedChurchId: data.churchId,
-                })
+                }),
               );
             }
           } else {
