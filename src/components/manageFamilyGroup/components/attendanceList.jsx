@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import { useSelector } from 'react-redux';
+import usePermission from '../../../hooks/usePermission';
 import {
   genericGetService,
   getAuthHeaders,
@@ -56,6 +57,7 @@ const columns = [
 
 export default function AttendanceList({ familyGroupId }) {
   const user = useSelector(state => state.user);
+  const canRegister = usePermission('/family-groups', 'register_attendance');
   const [attendance, setAttendance] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [formOpen, setFormOpen] = useState(false);
@@ -94,14 +96,16 @@ export default function AttendanceList({ familyGroupId }) {
           placeholder: 'Buscar por clase u observaciones...',
         }}
         toolbarActions={
-          <Button
-            variant="contained"
-            onClick={() => setFormOpen(true)}
-            sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
-          >
-            <AddIcon sx={{ fontSize: 18 }} />
-            Registrar asistencia
-          </Button>
+          canRegister && (
+            <Button
+              variant="contained"
+              onClick={() => setFormOpen(true)}
+              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+            >
+              <AddIcon sx={{ fontSize: 18 }} />
+              Registrar asistencia
+            </Button>
+          )
         }
         emptyState="No hay asistencias registradas"
       />

@@ -8,6 +8,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import usePermission from '../../../hooks/usePermission';
 import {
   genericGetService,
   getAuthHeaders,
@@ -65,6 +66,8 @@ const columns = [
 function FamilyGroupList() {
   const user = useSelector(state => state.user);
   const navigate = useNavigate();
+  const canCreate = usePermission('/family-groups', 'create_group');
+  const canEdit = usePermission('/family-groups', 'edit_group');
 
   const [familyGroups, setFamilyGroups] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -127,11 +130,13 @@ function FamilyGroupList() {
 
   const rowActions = ({ row }) => (
     <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
-      <Tooltip title="Editar">
-        <IconButton size="small" onClick={() => handleEdit(row)}>
-          <ModeEditIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
+      {canEdit && (
+        <Tooltip title="Editar">
+          <IconButton size="small" onClick={() => handleEdit(row)}>
+            <ModeEditIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      )}
       <Tooltip title="Ver detalle">
         <IconButton size="small" onClick={() => handleView(row)}>
           <VisibilityIcon fontSize="small" />
@@ -158,14 +163,16 @@ function FamilyGroupList() {
         }}
         rowActions={rowActions}
         toolbarActions={
-          <Button
-            variant="contained"
-            onClick={handleCreate}
-            sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
-          >
-            <AddIcon sx={{ fontSize: 18 }} />
-            Nuevo grupo familiar
-          </Button>
+          canCreate && (
+            <Button
+              variant="contained"
+              onClick={handleCreate}
+              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+            >
+              <AddIcon sx={{ fontSize: 18 }} />
+              Nuevo grupo familiar
+            </Button>
+          )
         }
         emptyState="No se encontraron grupos familiares"
         isLoading={loading}

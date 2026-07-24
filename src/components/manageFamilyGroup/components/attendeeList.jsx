@@ -15,6 +15,7 @@ import Select from '../../shared/Select';
 import MenuItem from '@mui/material/MenuItem';
 import DateInput from '../../shared/DateInput';
 import { useSelector } from 'react-redux';
+import usePermission from '../../../hooks/usePermission';
 import {
   genericGetService,
   genericPostService,
@@ -26,6 +27,12 @@ import DataTable from '../../shared/DataTable';
 
 export default function AttendeeList({ familyGroupId }) {
   const user = useSelector(state => state.user);
+  const canAddMember = usePermission('/family-groups', 'add_group_member');
+  const canEditMember = usePermission('/family-groups', 'edit_group_member');
+  const canRemoveMember = usePermission(
+    '/family-groups',
+    'remove_group_member',
+  );
   const [members, setMembers] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [formOpen, setFormOpen] = useState(false);
@@ -169,16 +176,20 @@ export default function AttendeeList({ familyGroupId }) {
 
   const rowActions = ({ row }) => (
     <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
-      <Tooltip title="Editar">
-        <IconButton size="small" onClick={() => openEdit(row)}>
-          <ModeEditIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Eliminar">
-        <IconButton size="small" onClick={() => {}}>
-          <DeleteIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
+      {canEditMember && (
+        <Tooltip title="Editar">
+          <IconButton size="small" onClick={() => openEdit(row)}>
+            <ModeEditIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      )}
+      {canRemoveMember && (
+        <Tooltip title="Eliminar">
+          <IconButton size="small" onClick={() => {}}>
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      )}
     </Box>
   );
 
@@ -194,14 +205,16 @@ export default function AttendeeList({ familyGroupId }) {
         }}
         rowActions={rowActions}
         toolbarActions={
-          <Button
-            variant="contained"
-            onClick={openCreate}
-            sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
-          >
-            <AddIcon sx={{ fontSize: 18 }} />
-            Agregar integrante
-          </Button>
+          canAddMember && (
+            <Button
+              variant="contained"
+              onClick={openCreate}
+              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+            >
+              <AddIcon sx={{ fontSize: 18 }} />
+              Agregar integrante
+            </Button>
+          )
         }
         emptyState="No hay integrantes registrados"
       />
