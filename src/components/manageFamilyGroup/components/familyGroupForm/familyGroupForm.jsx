@@ -8,6 +8,8 @@ import TextField from '@mui/material/TextField';
 import Select from '../../../shared/Select';
 import MenuItem from '@mui/material/MenuItem';
 import DateInput from '../../../shared/DateInput';
+import TimeInput from '../../../shared/TimeInput';
+import MultiSelect from '../../../shared/MultiSelect';
 import showToast from '../../../../customComponents/toast/showToast';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -30,10 +32,6 @@ const DAYS = [
   'Sábado',
   'Domingo',
 ];
-
-const TIMES = Array.from({ length: 24 }, (_, i) =>
-  `${String(i).padStart(2, '0')}:00`,
-);
 
 const STATUSES = ['Activo', 'Suspendido', 'Cancelado'];
 
@@ -70,7 +68,7 @@ export default function FamilyGroupForm({
   const getMembers = useCallback(async () => {
     const headers = getAuthHeaders(user.token);
     return await genericGetService(
-      `${B2C_BASE_URL}/member?limit=99999`,
+      `${B2C_BASE_URL}/member?limit=99999&ignoreWorkfront=true`,
       headers,
     );
   }, [user.token]);
@@ -95,7 +93,8 @@ export default function FamilyGroupForm({
     setAddress(selectedItem?.address || '');
     setStartDate(selectedItem?.startDate || '');
     setNeighborhood(selectedItem?.neighborhood?._id || '');
-    setLeader(selectedItem?.leader?._id || '');
+    setLocality(selectedItem?.neighborhood?.locality || '');
+    setLeader(selectedItem?.leader || '');
     setDay(selectedItem?.day || '');
     setTime(selectedItem?.time || '');
     setStatus(selectedItem?.status || '');
@@ -124,6 +123,12 @@ export default function FamilyGroupForm({
             );
             setLocalityList(filtered);
           }
+        } else if (user.zoneId) {
+          setZoneBind(user.zoneId);
+          const filtered = localitiesRes[0].filter(
+            l => l.zone?._id === user.zoneId,
+          );
+          setLocalityList(filtered);
         } else {
           setLocalityList(localitiesRes[0]);
         }
@@ -133,6 +138,14 @@ export default function FamilyGroupForm({
         if (selectedItem) {
           const filtered = neighborhoodsRes[0].filter(
             n => n.locality?._id === selectedItem.neighborhood?.locality,
+          );
+          setNeighborhoodList(filtered);
+        } else if (user.zoneId) {
+          const locIds = localitiesRes[0]
+            .filter(l => l.zone?._id === user.zoneId)
+            .map(l => l._id);
+          const filtered = neighborhoodsRes[0].filter(n =>
+            locIds.includes(n.locality?._id),
           );
           setNeighborhoodList(filtered);
         } else {
@@ -148,6 +161,7 @@ export default function FamilyGroupForm({
     getZones,
     getLocalities,
     getNeighborhoods,
+    user.zoneId,
   ]);
 
   const validate = () => {
@@ -173,7 +187,7 @@ export default function FamilyGroupForm({
       code,
       address,
       startDate,
-      leader,
+      leader: leader?._id || leader,
       neighborhood,
       time,
       day,
@@ -192,7 +206,10 @@ export default function FamilyGroupForm({
       showToast.error('Error', data?.message || 'Se ha presentado un error');
       return;
     }
-    showToast.success('Guardado exitoso', 'El grupo familiar se ha guardado correctamente');
+    showToast.success(
+      'Guardado exitoso',
+      'El grupo familiar se ha guardado correctamente',
+    );
     onSuccess?.();
   };
 
@@ -264,9 +281,11 @@ export default function FamilyGroupForm({
             label="Zona"
             value={zoneBind}
             onChange={handleChangeZone}
+            disabled={!!user.zoneId && !isEditing}
             error={!!errors.zoneBind}
             helperText={errors.zoneBind}
             size="small"
+            required
           >
             <MenuItem value="">
               <em>Seleccione una zona</em>
@@ -286,6 +305,7 @@ export default function FamilyGroupForm({
             error={!!errors.locality}
             helperText={errors.locality}
             size="small"
+            required
           >
             <MenuItem value="">
               <em>Seleccione una localidad</em>
@@ -304,6 +324,7 @@ export default function FamilyGroupForm({
             onChange={e => setNeighborhood(e.target.value)}
             error={!!errors.neighborhood}
             size="small"
+            required
           >
             <MenuItem value="">
               <em>Seleccione un barrio</em>
@@ -316,24 +337,23 @@ export default function FamilyGroupForm({
                 </MenuItem>
               ))}
           </Select>
-          <Select
+          <MultiSelect
             label="Líder Principal"
+            options={membersList.sort((a, b) =>
+              a.fullName?.localeCompare(b.fullName),
+            )}
             value={leader}
-            onChange={e => setLeader(e.target.value)}
+            onChange={newValue => setLeader(newValue)}
+            getOptionLabel={option => option.fullName?.toUpperCase() || ''}
+            isOptionEqualToValue={(option, val) =>
+              option._id === val?._id || option._id === val
+            }
             error={!!errors.leader}
-            size="small"
-          >
-            <MenuItem value="">
-              <em>Seleccione un líder</em>
-            </MenuItem>
-            {membersList
-              .sort((a, b) => a.fullName?.localeCompare(b.fullName))
-              .map(m => (
-                <MenuItem key={m._id} value={m._id}>
-                  {m.fullName?.toUpperCase()}
-                </MenuItem>
-              ))}
-          </Select>
+            helperText={errors.leader}
+            multiple={false}
+            required
+            placeholder="Buscar y seleccionar líder"
+          />
           <Select
             label="Día"
             value={day}
@@ -350,22 +370,14 @@ export default function FamilyGroupForm({
               </MenuItem>
             ))}
           </Select>
-          <Select
+          <TimeInput
             label="Hora"
             value={time}
-            onChange={e => setTime(e.target.value)}
+            onChange={setTime}
             error={!!errors.time}
-            size="small"
-          >
-            <MenuItem value="">
-              <em>Seleccione una hora</em>
-            </MenuItem>
-            {TIMES.map(t => (
-              <MenuItem key={t} value={t}>
-                {t}
-              </MenuItem>
-            ))}
-          </Select>
+            helperText={errors.time}
+            required
+          />
           <Select
             label="Estado"
             value={status}

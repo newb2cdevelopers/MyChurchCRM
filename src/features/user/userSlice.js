@@ -8,6 +8,7 @@ export const userSlice = createSlice({
     selectedChurchId: '',
     roles: [],
     workfront: null,
+    zoneId: null,
   },
   reducers: {
     login: (state, action) => {
@@ -15,6 +16,7 @@ export const userSlice = createSlice({
       state.token = action.payload.token;
       state.roles = action.payload.roles;
       state.workfront = action.payload.workfront;
+      state.zoneId = action.payload.zoneId || null;
     },
     setSelectedChurch: (state, action) => {
       state.selectedChurchId = action.payload.selectedChurchId;
@@ -25,6 +27,7 @@ export const userSlice = createSlice({
       state.selectedChurchId = '';
       state.roles = [];
       state.workfront = null;
+      state.zoneId = null;
     },
   },
 });

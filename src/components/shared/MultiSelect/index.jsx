@@ -15,6 +15,8 @@ function MultiSelect({
   error,
   helperText,
   disabled,
+  multiple = true,
+  required,
 }) {
   const defaultGetOptionLabel = option =>
     option.name?.toUpperCase() || option.label?.toUpperCase() || '';
@@ -24,9 +26,9 @@ function MultiSelect({
 
   return (
     <Autocomplete
-      multiple
+      multiple={multiple}
       options={options}
-      value={value || []}
+      value={multiple ? value || [] : value || null}
       onChange={(e, newValue) => onChange(newValue)}
       getOptionLabel={getOptionLabel || defaultGetOptionLabel}
       isOptionEqualToValue={isOptionEqualToValue || defaultIsOptionEqualToValue}
@@ -39,20 +41,24 @@ function MultiSelect({
           size={size}
           error={error}
           helperText={helperText}
+          required={required}
         />
       )}
-      renderTags={(val, getTagProps) =>
-        val.map((option, index) => {
-          const label = (getOptionLabel || defaultGetOptionLabel)(option);
-          return (
-            <Chip
-              label={label}
-              size="small"
-              {...getTagProps({ index })}
-              key={option._id || option.id || index}
-            />
-          );
-        })
+      renderTags={
+        multiple
+          ? (val, getTagProps) =>
+              val.map((option, index) => {
+                const label = (getOptionLabel || defaultGetOptionLabel)(option);
+                return (
+                  <Chip
+                    label={label}
+                    size="small"
+                    {...getTagProps({ index })}
+                    key={option._id || option.id || index}
+                  />
+                );
+              })
+          : undefined
       }
       noOptionsText={noOptionsText}
       fullWidth

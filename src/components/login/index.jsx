@@ -94,6 +94,7 @@ function Login() {
           token: results[0].access_token,
           roles: results[0].roles,
           workfront: results[0].workfront,
+          zoneId: results[0].zoneId,
         }),
       );
 

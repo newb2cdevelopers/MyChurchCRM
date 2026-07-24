@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Select from '../../shared/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { parse, format, isValid } from 'date-fns';
 import DateInput from '../../shared/DateInput';
 import { useSelector } from 'react-redux';
 import usePermission from '../../../hooks/usePermission';
@@ -71,7 +72,7 @@ export default function AttendeeList({ familyGroupId }) {
   const openCreate = () => {
     setEditingMember(null);
     setName('');
-    setDocumentType('CC');
+    setDocumentType('');
     setDocumentNumber('');
     setAddress('');
     setMobilePhone('');
@@ -86,7 +87,7 @@ export default function AttendeeList({ familyGroupId }) {
   const openEdit = member => {
     setEditingMember(member);
     setName(member.name || '');
-    setDocumentType(member.documentType || 'CC');
+    setDocumentType(member.documentType || '');
     setDocumentNumber(member.documentNumber || '');
     setAddress(member.address || '');
     setMobilePhone(member.mobilePhone || '');
@@ -170,28 +171,39 @@ export default function AttendeeList({ familyGroupId }) {
     {
       id: 'birthDate',
       label: 'Fecha de nacimiento',
-      accessor: row => row.birthDate || '—',
+      accessor: row => {
+        if (!row.birthDate) return '—';
+        let raw = row.birthDate;
+        if (typeof raw === 'string' && raw.includes('T')) {
+          raw = raw.split('T')[0];
+        }
+        const d = parse(raw, 'yyyy-MM-dd', new Date());
+        return isValid(d) ? format(d, 'dd/MM/yyyy') : raw;
+      },
     },
   ];
 
-  const rowActions = ({ row }) => (
-    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
-      {canEditMember && (
-        <Tooltip title="Editar">
-          <IconButton size="small" onClick={() => openEdit(row)}>
-            <ModeEditIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      )}
-      {canRemoveMember && (
-        <Tooltip title="Eliminar">
-          <IconButton size="small" onClick={() => {}}>
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Box>
-  );
+  const rowActions =
+    canEditMember || canRemoveMember
+      ? ({ row }) => (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
+            {canEditMember && (
+              <Tooltip title="Editar">
+                <IconButton size="small" onClick={() => openEdit(row)}>
+                  <ModeEditIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+            {canRemoveMember && (
+              <Tooltip title="Eliminar">
+                <IconButton size="small" onClick={() => {}}>
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Box>
+        )
+      : null;
 
   return (
     <Box>
@@ -246,6 +258,7 @@ export default function AttendeeList({ familyGroupId }) {
               error={!!errors.documentType}
               helperText={errors.documentType}
               size="small"
+              required
             >
               {DOCUMENT_TYPES.map(dt => (
                 <MenuItem key={dt} value={dt}>
