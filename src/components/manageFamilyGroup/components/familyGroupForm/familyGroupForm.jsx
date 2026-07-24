@@ -360,6 +360,7 @@ export default function FamilyGroupForm({
             onChange={e => setDay(e.target.value)}
             error={!!errors.day}
             size="small"
+            required
           >
             <MenuItem value="">
               <em>Seleccione un día</em>
@@ -384,6 +385,7 @@ export default function FamilyGroupForm({
             onChange={e => setStatus(e.target.value)}
             error={!!errors.status}
             size="small"
+            required
           >
             <MenuItem value="">
               <em>Seleccione un estado</em>
