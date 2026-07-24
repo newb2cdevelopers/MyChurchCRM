@@ -29,6 +29,8 @@ export default function UserForm({ open, setOpen, selectedItem, onSuccess }) {
   const [rolesList, setRolesList] = useState([]);
   const [zoneList, setZoneList] = useState([]);
   const [selectedZone, setSelectedZone] = useState('');
+  const [workfrontList, setWorkfrontList] = useState([]);
+  const [selectedWorkfront, setSelectedWorkfront] = useState('');
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -41,15 +43,22 @@ export default function UserForm({ open, setOpen, selectedItem, onSuccess }) {
       genericGetService(`${B2C_BASE_URL}/zone`).then(([data]) => {
         if (data) setZoneList(data);
       });
+      genericGetService(`${B2C_BASE_URL}/workfront`).then(([data]) => {
+        if (data) setWorkfrontList(data);
+      });
 
       if (selectedItem) {
         setActive(selectedItem.active || false);
         setSelectedRoles(selectedItem.roles || []);
         setSelectedZone(selectedItem.zoneId?._id || selectedItem.zoneId || '');
+        setSelectedWorkfront(
+          selectedItem.workfront?._id || selectedItem.workfront || '',
+        );
       } else {
         setActive(false);
         setSelectedRoles([]);
         setSelectedZone('');
+        setSelectedWorkfront('');
       }
       setErrors({});
     }
@@ -92,6 +101,7 @@ export default function UserForm({ open, setOpen, selectedItem, onSuccess }) {
       active,
       roles: selectedRoles.map(r => r._id),
       zoneId: selectedZone || undefined,
+      workfront: selectedWorkfront || undefined,
     };
 
     const [, error] = await genericPutService(
@@ -195,6 +205,23 @@ export default function UserForm({ open, setOpen, selectedItem, onSuccess }) {
                 ))}
             </Select>
           )}
+          <Select
+            label="Frente de trabajo"
+            value={selectedWorkfront}
+            onChange={e => setSelectedWorkfront(e.target.value)}
+            size="small"
+          >
+            <MenuItem value="">
+              <em>Sin frente</em>
+            </MenuItem>
+            {[...workfrontList]
+              .sort((a, b) => a.name?.localeCompare(b.name))
+              .map(w => (
+                <MenuItem key={w._id} value={w._id}>
+                  {w.name}
+                </MenuItem>
+              ))}
+          </Select>
         </Box>
       </DialogContent>
       <DialogActions>
