@@ -237,7 +237,7 @@ export default function WorkfrontAssignment() {
               }}
             >
               <Typography variant="body2" color="text.secondary">
-                Miembros:
+                Usuarios:
               </Typography>
               <Typography variant="body2" sx={{ fontWeight: 600 }}>
                 {selectedUserIds.length}
@@ -314,7 +314,7 @@ export default function WorkfrontAssignment() {
           >
             2
           </Box>
-          Seleccionar Miembros
+          Seleccionar Usuarios
         </Typography>
         <DataTable
           columns={columns}
@@ -323,7 +323,7 @@ export default function WorkfrontAssignment() {
           search={{
             value: search,
             onChange: setSearch,
-            placeholder: 'Buscar miembros...',
+            placeholder: 'Buscar usuarios...',
           }}
           selection={{
             selected: selectedUserIds,
@@ -357,8 +357,8 @@ export default function WorkfrontAssignment() {
           }
           emptyState={{
             message: search
-              ? 'No se encontraron miembros'
-              : 'No hay miembros disponibles',
+              ? 'No se encontraron usuarios'
+              : 'No hay usuarios disponibles',
           }}
         />
       </Box>
