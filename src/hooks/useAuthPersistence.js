@@ -52,6 +52,7 @@ export const useAuthPersistence = () => {
                 roles: data.roles || [],
                 workfront: data.workfront || null,
                 zoneId: data.zoneId || null,
+                churchName: data.churchName || '',
               }),
             );
 

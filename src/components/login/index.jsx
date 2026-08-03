@@ -95,6 +95,7 @@ function Login() {
           roles: results[0].roles,
           workfront: results[0].workfront,
           zoneId: results[0].zoneId,
+          churchName: results[0].churchName,
         }),
       );
 

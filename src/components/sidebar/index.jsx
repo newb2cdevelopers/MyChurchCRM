@@ -12,6 +12,7 @@ import Divider from '@mui/material/Divider';
 import { alpha } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import ChurchIcon from '@mui/icons-material/Church';
 import { setSelectedModule } from '../../features/navigation/navigationSlice';
 import * as authService from '../../services/authService';
 import { renderAppIcon } from '../../utils/iconResolver';
@@ -62,7 +63,7 @@ function SidebarContent({ onItemClick }) {
   const { pathname } = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { roles } = useSelector(state => state.user);
+  const { roles, churchName } = useSelector(state => state.user);
   const { selectedModuleName } = useSelector(state => state.navigation);
 
   const closeIfNeeded = () => {
@@ -142,6 +143,33 @@ function SidebarContent({ onItemClick }) {
         >
           SISTEMA DE GESTION MI IGLESIA
         </Typography>
+
+        {churchName && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              mt: 1,
+            }}
+          >
+            <ChurchIcon
+              sx={{ fontSize: 18, color: 'text.secondary', flexShrink: 0 }}
+            />
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{
+                fontWeight: 500,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {churchName}
+            </Typography>
+          </Box>
+        )}
       </Box>
 
       <List sx={{ flex: 1, px: 1.5, py: 1.5 }}>

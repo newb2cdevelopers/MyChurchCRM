@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import DateInput from '../../shared/DateInput';
-import MultiSelect from '../../shared/MultiSelect';
+import CheckboxList from '../../shared/CheckboxList';
 import showToast from '../../../customComponents/toast/showToast';
 import { useSelector } from 'react-redux';
 import {
@@ -130,12 +130,12 @@ export default function AttendanceForm({
               No hay integrantes registrados en este grupo
             </Typography>
           ) : (
-            <MultiSelect
+            <CheckboxList
               options={members}
               value={selectedMembers}
               onChange={setSelectedMembers}
               getOptionLabel={option => option.name || ''}
-              placeholder="Buscar y seleccionar asistentes..."
+              emptyLabel="No hay integrantes registrados en este grupo"
             />
           )}
         </Box>
