@@ -19,7 +19,7 @@ import {
   genericGetService,
   getAuthHeaders,
 } from '../../../api/externalServices';
-import { B2C_BASE_URL } from '../../../constants';
+import { B2C_BASE_URL, DOCUMENT_TYPES } from '../../../constants';
 import DateInput from '../DateInput';
 
 const GeneralInfoStep = forwardRef(function GeneralInfoStep(
@@ -147,8 +147,11 @@ const GeneralInfoStep = forwardRef(function GeneralInfoStep(
   useImperativeHandle(ref, () => ({
     getData: () => {
       if (!validate()) return null;
+      const generalValues = { ...values };
+      delete generalValues.status;
+      delete generalValues.inactiveReason;
       return {
-        ...values,
+        ...generalValues,
         conversionyear: values.conversionyear
           ? Number(values.conversionyear)
           : 0,
@@ -185,10 +188,11 @@ const GeneralInfoStep = forwardRef(function GeneralInfoStep(
             <MenuItem value="">
               <em>Seleccione una opción</em>
             </MenuItem>
-            <MenuItem value="CC">Cédula</MenuItem>
-            <MenuItem value="TI">Tarjeta de identidad</MenuItem>
-            <MenuItem value="RC">Registro civil</MenuItem>
-            <MenuItem value="CE">Cédula de extranjería</MenuItem>
+            {DOCUMENT_TYPES.map(dt => (
+              <MenuItem key={dt.value} value={dt.value}>
+                {dt.label}
+              </MenuItem>
+            ))}
           </Select>
           {errors.documentType && (
             <FormHelperText>{errors.documentType}</FormHelperText>

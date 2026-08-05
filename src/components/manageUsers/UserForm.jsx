@@ -17,7 +17,7 @@ import {
   genericPutService,
   getAuthHeaders,
 } from '../../api/externalServices';
-import { B2C_BASE_URL } from '../../constants';
+import { B2C_BASE_URL, getDocumentTypeLabel } from '../../constants';
 import MultiSelect from '../shared/MultiSelect';
 import Select from '../shared/Select';
 
@@ -154,7 +154,7 @@ export default function UserForm({ open, setOpen, selectedItem, onSuccess }) {
           />
           <TextField
             label="Tipo de documento"
-            value={selectedItem?.documentType || ''}
+            value={getDocumentTypeLabel(selectedItem?.documentType) || ''}
             size="small"
             disabled
           />

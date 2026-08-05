@@ -22,7 +22,7 @@ import {
   genericGetService,
   getAuthHeaders,
 } from '../../../api/externalServices';
-import { B2C_BASE_URL } from '../../../constants';
+import { B2C_BASE_URL, getDocumentTypeLabel } from '../../../constants';
 
 function formatDate(dateStr) {
   if (!dateStr) return '—';
@@ -223,7 +223,7 @@ export default function CvMember() {
                   <Grid item xs={12} sm={6}>
                     <InfoRow
                       label="Documento"
-                      value={`${member.documentType || 'CC'} ${member.documentNumber || ''}`}
+                      value={`${getDocumentTypeLabel(member.documentType || 'CC')} ${member.documentNumber || ''}`}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -751,7 +751,8 @@ export default function CvMember() {
           color="text.secondary"
           sx={{ fontStyle: 'italic', textAlign: 'left', width: '100%' }}
         >
-          {member.documentType || 'CC'} {member.documentNumber}
+          {getDocumentTypeLabel(member.documentType || 'CC')}{' '}
+          {member.documentNumber}
         </Typography>
       </Box>
 

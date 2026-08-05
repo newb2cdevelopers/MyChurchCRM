@@ -303,8 +303,8 @@ function Register() {
                   <em>Seleccione...</em>
                 </MenuItem>
                 {DOCUMENT_TYPES.map(dt => (
-                  <MenuItem key={dt} value={dt}>
-                    {dt}
+                  <MenuItem key={dt.value} value={dt.value}>
+                    {dt.label}
                   </MenuItem>
                 ))}
               </Select>
