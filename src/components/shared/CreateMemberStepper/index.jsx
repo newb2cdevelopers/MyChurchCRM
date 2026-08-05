@@ -8,6 +8,7 @@ import {
   getAuthHeaders,
 } from '../../../api/externalServices';
 import { B2C_BASE_URL } from '../../../constants';
+import ConfirmDialog from '../ConfirmDialog';
 import GeneralInfoStep from './GeneralInfoStep';
 import FamilyStep from './FamilyStep';
 import AcademicStep from './AcademicStep';
@@ -26,6 +27,8 @@ export default function CreateMemberStepper({
   const ministryStepRef = useRef(null);
   const isEditing = Boolean(initialData);
   const [memberId, setMemberId] = useState(initialData?._id || null);
+  const [inactiveMember, setInactiveMember] = useState(null);
+  const [reactivating, setReactivating] = useState(false);
 
   useEffect(() => {
     setMemberId(initialData?._id || null);
@@ -35,6 +38,30 @@ export default function CreateMemberStepper({
   const onSaved = useCallback(() => {
     dataChangedRef.current = true;
   }, []);
+
+  const applyStatusChange = useCallback(
+    async memberIdToUse => {
+      if (!isEditing) return;
+      const statusData = generalStepRef.current?.getStatusData?.();
+      const prevStatus = initialData?.status || 'active';
+      if (!statusData || statusData.status === prevStatus) return;
+
+      const headers = getAuthHeaders(user.token);
+      const [, error] = await genericPutService(
+        `${B2C_BASE_URL}/member/${memberIdToUse}/status`,
+        {
+          status: statusData.status,
+          inactiveReason:
+            statusData.status === 'inactive'
+              ? statusData.inactiveReason || undefined
+              : undefined,
+        },
+        headers,
+      );
+      if (error) throw new Error('Error al cambiar el estado del miembro');
+    },
+    [isEditing, initialData, user.token],
+  );
 
   const handleClose = useCallback(() => {
     if (dataChangedRef.current) {
@@ -120,6 +147,7 @@ export default function CreateMemberStepper({
             throw new Error(
               results[0]?.message || 'Error al actualizar el miembro',
             );
+          await applyStatusChange(initialData._id);
           setMemberId(initialData._id);
           dataChangedRef.current = true;
           return { memberId: initialData._id };
@@ -131,8 +159,13 @@ export default function CreateMemberStepper({
           headers,
         );
         if (results[1]) throw new Error('Error al crear el miembro');
-        if (!results[0]?.isSuccessful)
+        if (!results[0]?.isSuccessful) {
+          if (results[0]?.data?._id) {
+            setInactiveMember(results[0].data);
+            throw new Error('REACTIVAR_MEMBER');
+          }
           throw new Error(results[0]?.message || 'Error al crear el miembro');
+        }
         const newId = results[0].data._id;
         setMemberId(newId);
         dataChangedRef.current = true;
@@ -141,7 +174,7 @@ export default function CreateMemberStepper({
 
       return {};
     },
-    [user.token, isEditing, initialData],
+    [user.token, isEditing, initialData, applyStatusChange],
   );
 
   const handleStepClick = useCallback(
@@ -162,6 +195,7 @@ export default function CreateMemberStepper({
             headers,
           );
           if (results[1] || !results[0]?.isSuccessful) return false;
+          await applyStatusChange(memberId);
         } else {
           const results = await genericPostService(
             `${B2C_BASE_URL}/member`,
@@ -176,7 +210,7 @@ export default function CreateMemberStepper({
 
       return true;
     },
-    [isEditing, memberId, user.token],
+    [isEditing, memberId, user.token, applyStatusChange],
   );
 
   const handleFinish = useCallback(async () => {
@@ -184,24 +218,59 @@ export default function CreateMemberStepper({
     onSuccess?.();
   }, [onSuccess]);
 
+  const handleReactivate = useCallback(async () => {
+    if (!inactiveMember) return;
+    setReactivating(true);
+    const headers = getAuthHeaders(user.token);
+    const [, error] = await genericPutService(
+      `${B2C_BASE_URL}/member/${inactiveMember._id}/status`,
+      { status: 'active' },
+      headers,
+    );
+    setReactivating(false);
+
+    if (!error) {
+      setInactiveMember(null);
+      setMemberId(inactiveMember._id);
+      dataChangedRef.current = true;
+      onSuccess?.();
+    }
+  }, [inactiveMember, user.token, onSuccess]);
+
+  const handleCancelReactivate = useCallback(() => {
+    setInactiveMember(null);
+  }, []);
+
   const theme = useTheme();
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
-    <StepperModal
-      open={open}
-      onClose={handleClose}
-      fullScreen={isMdDown}
-      title={isEditing ? 'Editar miembro' : 'Nuevo miembro'}
-      description={
-        isEditing
-          ? 'Actualice la información del miembro'
-          : 'Complete el proceso de registro'
-      }
-      steps={steps}
-      onStepSubmit={handleStepSubmit}
-      onStepClick={handleStepClick}
-      onFinish={handleFinish}
-    />
+    <>
+      <StepperModal
+        open={open}
+        onClose={handleClose}
+        fullScreen={isMdDown}
+        title={isEditing ? 'Editar miembro' : 'Nuevo miembro'}
+        description={
+          isEditing
+            ? 'Actualice la información del miembro'
+            : 'Complete el proceso de registro'
+        }
+        steps={steps}
+        onStepSubmit={handleStepSubmit}
+        onStepClick={handleStepClick}
+        onFinish={handleFinish}
+      />
+      <ConfirmDialog
+        open={Boolean(inactiveMember)}
+        onClose={handleCancelReactivate}
+        title="Miembro inactivo encontrado"
+        description={`Ya existe un miembro inactivo con ese documento en esta iglesia (${inactiveMember?.fullName || ''}). ¿Desea reactivarlo con la información existente?`}
+        confirmText={reactivating ? 'Reactivando...' : 'Reactivar'}
+        cancelText="Cancelar"
+        confirmColor="primary"
+        onConfirm={handleReactivate}
+      />
+    </>
   );
 }

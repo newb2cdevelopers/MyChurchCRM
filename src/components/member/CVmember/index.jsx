@@ -315,6 +315,54 @@ export default function CvMember() {
                       color="text.secondary"
                       sx={{ textAlign: 'left' }}
                     >
+                      Estado
+                    </Typography>
+                    <Chip
+                      label={
+                        member.status === 'inactive' ? 'Inactivo' : 'Activo'
+                      }
+                      size="small"
+                      color={
+                        member.status === 'inactive' ? 'default' : 'primary'
+                      }
+                    />
+                  </Box>
+                  {member.status === 'inactive' && (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ textAlign: 'left' }}
+                      >
+                        Motivo de inactivación
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        fontWeight={400}
+                        sx={{ textAlign: 'right' }}
+                      >
+                        {member.inactiveReason || '—'}
+                      </Typography>
+                    </Box>
+                  )}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ textAlign: 'left' }}
+                    >
                       Año de conversión
                     </Typography>
                     <Typography

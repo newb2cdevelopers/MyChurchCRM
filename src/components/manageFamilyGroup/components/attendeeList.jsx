@@ -144,6 +144,12 @@ export default function AttendeeList({ familyGroupId }) {
     }
 
     if (data?.data?.members) setMembers(data.data.members);
+    showToast.success(
+      editingMember ? 'Integrante actualizado' : 'Integrante registrado',
+      editingMember
+        ? 'El integrante se ha actualizado exitosamente'
+        : 'El integrante se ha registrado exitosamente',
+    );
     setFormOpen(false);
   };
 

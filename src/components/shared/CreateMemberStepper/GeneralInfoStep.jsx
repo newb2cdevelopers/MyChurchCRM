@@ -48,6 +48,8 @@ const GeneralInfoStep = forwardRef(function GeneralInfoStep(
         isBaptised: initialData.isBaptised || false,
         workfront: initialData.workfront?._id || initialData.workfront || '',
         comments: initialData.comments || '',
+        status: initialData.status || 'active',
+        inactiveReason: initialData.inactiveReason || '',
       };
     }
     return {
@@ -68,6 +70,8 @@ const GeneralInfoStep = forwardRef(function GeneralInfoStep(
       isBaptised: false,
       workfront: '',
       comments: '',
+      status: 'active',
+      inactiveReason: '',
     };
   });
   const [errors, setErrors] = useState({});
@@ -110,6 +114,14 @@ const GeneralInfoStep = forwardRef(function GeneralInfoStep(
     }
   };
 
+  const handleStatusToggle = e => {
+    setDirty(true);
+    setValues(prev => ({
+      ...prev,
+      status: e.target.checked ? 'active' : 'inactive',
+    }));
+  };
+
   const validate = () => {
     const newErrors = {};
     if (!values.documentNumber.trim())
@@ -146,6 +158,10 @@ const GeneralInfoStep = forwardRef(function GeneralInfoStep(
         email: values.email.trim(),
       };
     },
+    getStatusData: () => ({
+      status: values.status,
+      inactiveReason: values.inactiveReason,
+    }),
     isDirty: () => dirty,
   }));
 
@@ -352,6 +368,32 @@ const GeneralInfoStep = forwardRef(function GeneralInfoStep(
           }
           label="¿Es bautizado?"
         />
+
+        {initialData && (
+          <>
+            <FormControlLabel
+              control={
+                <Switch
+                  name="status"
+                  checked={values.status === 'active'}
+                  onChange={handleStatusToggle}
+                />
+              }
+              label="Activo"
+            />
+            {values.status === 'inactive' && (
+              <TextField
+                size="small"
+                label="Motivo de inactivación"
+                name="inactiveReason"
+                value={values.inactiveReason}
+                onChange={handleChange}
+                multiline
+                rows={2}
+              />
+            )}
+          </>
+        )}
 
         <FormControl size="small" error={!!errors.workfront}>
           <InputLabel>Frente o área de trabajo *</InputLabel>

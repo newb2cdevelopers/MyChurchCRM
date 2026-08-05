@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import Chip from '@mui/material/Chip';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
@@ -12,7 +13,18 @@ import { genericGetService, getAuthHeaders } from '../../api/externalServices';
 import { B2C_BASE_URL } from '../../constants';
 import { selectedMemberData } from '../../features/members/membersSlice';
 import DataTable from '../shared/DataTable';
+import FilterPopover from '../shared/FilterPopover';
 import CreateMemberStepper from '../shared/CreateMemberStepper';
+
+const STATUS_LABELS = {
+  active: 'Activo',
+  inactive: 'Inactivo',
+};
+
+const STATUS_COLORS = {
+  active: 'primary',
+  inactive: 'default',
+};
 
 const columns = [
   {
@@ -47,6 +59,18 @@ const columns = [
     label: 'Correo',
     accessor: row => row.email || '',
   },
+  {
+    id: 'status',
+    label: 'Estado',
+    width: '110px',
+    accessor: row => (
+      <Chip
+        label={STATUS_LABELS[row.status] || STATUS_LABELS.active}
+        color={STATUS_COLORS[row.status] || STATUS_COLORS.active}
+        size="small"
+      />
+    ),
+  },
 ];
 
 function ChurchMembersList() {
@@ -58,6 +82,7 @@ function ChurchMembersList() {
   const [totalRecords, setTotalRecords] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(0);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -65,7 +90,7 @@ function ChurchMembersList() {
   const pageSize = 10;
 
   const fetchMembers = useCallback(
-    (pageNum, search) => {
+    (pageNum, search, status) => {
       if (!user.selectedChurchId) return;
       setLoading(true);
       const headers = getAuthHeaders(user.token);
@@ -74,6 +99,7 @@ function ChurchMembersList() {
         limit: String(pageSize),
       });
       if (search) params.set('search', search);
+      if (status) params.set('status', status);
       genericGetService(`${B2C_BASE_URL}/member?${params}`, headers).then(
         data => {
           if (data[0]) {
@@ -89,8 +115,8 @@ function ChurchMembersList() {
 
   useEffect(() => {
     dispatch(selectedMemberData({ selectedMemberData: null }));
-    fetchMembers(page, searchInput);
-  }, [fetchMembers, page, searchInput, dispatch]);
+    fetchMembers(page, searchInput, statusFilter);
+  }, [fetchMembers, page, searchInput, statusFilter, dispatch]);
 
   const handleEdit = document => {
     const member = members.find(m => m.documentNumber === document);
@@ -114,23 +140,35 @@ function ChurchMembersList() {
     setPage(0);
   };
 
-  const rowActions = ({ row }) => (
-    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
-      <Tooltip title="Editar">
-        <IconButton size="small" onClick={() => handleEdit(row.documentNumber)}>
-          <ModeEditIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Ver detalle">
-        <IconButton
-          size="small"
-          onClick={() => selectedMemberToEdit(row.documentNumber, '/cv-member')}
-        >
-          <VisibilityIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-    </Box>
-  );
+  const handleStatusFilterChange = value => {
+    setStatusFilter(value);
+    setPage(0);
+  };
+
+  const rowActions = ({ row }) => {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
+        <Tooltip title="Editar">
+          <IconButton
+            size="small"
+            onClick={() => handleEdit(row.documentNumber)}
+          >
+            <ModeEditIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Ver detalle">
+          <IconButton
+            size="small"
+            onClick={() =>
+              selectedMemberToEdit(row.documentNumber, '/cv-member')
+            }
+          >
+            <VisibilityIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    );
+  };
 
   return (
     <Box>
@@ -142,22 +180,41 @@ function ChurchMembersList() {
           onChange: handleSearchChange,
           placeholder: 'Buscar por documento o nombre…',
         }}
+        toolbarActions={
+          <>
+            <FilterPopover
+              hideLabelOnMobile
+              filters={[
+                {
+                  id: 'status',
+                  label: 'Estado',
+                  type: 'single',
+                  value: statusFilter,
+                  options: [
+                    { value: 'active', label: 'Activo' },
+                    { value: 'inactive', label: 'Inactivo' },
+                  ],
+                  onChange: handleStatusFilterChange,
+                },
+              ]}
+              onClearAll={() => handleStatusFilterChange('')}
+            />
+            <Button
+              variant="primary"
+              onClick={() => setCreateModalOpen(true)}
+              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+            >
+              <AddIcon sx={{ fontSize: 18 }} />
+              Nuevo miembro
+            </Button>
+          </>
+        }
         pagination={{
           page,
           pageSize,
           total: totalRecords,
           onPageChange: setPage,
         }}
-        toolbarActions={
-          <Button
-            variant="primary"
-            onClick={() => setCreateModalOpen(true)}
-            sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
-          >
-            <AddIcon sx={{ fontSize: 18 }} />
-            Nuevo miembro
-          </Button>
-        }
         emptyState={{
           message: searchInput
             ? 'No se encontraron miembros con ese criterio de búsqueda.'
@@ -171,7 +228,7 @@ function ChurchMembersList() {
         onClose={() => setCreateModalOpen(false)}
         onSuccess={() => {
           setCreateModalOpen(false);
-          fetchMembers(page, searchInput);
+          fetchMembers(page, searchInput, statusFilter);
         }}
       />
       <CreateMemberStepper
@@ -184,7 +241,7 @@ function ChurchMembersList() {
         onSuccess={() => {
           setEditModalOpen(false);
           setMemberToEdit(null);
-          fetchMembers(page, searchInput);
+          fetchMembers(page, searchInput, statusFilter);
         }}
       />
     </Box>
