@@ -6,7 +6,9 @@ import ChurchMembersList from '../components/member/ChurchMembersList';
 import WorkfrontAssignment from '../components/workfrontAssignments/workfrontAssignment';
 import FamilyGroupList from '../components/manageFamilyGroup/components/familyGroupList';
 import ManageUsers from '../components/manageUsers';
-import SundaySchool from '../components/sundaySchool';
+import StudentList from '../components/sundaySchool/students/StudentList';
+import LevelList from '../components/sundaySchool/levels/LevelList';
+import ClassList from '../components/sundaySchool/classes/ClassList';
 
 const ROUTE_COMPONENTS = {
   '/create-events': EventListView,
@@ -17,7 +19,9 @@ const ROUTE_COMPONENTS = {
   '/front-assignment': WorkfrontAssignment,
   '/family-groups': FamilyGroupList,
   '/manage-users': ManageUsers,
-  '/sunday-school-students': SundaySchool,
+  '/sunday-school-students': StudentList,
+  '/sunday-school-levels': LevelList,
+  '/sunday-school-classes': ClassList,
 };
 
 export default ROUTE_COMPONENTS;

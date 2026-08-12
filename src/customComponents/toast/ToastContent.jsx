@@ -9,23 +9,23 @@ import CloseIcon from '@mui/icons-material/Close';
 
 const config = {
   success: {
-    borderColor: '#4ADE80',
-    iconColor: '#166534',
+    borderColor: 'success.main',
+    iconColor: 'success.dark',
     Icon: CheckCircleIcon,
   },
   error: {
-    borderColor: '#F87171',
-    iconColor: '#991B1B',
+    borderColor: 'error.main',
+    iconColor: 'error.dark',
     Icon: ErrorIcon,
   },
   warning: {
-    borderColor: '#FBBF24',
-    iconColor: '#92400E',
+    borderColor: 'warning.main',
+    iconColor: 'warning.dark',
     Icon: WarningIcon,
   },
   info: {
-    borderColor: '#A78BFA',
-    iconColor: '#5B21B6',
+    borderColor: 'info.main',
+    iconColor: 'info.dark',
     Icon: InfoIcon,
   },
 };
@@ -43,7 +43,8 @@ function ToastContent({ variant = 'info', title, description, closeToast }) {
         backdropFilter: 'blur(8px)',
         border: '1px solid',
         borderColor: 'divider',
-        borderLeft: `4px solid ${borderColor}`,
+        borderLeftWidth: 4,
+        borderLeftColor: borderColor,
         borderRadius: 2,
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.04)',
         p: 2,

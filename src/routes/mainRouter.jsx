@@ -14,6 +14,7 @@ import ManageBooking from '../components/aforo/events/bookings/ManageBookings';
 import CvMember from '../components/member/CVmember';
 import RecoveryPasswordRequest from './../components/login/recoveryPasswordRequest';
 import FamilyGroupDetail from '../components/manageFamilyGroup/components/familyGroupDetail';
+import LevelDetail from '../components/sundaySchool/levels/LevelDetail';
 import DirectoryCompanies from '../components/directoryCompanies';
 import CompanyForm from '../components/directoryCompanies/CompanyForm';
 import CompanyDetail from '../components/directoryCompanies/CompanyDetail';
@@ -66,6 +67,14 @@ const RoutesCollection = (
         element={
           <ProtectedRoute>
             <FamilyGroupDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/manage-sunday-school/:id"
+        element={
+          <ProtectedRoute>
+            <LevelDetail />
           </ProtectedRoute>
         }
       />

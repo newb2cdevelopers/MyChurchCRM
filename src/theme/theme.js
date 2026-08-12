@@ -21,6 +21,24 @@ const theme = createTheme({
       dark: '#93000a',
       contrastText: '#ffffff',
     },
+    success: {
+      main: '#4ADE80',
+      light: '#DCFCE7',
+      dark: '#166534',
+      contrastText: '#ffffff',
+    },
+    warning: {
+      main: '#FBBF24',
+      light: '#FEF3C7',
+      dark: '#92400E',
+      contrastText: '#ffffff',
+    },
+    info: {
+      main: '#A78BFA',
+      light: '#EDE9FE',
+      dark: '#5B21B6',
+      contrastText: '#ffffff',
+    },
     background: {
       default: '#faf8ff',
       paper: '#ffffff',
