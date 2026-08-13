@@ -20,6 +20,7 @@ import {
   getAuthHeaders,
 } from '../../../api/externalServices';
 import { B2C_BASE_URL, DOCUMENT_TYPES } from '../../../constants';
+import { getAgeFromBirthDate } from '../../../utils/dateUtils';
 
 export default function StudentForm({
   open,
@@ -43,8 +44,10 @@ export default function StudentForm({
   const [emergencyContactName, setEmergencyContactName] = useState('');
   const [emergencyContactPhone, setEmergencyContactPhone] = useState('');
   const [guardianName, setGuardianName] = useState('');
+  const [observations, setObservations] = useState('');
   const [levelId, setLevelId] = useState('');
   const [errors, setErrors] = useState({});
+  const [birthDateTouched, setBirthDateTouched] = useState(false);
 
   const fetchLevels = useCallback(async () => {
     const headers = getAuthHeaders(user.token);
@@ -64,15 +67,33 @@ export default function StudentForm({
     setDocumentType(selectedItem?.documentType || 'TI');
     setDocumentNumber(selectedItem?.documentNumber || '');
     setBirthDate(selectedItem?.birthDate || '');
+    setBirthDateTouched(false);
     setFatherName(selectedItem?.fatherName || '');
     setMotherName(selectedItem?.motherName || '');
     setEmergencyContactName(selectedItem?.emergencyContactName || '');
     setEmergencyContactPhone(selectedItem?.emergencyContactPhone || '');
     setGuardianName(selectedItem?.guardianName || '');
+    setObservations(selectedItem?.observations || '');
     setLevelId(selectedItem?.levelId?._id || selectedItem?.levelId || '');
 
     fetchLevels();
   }, [open, selectedItem, fetchLevels]);
+
+  // Suggest a level based on the birth date. It only runs when the user
+  // actually edits the birth date, so editing an existing student keeps the
+  // level that was already assigned.
+  useEffect(() => {
+    if (!birthDateTouched || !birthDate || levels.length === 0) return;
+
+    const age = getAgeFromBirthDate(birthDate);
+    if (age === null) return;
+
+    const suggestedLevel = levels.find(
+      level => age >= level.minAge && age <= level.maxAge,
+    );
+
+    setLevelId(suggestedLevel?._id || '');
+  }, [birthDate, birthDateTouched, levels]);
 
   const validate = () => {
     const errs = {};
@@ -112,6 +133,7 @@ export default function StudentForm({
       emergencyContactName: emergencyContactName.trim(),
       emergencyContactPhone: emergencyContactPhone.trim(),
       guardianName: guardianName.trim() || undefined,
+      observations: observations.trim() || undefined,
       levelId,
     };
 
@@ -199,7 +221,10 @@ export default function StudentForm({
           <DateInput
             label="Fecha de nacimiento"
             value={birthDate}
-            onChange={setBirthDate}
+            onChange={value => {
+              setBirthDate(value);
+              setBirthDateTouched(true);
+            }}
             error={!!errors.birthDate}
             helperText={errors.birthDate}
             required
@@ -209,7 +234,12 @@ export default function StudentForm({
             value={levelId}
             onChange={e => setLevelId(e.target.value)}
             error={!!errors.levelId}
-            helperText={errors.levelId}
+            helperText={
+              errors.levelId ||
+              (birthDateTouched && birthDate && levels.length > 0 && !levelId
+                ? 'No existe un nivel para la edad de este estudiante'
+                : '')
+            }
             size="small"
             required
           >
@@ -221,7 +251,7 @@ export default function StudentForm({
               .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
               .map(level => (
                 <MenuItem key={level._id} value={level._id}>
-                  {level.name?.toUpperCase()}
+                  {`${level.name?.toUpperCase()} (${level.minAge} - ${level.maxAge} años)`}
                 </MenuItem>
               ))}
           </Select>
@@ -263,6 +293,14 @@ export default function StudentForm({
             value={guardianName}
             onChange={e => setGuardianName(e.target.value)}
             size="small"
+          />
+          <TextField
+            label="Observaciones"
+            value={observations}
+            onChange={e => setObservations(e.target.value)}
+            size="small"
+            multiline
+            rows={2}
           />
         </Box>
       </DialogContent>

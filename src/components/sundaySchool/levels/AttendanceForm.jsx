@@ -8,7 +8,7 @@ import DialogActions from '@mui/material/DialogActions';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import { useSelector } from 'react-redux';
-import { format } from 'date-fns';
+import { format, isSunday, previousSunday } from 'date-fns';
 import TextField from '../../shared/TextField';
 import Select from '../../shared/Select';
 import DateInput from '../../shared/DateInput';
@@ -20,12 +20,14 @@ import {
   getAuthHeaders,
 } from '../../../api/externalServices';
 import { B2C_BASE_URL } from '../../../constants';
+import { getColombiaToday } from '../../../utils/dateUtils';
 
-function getDatePart(dateStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return '';
-  return format(d, 'yyyy-MM-dd');
+// The attendance date is the immediately preceding Sunday: if today (in
+// Colombia) is Sunday, use today; otherwise use the most recent Sunday.
+function getLastSundayDate() {
+  const today = getColombiaToday();
+  const sunday = isSunday(today) ? today : previousSunday(today);
+  return format(sunday, 'yyyy-MM-dd');
 }
 
 export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
@@ -56,23 +58,16 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
         headers,
       );
 
-      const [prefillRes] = await genericGetService(
-        `${B2C_BASE_URL}/sundaySchool/class/prefill`,
-        headers,
-      );
-
       if (studentsRes?.data) {
         setStudents(studentsRes.data);
-        setSelectedStudents(studentsRes.data);
+        setSelectedStudents([]);
       }
 
       const levelTeachers = levelRes?.teachers || [];
       setTeachers(levelTeachers);
       setTeacherId(levelTeachers.length === 1 ? levelTeachers[0]._id : '');
 
-      // The attendance date falls within the same week as the class:
-      // default to the last day (Sunday) of the current week.
-      setDate(getDatePart(prefillRes?.endOfWeek));
+      setDate(getLastSundayDate());
       setLessonName('');
       setComments('');
     };
@@ -150,7 +145,7 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
             required
           />
           <Select
-            label="Maestro"
+            label="Maestro que dio la clase"
             value={teacherId}
             onChange={e => setTeacherId(e.target.value)}
             size="small"

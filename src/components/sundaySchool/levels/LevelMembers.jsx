@@ -20,16 +20,13 @@ function formatDate(value) {
 const columns = [
   {
     id: 'name',
-    label: 'Nombre',
+    label: 'Nombre completo',
     accessor: row => `${row.name || ''} ${row.lastName || ''}`.trim() || '—',
   },
   {
     id: 'documentNumber',
     label: 'Identificación',
-    accessor: row =>
-      row.documentNumber
-        ? `${row.documentNumber}${row.documentType ? ` · ${row.documentType}` : ''}`
-        : '—',
+    accessor: row => row.documentNumber || '—',
   },
   {
     id: 'birthDate',

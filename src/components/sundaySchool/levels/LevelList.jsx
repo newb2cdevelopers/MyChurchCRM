@@ -39,6 +39,8 @@ const columns = [
   {
     id: 'teachers',
     label: 'Maestros',
+    maxWidth: '220px',
+    tooltip: true,
     accessor: row => {
       const names = (row.teachers || [])
         .map(t => t?.fullName?.toUpperCase())

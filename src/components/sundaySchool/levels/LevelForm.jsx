@@ -7,6 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { useSelector } from 'react-redux';
 import TextField from '../../shared/TextField';
 import MultiSelect from '../../shared/MultiSelect';
 import showToast from '../../../customComponents/toast/showToast';
@@ -19,6 +20,7 @@ import { B2C_BASE_URL } from '../../../constants';
 
 export default function LevelForm({ open, setOpen, selectedItem, onSuccess }) {
   const isEditing = selectedItem !== null;
+  const user = useSelector(state => state.user);
 
   const [membersList, setMembersList] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -29,12 +31,62 @@ export default function LevelForm({ open, setOpen, selectedItem, onSuccess }) {
   const [teachers, setTeachers] = useState([]);
   const [errors, setErrors] = useState({});
 
-  const fetchMembers = useCallback(async () => {
-    const [data] = await genericGetService(
-      `${B2C_BASE_URL}/member?limit=99999&ignoreWorkfront=true`,
+  const resolveSundaySchoolModuleId = useCallback(() => {
+    const accesses = (user.roles || []).flatMap(role => role.accesses || []);
+    const sundaySchoolAccess = accesses.find(
+      access => access?.module?.route === 'sunday-school',
     );
-    if (data?.data) setMembersList(data.data);
-  }, []);
+    return sundaySchoolAccess?.module?._id || null;
+  }, [user.roles]);
+
+  const fetchMembers = useCallback(async () => {
+    const moduleId = resolveSundaySchoolModuleId();
+
+    if (!moduleId) {
+      setMembersList([]);
+      showToast.error(
+        'Error',
+        'No se pudo identificar el módulo de Escuela Dominical para filtrar maestros.',
+      );
+      return;
+    }
+
+    const [workfronts, workfrontError] = await genericGetService(
+      `${B2C_BASE_URL}/workfront/by-module?moduleId=${encodeURIComponent(moduleId)}`,
+    );
+
+    if (workfrontError) {
+      setMembersList([]);
+      showToast.error(
+        'Error',
+        workfrontError?.message ||
+          'No se pudieron consultar los frentes del módulo actual.',
+      );
+      return;
+    }
+
+    const moduleWorkfrontId = workfronts?.[0]?._id;
+
+    if (!moduleWorkfrontId) {
+      setMembersList([]);
+      return;
+    }
+
+    const [membersData, membersError] = await genericGetService(
+      `${B2C_BASE_URL}/member?limit=99999&workfrontId=${encodeURIComponent(moduleWorkfrontId)}`,
+    );
+
+    if (membersError) {
+      setMembersList([]);
+      showToast.error(
+        'Error',
+        membersError?.message || 'No se pudo consultar el listado de maestros.',
+      );
+      return;
+    }
+
+    setMembersList(membersData?.data || []);
+  }, [resolveSundaySchoolModuleId]);
 
   useEffect(() => {
     if (!open) return;

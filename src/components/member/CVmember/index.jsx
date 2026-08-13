@@ -107,6 +107,7 @@ const academicColumns = [
   {
     id: 'comments',
     label: 'Observaciones',
+    wrap: true,
     accessor: row => row.comments || '—',
   },
 ];
@@ -147,7 +148,12 @@ const ministryColumns = [
       );
     },
   },
-  { id: 'comments', label: 'Notas', accessor: row => row.comments || '—' },
+  {
+    id: 'comments',
+    label: 'Notas',
+    wrap: true,
+    accessor: row => row.comments || '—',
+  },
 ];
 
 export default function CvMember() {

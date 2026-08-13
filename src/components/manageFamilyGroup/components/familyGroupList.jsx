@@ -33,6 +33,7 @@ const columns = [
   {
     id: 'address',
     label: 'Dirección',
+    maxWidth: '220px',
     accessor: row => row.address || '',
   },
   {

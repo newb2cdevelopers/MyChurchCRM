@@ -36,6 +36,8 @@ const columns = [
   {
     id: 'lessonName',
     label: 'Clase enseñada',
+    maxWidth: '200px',
+    tooltip: true,
     accessor: row => row.lessonName || '—',
   },
   {
@@ -51,6 +53,8 @@ const columns = [
   {
     id: 'comments',
     label: 'Observaciones',
+    maxWidth: '220px',
+    tooltip: true,
     accessor: row => row.comments || '—',
   },
 ];

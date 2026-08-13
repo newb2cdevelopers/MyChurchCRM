@@ -51,6 +51,8 @@ const columns = [
   {
     id: 'levels',
     label: 'Niveles',
+    maxWidth: '220px',
+    tooltip: true,
     accessor: row => {
       const names = (row.levelIds || []).map(l => l?.name).filter(Boolean);
       return names.length ? names.join(', ') : '—';

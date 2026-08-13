@@ -153,6 +153,10 @@ function DataTable({
                     color: 'text.secondary',
                     whiteSpace: 'nowrap',
                     ...(col.width ? { width: col.width } : {}),
+                    ...(col.maxWidth ? { maxWidth: col.maxWidth } : {}),
+                    ...(col.width || col.maxWidth
+                      ? { overflow: 'hidden', textOverflow: 'ellipsis' }
+                      : {}),
                   }}
                 >
                   {sort && col.sortable ? (
@@ -254,11 +258,44 @@ function DataTable({
                       />
                     </TableCell>
                   )}
-                  {columns.map(col => (
-                    <TableCell key={col.id} align={col.align || 'left'}>
-                      {col.accessor(row)}
-                    </TableCell>
-                  ))}
+                  {columns.map(col => {
+                    const cellContent = col.accessor(row);
+                    const showTooltip =
+                      col.tooltip && typeof cellContent === 'string';
+
+                    return (
+                      <TableCell
+                        key={col.id}
+                        align={col.align || 'left'}
+                        sx={{
+                          whiteSpace: col.wrap ? 'normal' : 'nowrap',
+                          ...(col.width ? { width: col.width } : {}),
+                          ...(col.maxWidth ? { maxWidth: col.maxWidth } : {}),
+                          ...(col.width || col.maxWidth
+                            ? { overflow: 'hidden', textOverflow: 'ellipsis' }
+                            : {}),
+                        }}
+                      >
+                        {showTooltip ? (
+                          <Tooltip title={cellContent} placement="top">
+                            <Box
+                              component="span"
+                              sx={{
+                                display: 'block',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {cellContent}
+                            </Box>
+                          </Tooltip>
+                        ) : (
+                          cellContent
+                        )}
+                      </TableCell>
+                    );
+                  })}
                   {rowActions && (
                     <TableCell align="right" onClick={e => e.stopPropagation()}>
                       {rowActions({ row })}

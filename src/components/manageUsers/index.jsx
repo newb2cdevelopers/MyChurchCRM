@@ -37,6 +37,7 @@ const columns = [
   {
     id: 'roles',
     label: 'Rol(es)',
+    maxWidth: '220px',
     accessor: row =>
       row.roles?.length ? row.roles.map(r => r.name).join(', ') : 'Sin rol',
   },

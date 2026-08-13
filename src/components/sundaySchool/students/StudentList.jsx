@@ -31,18 +31,15 @@ function formatDate(value) {
 
 const columns = [
   {
-    id: 'name',
-    label: 'Nombre',
-    sortable: true,
-    accessor: row => `${row.name || ''} ${row.lastName || ''}`.trim() || '—',
-  },
-  {
     id: 'documentNumber',
     label: 'Identificación',
-    accessor: row =>
-      row.documentNumber
-        ? `${row.documentNumber}${row.documentType ? ` · ${row.documentType}` : ''}`
-        : '—',
+    accessor: row => row.documentNumber || '—',
+  },
+  {
+    id: 'name',
+    label: 'Nombre completo',
+    sortable: true,
+    accessor: row => `${row.name || ''} ${row.lastName || ''}`.trim() || '—',
   },
   {
     id: 'level',
@@ -205,8 +202,8 @@ function StudentList() {
     <Box>
       {canCreate && hasLevels === false && (
         <Alert severity="warning" sx={{ mb: 2 }}>
-          No hay niveles creados. Cree un nivel en la pestaña Gestión de
-          Niveles para poder registrar estudiantes.
+          No hay niveles creados. Cree un nivel en la pestaña Gestión de Niveles
+          para poder registrar estudiantes.
         </Alert>
       )}
       <DataTable
