@@ -9,6 +9,8 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import Typography from '@mui/material/Typography';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { useSelector } from 'react-redux';
 import TextField from '../../shared/TextField';
 import DateInput from '../../shared/DateInput';
@@ -32,6 +34,7 @@ export default function ClassForm({ open, setOpen, selectedItem, onSuccess }) {
   const [lessonName, setLessonName] = useState('');
   const [date, setDate] = useState('');
   const [selectedLevels, setSelectedLevels] = useState([]);
+  const [selectAllLevels, setSelectAllLevels] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfName, setPdfName] = useState('');
   const [errors, setErrors] = useState({});
@@ -52,6 +55,7 @@ export default function ClassForm({ open, setOpen, selectedItem, onSuccess }) {
     setLessonName(selectedItem?.lessonName || '');
     setDate(selectedItem?.date || '');
     setSelectedLevels(selectedItem?.levelIds || []);
+    setSelectAllLevels(false);
     setPdfFile(null);
     setPdfName(selectedItem?.pdfUrl ? 'PDF actual cargado' : '');
 
@@ -76,6 +80,13 @@ export default function ClassForm({ open, setOpen, selectedItem, onSuccess }) {
     setPdfFile(selectedFile);
     setPdfName(selectedFile.name);
     event.target.value = '';
+  };
+
+  const handleSelectAllLevels = event => {
+    const checked = event.target.checked;
+    setSelectAllLevels(checked);
+    setSelectedLevels(checked ? levels : []);
+    setErrors(prev => ({ ...prev, levels: undefined }));
   };
 
   const validate = () => {
@@ -160,6 +171,16 @@ export default function ClassForm({ open, setOpen, selectedItem, onSuccess }) {
             helperText={errors.date}
             required
           />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={selectAllLevels}
+                onChange={handleSelectAllLevels}
+                disabled={levels.length === 0}
+              />
+            }
+            label="Aplicar a todos los niveles"
+          />
           <MultiSelect
             label="Niveles"
             options={levels
@@ -170,6 +191,7 @@ export default function ClassForm({ open, setOpen, selectedItem, onSuccess }) {
             getOptionLabel={option => option.name?.toUpperCase() || ''}
             placeholder="Buscar y seleccionar niveles"
             multiple
+            disabled={selectAllLevels}
             error={!!errors.levels}
             helperText={errors.levels}
             required

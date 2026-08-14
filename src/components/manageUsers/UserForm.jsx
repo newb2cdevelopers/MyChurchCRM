@@ -80,6 +80,12 @@ export default function UserForm({ open, setOpen, selectedItem, onSuccess }) {
       'Coordinador Grupos Familiares',
     );
     const hasLeaderRole = roleNames.includes('Líder Grupos Familiares');
+    const hasSundaySchoolCoordinatorRole = roleNames.includes(
+      'Coordinador Escuela Dominical',
+    );
+    const hasSundaySchoolTeacherRole = roleNames.includes(
+      'Maestro Escuela Dominical',
+    );
     const newErrors = {};
 
     if (hasCoordinatorRole && !selectedZone) {
@@ -87,7 +93,13 @@ export default function UserForm({ open, setOpen, selectedItem, onSuccess }) {
         'Debe seleccionar una zona para el coordinador de grupos familiares.';
     }
 
-    if ((hasCoordinatorRole || hasLeaderRole) && !selectedItem.isMember) {
+    if (
+      (hasCoordinatorRole ||
+        hasLeaderRole ||
+        hasSundaySchoolCoordinatorRole ||
+        hasSundaySchoolTeacherRole) &&
+      !selectedItem.isMember
+    ) {
       newErrors.roles =
         'El usuario debe existir como miembro del sistema para asignarle este rol.';
     }
