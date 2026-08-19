@@ -60,7 +60,7 @@ export default function LevelDetail() {
         <Button
           sx={{ mt: 2 }}
           startIcon={<ArrowBackIcon />}
-          onClick={() => navigate('/module/sunday-school')}
+          onClick={() => navigate('/module/sunday-school/sunday-school-levels')}
         >
           Volver al listado
         </Button>
@@ -83,7 +83,7 @@ export default function LevelDetail() {
     <Box>
       <Button
         startIcon={<ArrowBackIcon />}
-        onClick={() => navigate('/module/sunday-school')}
+        onClick={() => navigate('/module/sunday-school/sunday-school-levels')}
         sx={{ mb: { xs: 1.5, md: 2 }, textTransform: 'none' }}
       >
         Volver al listado

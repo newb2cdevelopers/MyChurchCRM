@@ -31,6 +31,11 @@ function getLastSundayDate() {
   return format(sunday, 'yyyy-MM-dd');
 }
 
+// Builds the display value for a church service, e.g. "Domingo 07:00 am".
+function formatService(service) {
+  return `${service.day} ${service.time}`;
+}
+
 export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
   const user = useSelector(state => state.user);
 
@@ -38,6 +43,8 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [teacherId, setTeacherId] = useState('');
+  const [services, setServices] = useState([]);
+  const [service, setService] = useState('');
   const [date, setDate] = useState('');
   const [lessonName, setLessonName] = useState('');
   const [comments, setComments] = useState('');
@@ -61,6 +68,19 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
       const [levelRes] = await genericGetService(
         `${B2C_BASE_URL}/sundaySchool/level/${levelId}`,
         headers,
+      );
+
+      let churchServices = [];
+      if (user.selectedChurchId) {
+        const [churchRes] = await genericGetService(
+          `${B2C_BASE_URL}/church/${user.selectedChurchId}`,
+          headers,
+        );
+        churchServices = churchRes?.services || [];
+      }
+      setServices(churchServices);
+      setService(
+        churchServices.length === 1 ? formatService(churchServices[0]) : '',
       );
 
       if (studentsRes?.data) {
@@ -92,7 +112,7 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
       setLoadingClass(false);
     };
     fetchData();
-  }, [open, levelId, user.token]);
+  }, [open, levelId, user.token, user.selectedChurchId]);
 
   const handleSave = async () => {
     if (missingClass) {
@@ -107,6 +127,14 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
       showToast.warning(
         'Campos obligatorios',
         'Fecha y nombre de la clase son obligatorios',
+      );
+      return;
+    }
+
+    if (!service) {
+      showToast.warning(
+        'Campos obligatorios',
+        'Seleccione el servicio al que corresponde la asistencia',
       );
       return;
     }
@@ -128,6 +156,7 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
     const payload = {
       levelId,
       date,
+      service,
       lessonName,
       teacherId,
       comments,
@@ -171,6 +200,31 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
             disabled
             required
           />
+          <Select
+            label="Servicio"
+            value={service}
+            onChange={e => setService(e.target.value)}
+            size="small"
+            required
+          >
+            <MenuItem value="">
+              <em>Seleccione un servicio</em>
+            </MenuItem>
+            {services.map(svc => (
+              <MenuItem
+                key={`${svc.day}-${svc.time}`}
+                value={formatService(svc)}
+              >
+                {formatService(svc)}
+              </MenuItem>
+            ))}
+          </Select>
+          {services.length === 0 && (
+            <Alert severity="warning" title="Sin servicios configurados">
+              La iglesia no tiene servicios configurados. Comuníquese con el
+              administrador para registrar la asistencia.
+            </Alert>
+          )}
           <TextField
             label="Clase enseñada"
             value={lessonName}
@@ -230,7 +284,9 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
         <Button
           onClick={handleSave}
           variant="contained"
-          disabled={saving || loadingClass || missingClass}
+          disabled={
+            saving || loadingClass || missingClass || services.length === 0
+          }
         >
           {saving ? 'Guardando...' : 'Guardar'}
         </Button>

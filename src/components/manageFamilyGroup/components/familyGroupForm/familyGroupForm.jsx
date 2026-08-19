@@ -53,6 +53,7 @@ export default function FamilyGroupForm({
 
   const [code, setCode] = useState('');
   const [address, setAddress] = useState('');
+  const [host, setHost] = useState('');
   const [startDate, setStartDate] = useState('');
   const [zoneBind, setZoneBind] = useState('');
   const [locality, setLocality] = useState('');
@@ -91,6 +92,7 @@ export default function FamilyGroupForm({
     setErrors({});
     setCode(selectedItem?.code || '');
     setAddress(selectedItem?.address || '');
+    setHost(selectedItem?.host || '');
     setStartDate(selectedItem?.startDate || '');
     setNeighborhood(selectedItem?.neighborhood?._id || '');
     setLocality(selectedItem?.neighborhood?.locality || '');
@@ -168,6 +170,7 @@ export default function FamilyGroupForm({
     const errs = {};
     if (!code) errs.code = 'El código es obligatorio';
     if (!address) errs.address = 'La dirección es obligatoria';
+    if (!host) errs.host = 'El anfitrión es obligatorio';
     if (!startDate) errs.startDate = 'La fecha de inicio es obligatoria';
     if (!zoneBind) errs.zoneBind = 'Seleccione una zona';
     if (!locality) errs.locality = 'Seleccione una localidad';
@@ -186,6 +189,7 @@ export default function FamilyGroupForm({
     const payload = {
       code,
       address,
+      host,
       startDate,
       leader: leader?._id || leader,
       neighborhood,
@@ -266,6 +270,15 @@ export default function FamilyGroupForm({
             onChange={e => setAddress(e.target.value)}
             error={!!errors.address}
             helperText={errors.address}
+            size="small"
+            required
+          />
+          <TextField
+            label="Anfitrión"
+            value={host}
+            onChange={e => setHost(e.target.value)}
+            error={!!errors.host}
+            helperText={errors.host}
             size="small"
             required
           />

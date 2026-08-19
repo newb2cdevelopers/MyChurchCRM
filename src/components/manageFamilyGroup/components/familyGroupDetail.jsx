@@ -173,18 +173,33 @@ export default function FamilyGroupDetail() {
                   Identidad
                 </Typography>
               </Box>
-              <Box sx={{ mb: 1.5 }}>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  display="block"
-                  sx={{ lineHeight: 1.3, mb: 0.25 }}
-                >
-                  Líder responsable
-                </Typography>
-                <Typography variant="body2" fontWeight={600}>
-                  {group.leader?.fullName?.toUpperCase() || '—'}
-                </Typography>
+              <Box sx={{ display: 'flex', gap: 2, mb: 1.5 }}>
+                <Box sx={{ flex: 1 }}>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    sx={{ lineHeight: 1.3, mb: 0.25 }}
+                  >
+                    Líder responsable
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    {group.leader?.fullName?.toUpperCase() || '—'}
+                  </Typography>
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    sx={{ lineHeight: 1.3, mb: 0.25 }}
+                  >
+                    Anfitrión
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    {group.host || '—'}
+                  </Typography>
+                </Box>
               </Box>
               <Box>
                 <Typography

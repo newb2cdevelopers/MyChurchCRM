@@ -34,6 +34,24 @@ const columns = [
     accessor: row => formatDate(row.date),
   },
   {
+    id: 'service',
+    label: 'Servicio',
+    sortable: true,
+    accessor: row => row.service || '—',
+  },
+  {
+    id: 'teacher',
+    label: 'Maestro que da la clase',
+    sortable: true,
+    accessor: row => {
+      const teacher = row.teacherId;
+      if (!teacher) return '—';
+      return typeof teacher === 'object' && teacher.fullName
+        ? teacher.fullName.toUpperCase()
+        : '—';
+    },
+  },
+  {
     id: 'lessonName',
     label: 'Clase enseñada',
     maxWidth: '200px',
