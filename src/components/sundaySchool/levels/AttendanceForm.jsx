@@ -13,6 +13,7 @@ import TextField from '../../shared/TextField';
 import Select from '../../shared/Select';
 import DateInput from '../../shared/DateInput';
 import CheckboxList from '../../shared/CheckboxList';
+import Alert from '../../shared/Alert';
 import showToast from '../../../customComponents/toast/showToast';
 import {
   genericGetService,
@@ -41,12 +42,16 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
   const [lessonName, setLessonName] = useState('');
   const [comments, setComments] = useState('');
   const [saving, setSaving] = useState(false);
+  const [loadingClass, setLoadingClass] = useState(false);
+  const [missingClass, setMissingClass] = useState(false);
 
   useEffect(() => {
     if (!open || !levelId) return;
 
     const fetchData = async () => {
       const headers = getAuthHeaders(user.token);
+      const attendanceDate = getLastSundayDate();
+      setDate(attendanceDate);
 
       const [studentsRes] = await genericGetService(
         `${B2C_BASE_URL}/sundaySchool/student?levelId=${levelId}&page=1&limit=99999`,
@@ -67,14 +72,37 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
       setTeachers(levelTeachers);
       setTeacherId(levelTeachers.length === 1 ? levelTeachers[0]._id : '');
 
-      setDate(getLastSundayDate());
-      setLessonName('');
       setComments('');
+      setLessonName('');
+      setMissingClass(false);
+      setLoadingClass(true);
+
+      const [classRes] = await genericGetService(
+        `${B2C_BASE_URL}/sundaySchool/class/forWeek?date=${attendanceDate}&levelId=${levelId}`,
+        headers,
+      );
+
+      if (classRes?.lessonName) {
+        setLessonName(classRes.lessonName);
+        setMissingClass(false);
+      } else {
+        setLessonName('');
+        setMissingClass(true);
+      }
+      setLoadingClass(false);
     };
     fetchData();
   }, [open, levelId, user.token]);
 
   const handleSave = async () => {
+    if (missingClass) {
+      showToast.warning(
+        'Clase no disponible',
+        'No se ha subido la clase para esta semana. Comuníquese con el coordinador.',
+      );
+      return;
+    }
+
     if (!date || !lessonName) {
       showToast.warning(
         'Campos obligatorios',
@@ -136,14 +164,27 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
       <DialogTitle>Registrar Asistencia</DialogTitle>
       <DialogContent dividers>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-          <DateInput label="Fecha" value={date} onChange={setDate} required />
+          <DateInput
+            label="Fecha"
+            value={date}
+            onChange={() => {}}
+            disabled
+            required
+          />
           <TextField
             label="Clase enseñada"
             value={lessonName}
-            onChange={e => setLessonName(e.target.value)}
+            onChange={() => {}}
             size="small"
+            disabled
             required
           />
+          {missingClass && (
+            <Alert severity="warning" title="Clase no disponible">
+              No se ha subido la clase para esta semana. Comuníquese con el
+              coordinador.
+            </Alert>
+          )}
           <Select
             label="Maestro que dio la clase"
             value={teacherId}
@@ -186,7 +227,11 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
         <Button onClick={() => setOpen(false)} color="inherit">
           Cancelar
         </Button>
-        <Button onClick={handleSave} variant="contained" disabled={saving}>
+        <Button
+          onClick={handleSave}
+          variant="contained"
+          disabled={saving || loadingClass || missingClass}
+        >
           {saving ? 'Guardando...' : 'Guardar'}
         </Button>
       </DialogActions>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -23,6 +23,7 @@ export default function LevelForm({ open, setOpen, selectedItem, onSuccess }) {
   const user = useSelector(state => state.user);
 
   const [membersList, setMembersList] = useState([]);
+  const [assignedTeacherIds, setAssignedTeacherIds] = useState(new Set());
   const [saving, setSaving] = useState(false);
 
   const [name, setName] = useState('');
@@ -88,6 +89,26 @@ export default function LevelForm({ open, setOpen, selectedItem, onSuccess }) {
     setMembersList(membersData?.data || []);
   }, [resolveSundaySchoolModuleId]);
 
+  // Builds the set of member IDs that are already teachers of another level,
+  // so they can be excluded from the teacher options. The level being edited
+  // is ignored so its current teachers remain selectable.
+  const fetchAssignedTeachers = useCallback(async () => {
+    const [levelsData] = await genericGetService(
+      `${B2C_BASE_URL}/sundaySchool/level`,
+    );
+
+    const assigned = new Set();
+
+    (levelsData || []).forEach(level => {
+      if (isEditing && level._id === selectedItem?._id) return;
+      (level.teachers || []).forEach(teacher => {
+        if (teacher?._id) assigned.add(String(teacher._id));
+      });
+    });
+
+    setAssignedTeacherIds(assigned);
+  }, [isEditing, selectedItem]);
+
   useEffect(() => {
     if (!open) return;
 
@@ -98,7 +119,17 @@ export default function LevelForm({ open, setOpen, selectedItem, onSuccess }) {
     setTeachers(selectedItem?.teachers || []);
 
     fetchMembers();
-  }, [open, selectedItem, fetchMembers]);
+    fetchAssignedTeachers();
+  }, [open, selectedItem, fetchMembers, fetchAssignedTeachers]);
+
+  // Members that are not already teachers of another level.
+  const availableMembers = useMemo(
+    () =>
+      membersList.filter(member => !assignedTeacherIds.has(String(member._id))),
+    [membersList, assignedTeacherIds],
+  );
+
+  const hiddenTeachersCount = membersList.length - availableMembers.length;
 
   const validate = () => {
     const errs = {};
@@ -205,7 +236,7 @@ export default function LevelForm({ open, setOpen, selectedItem, onSuccess }) {
           </Box>
           <MultiSelect
             label="Maestros"
-            options={membersList
+            options={availableMembers
               .slice()
               .sort((a, b) =>
                 (a.fullName || '').localeCompare(b.fullName || ''),
@@ -216,7 +247,11 @@ export default function LevelForm({ open, setOpen, selectedItem, onSuccess }) {
               option.fullName?.toUpperCase() || option._id || ''
             }
             placeholder="Buscar y seleccionar maestros"
-            helperText="Puede buscar y seleccionar uno o varios maestros"
+            helperText={
+              hiddenTeachersCount > 0
+                ? 'Algunos miembros no aparecen porque ya son maestros de otro nivel. Para asignarlos aquí, primero elimínelos de su nivel actual.'
+                : 'Puede buscar y seleccionar uno o varios maestros'
+            }
             multiple
           />
         </Box>

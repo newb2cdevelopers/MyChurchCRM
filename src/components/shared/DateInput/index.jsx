@@ -13,6 +13,7 @@ export default function DateInput({
   error,
   helperText,
   required,
+  disabled,
   placeholder = 'DD/MM/AAAA',
 }) {
   const dateValue = React.useMemo(() => {
@@ -42,6 +43,7 @@ export default function DateInput({
         inputFormat="dd/MM/yyyy"
         mask="__/__/____"
         label={label}
+        disabled={disabled}
         renderInput={params => (
           <TextField
             {...params}
@@ -50,6 +52,7 @@ export default function DateInput({
             error={error}
             helperText={helperText}
             required={required}
+            disabled={disabled}
             placeholder={placeholder}
             inputProps={{
               ...params.inputProps,
