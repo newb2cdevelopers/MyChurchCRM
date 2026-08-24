@@ -10,6 +10,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import AddIcon from '@mui/icons-material/Add';
 import { useSelector } from 'react-redux';
 import usePermission from '../../../hooks/usePermission';
+import { useLevels } from '../../../hooks/useLevels';
 import {
   genericGetService,
   genericDeleteService,
@@ -86,14 +87,13 @@ function ClassList() {
   const canEdit = usePermission('/sunday-school-classes', 'edit_class');
   const canDelete = usePermission('/sunday-school-classes', 'delete_class');
 
+  const { hasLevels } = useLevels();
+
   const [classes, setClasses] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const pageSize = 10;
-
-  // null = still loading; true/false once resolved (avoids flash of the enabled button).
-  const [hasLevels, setHasLevels] = useState(null);
 
   const [formOpen, setFormOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -123,29 +123,6 @@ function ClassList() {
   useEffect(() => {
     fetchClasses(page);
   }, [fetchClasses, page]);
-
-  // A class always references levels, so creation is gated on levels existing.
-  useEffect(() => {
-    let cancelled = false;
-    const fetchLevels = async () => {
-      const headers = getAuthHeaders(user.token);
-      const [data, error] = await genericGetService(
-        `${B2C_BASE_URL}/sundaySchool/level`,
-        headers,
-      );
-      if (cancelled) return;
-      if (error) {
-        // On fetch failure keep creation available; backend and form still guard.
-        setHasLevels(true);
-        return;
-      }
-      setHasLevels(Array.isArray(data) && data.length > 0);
-    };
-    fetchLevels();
-    return () => {
-      cancelled = true;
-    };
-  }, [user.token]);
 
   const handleCreate = () => {
     setSelectedItem(null);
@@ -207,10 +184,10 @@ function ClassList() {
 
   return (
     <Box>
-      {canCreate && hasLevels === false && (
+      {canCreate && !hasLevels && (
         <Alert severity="warning" sx={{ mb: 2 }}>
-          No hay niveles creados. Cree un nivel en la pestaña Gestión de
-          Niveles para poder subir clases.
+          No hay niveles creados. Cree un nivel en la pestaña Gestión de Niveles
+          para poder subir clases.
         </Alert>
       )}
       <DataTable
@@ -225,7 +202,6 @@ function ClassList() {
         rowActions={rowActions}
         toolbarActions={
           canCreate &&
-          hasLevels !== null &&
           (hasLevels ? (
             <Button
               variant="contained"

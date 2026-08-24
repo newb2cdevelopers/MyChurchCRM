@@ -15,6 +15,7 @@ import DateInput from '../../shared/DateInput';
 import CheckboxList from '../../shared/CheckboxList';
 import Alert from '../../shared/Alert';
 import showToast from '../../../customComponents/toast/showToast';
+import { useLevels } from '../../../hooks/useLevels';
 import {
   genericGetService,
   genericPostService,
@@ -38,6 +39,7 @@ function formatService(service) {
 
 export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
   const user = useSelector(state => state.user);
+  useLevels(); // ensures levels are loaded in cache
 
   const [students, setStudents] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
@@ -60,50 +62,49 @@ export default function AttendanceForm({ open, setOpen, levelId, onSave }) {
       const attendanceDate = getLastSundayDate();
       setDate(attendanceDate);
 
-      const [studentsRes] = await genericGetService(
-        `${B2C_BASE_URL}/sundaySchool/student?levelId=${levelId}&page=1&limit=99999`,
-        headers,
-      );
-
-      const [levelRes] = await genericGetService(
-        `${B2C_BASE_URL}/sundaySchool/level/${levelId}`,
-        headers,
-      );
-
-      let churchServices = [];
-      if (user.selectedChurchId) {
-        const [churchRes] = await genericGetService(
-          `${B2C_BASE_URL}/church/${user.selectedChurchId}`,
+      // Parallelize all 4 requests
+      const [studentsRes, levelRes, churchRes, classRes] = await Promise.all([
+        genericGetService(
+          `${B2C_BASE_URL}/sundaySchool/student?levelId=${levelId}&page=1&limit=99999`,
           headers,
-        );
-        churchServices = churchRes?.services || [];
+        ),
+        genericGetService(
+          `${B2C_BASE_URL}/sundaySchool/level/${levelId}`,
+          headers,
+        ),
+        user.selectedChurchId
+          ? genericGetService(
+              `${B2C_BASE_URL}/church/${user.selectedChurchId}`,
+              headers,
+            )
+          : Promise.resolve([null]),
+        genericGetService(
+          `${B2C_BASE_URL}/sundaySchool/class/forWeek?date=${attendanceDate}&levelId=${levelId}`,
+          headers,
+        ),
+      ]);
+
+      if (studentsRes[0]?.data) {
+        setStudents(studentsRes[0].data);
+        setSelectedStudents([]);
       }
+
+      const levelTeachers = levelRes[0]?.teachers || [];
+      setTeachers(levelTeachers);
+      setTeacherId(levelTeachers.length === 1 ? levelTeachers[0]._id : '');
+
+      const churchServices = churchRes[0]?.services || [];
       setServices(churchServices);
       setService(
         churchServices.length === 1 ? formatService(churchServices[0]) : '',
       );
 
-      if (studentsRes?.data) {
-        setStudents(studentsRes.data);
-        setSelectedStudents([]);
-      }
-
-      const levelTeachers = levelRes?.teachers || [];
-      setTeachers(levelTeachers);
-      setTeacherId(levelTeachers.length === 1 ? levelTeachers[0]._id : '');
-
       setComments('');
-      setLessonName('');
       setMissingClass(false);
       setLoadingClass(true);
 
-      const [classRes] = await genericGetService(
-        `${B2C_BASE_URL}/sundaySchool/class/forWeek?date=${attendanceDate}&levelId=${levelId}`,
-        headers,
-      );
-
-      if (classRes?.lessonName) {
-        setLessonName(classRes.lessonName);
+      if (classRes[0]?.lessonName) {
+        setLessonName(classRes[0].lessonName);
         setMissingClass(false);
       } else {
         setLessonName('');

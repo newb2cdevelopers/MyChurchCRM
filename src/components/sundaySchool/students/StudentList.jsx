@@ -10,6 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useSelector } from 'react-redux';
 import { format, parse, isValid } from 'date-fns';
 import usePermission from '../../../hooks/usePermission';
+import { useLevels } from '../../../hooks/useLevels';
 import {
   genericGetService,
   genericDeleteService,
@@ -69,15 +70,14 @@ function StudentList() {
   const canEdit = usePermission('/sunday-school-students', 'edit_student');
   const canDelete = usePermission('/sunday-school-students', 'delete_student');
 
+  const { hasLevels } = useLevels();
+
   const [students, setStudents] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
   const [page, setPage] = useState(0);
   const pageSize = 10;
-
-  // null = still loading; true/false once resolved (avoids flash of the enabled button).
-  const [hasLevels, setHasLevels] = useState(null);
 
   const [formOpen, setFormOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -108,29 +108,6 @@ function StudentList() {
   useEffect(() => {
     fetchStudents(page, searchInput);
   }, [fetchStudents, page, searchInput]);
-
-  // A student always belongs to a level, so creation is gated on levels existing.
-  useEffect(() => {
-    let cancelled = false;
-    const fetchLevels = async () => {
-      const headers = getAuthHeaders(user.token);
-      const [data, error] = await genericGetService(
-        `${B2C_BASE_URL}/sundaySchool/level`,
-        headers,
-      );
-      if (cancelled) return;
-      if (error) {
-        // On fetch failure keep creation available; backend and form still guard.
-        setHasLevels(true);
-        return;
-      }
-      setHasLevels(Array.isArray(data) && data.length > 0);
-    };
-    fetchLevels();
-    return () => {
-      cancelled = true;
-    };
-  }, [user.token]);
 
   const handleCreate = () => {
     setSelectedItem(null);
@@ -200,7 +177,7 @@ function StudentList() {
 
   return (
     <Box>
-      {canCreate && hasLevels === false && (
+      {canCreate && !hasLevels && (
         <Alert severity="warning" sx={{ mb: 2 }}>
           No hay niveles creados. Cree un nivel en la pestaña Gestión de Niveles
           para poder registrar estudiantes.
@@ -223,7 +200,6 @@ function StudentList() {
         rowActions={rowActions}
         toolbarActions={
           canCreate &&
-          hasLevels !== null &&
           (hasLevels ? (
             <Button
               variant="contained"

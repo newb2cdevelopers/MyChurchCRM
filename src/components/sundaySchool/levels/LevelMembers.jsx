@@ -48,28 +48,55 @@ const columns = [
 export default function LevelMembers({ levelId }) {
   const user = useSelector(state => state.user);
   const [students, setStudents] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
+  const [page, setPage] = useState(0);
+  const pageSize = 10;
 
-  const fetchStudents = useCallback(async () => {
-    setLoading(true);
-    const headers = getAuthHeaders(user.token);
-    const params = new URLSearchParams({
-      levelId,
-      page: '1',
-      limit: '99999',
-    });
-    const [data] = await genericGetService(
-      `${B2C_BASE_URL}/sundaySchool/student?${params}`,
-      headers,
-    );
-    if (data) setStudents(data.data || []);
-    setLoading(false);
-  }, [levelId, user.token]);
+  const fetchStudents = useCallback(
+    async (pageNum = 0, search = '') => {
+      setLoading(true);
+      const headers = getAuthHeaders(user.token);
+      const params = new URLSearchParams({
+        levelId,
+        page: String(pageNum + 1),
+        limit: String(pageSize),
+      });
+      if (search) params.set('search', search);
+      const [data] = await genericGetService(
+        `${B2C_BASE_URL}/sundaySchool/student?${params}`,
+        headers,
+      );
+      if (data) {
+        setStudents(data.data || []);
+        setTotalRecords(data.metadata?.totalRecords || 0);
+      }
+      setLoading(false);
+    },
+    [levelId, user.token],
+  );
 
   useEffect(() => {
-    if (levelId) fetchStudents();
+    if (levelId) fetchStudents(0, '');
   }, [levelId, fetchStudents]);
+
+  const handleSearchChange = useCallback(
+    value => {
+      setSearchInput(value);
+      setPage(0);
+      fetchStudents(0, value);
+    },
+    [fetchStudents],
+  );
+
+  const handlePageChange = useCallback(
+    newPage => {
+      setPage(newPage);
+      fetchStudents(newPage, searchInput);
+    },
+    [fetchStudents, searchInput],
+  );
 
   const filteredData = useMemo(() => {
     if (!searchInput) return students;
@@ -86,8 +113,14 @@ export default function LevelMembers({ levelId }) {
         data={filteredData}
         search={{
           value: searchInput,
-          onChange: setSearchInput,
+          onChange: handleSearchChange,
           placeholder: 'Buscar por nombre o documento...',
+        }}
+        pagination={{
+          page,
+          pageSize,
+          total: totalRecords,
+          onPageChange: handlePageChange,
         }}
         emptyState="Este nivel no tiene estudiantes asignados"
         isLoading={loading}

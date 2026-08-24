@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import TextField from '../../shared/TextField';
 import MultiSelect from '../../shared/MultiSelect';
 import showToast from '../../../customComponents/toast/showToast';
+import { useLevels } from '../../../hooks/useLevels';
 import {
   genericGetService,
   genericPostService,
@@ -21,6 +22,7 @@ import { B2C_BASE_URL } from '../../../constants';
 export default function LevelForm({ open, setOpen, selectedItem, onSuccess }) {
   const isEditing = selectedItem !== null;
   const user = useSelector(state => state.user);
+  const { levels } = useLevels();
 
   const [membersList, setMembersList] = useState([]);
   const [assignedTeacherIds, setAssignedTeacherIds] = useState(new Set());
@@ -93,13 +95,10 @@ export default function LevelForm({ open, setOpen, selectedItem, onSuccess }) {
   // so they can be excluded from the teacher options. The level being edited
   // is ignored so its current teachers remain selectable.
   const fetchAssignedTeachers = useCallback(async () => {
-    const [levelsData] = await genericGetService(
-      `${B2C_BASE_URL}/sundaySchool/level`,
-    );
-
+    // Use cached levels from Redux instead of making a new request
     const assigned = new Set();
 
-    (levelsData || []).forEach(level => {
+    (levels || []).forEach(level => {
       if (isEditing && level._id === selectedItem?._id) return;
       (level.teachers || []).forEach(teacher => {
         if (teacher?._id) assigned.add(String(teacher._id));
@@ -107,7 +106,7 @@ export default function LevelForm({ open, setOpen, selectedItem, onSuccess }) {
     });
 
     setAssignedTeacherIds(assigned);
-  }, [isEditing, selectedItem]);
+  }, [isEditing, selectedItem, levels]);
 
   useEffect(() => {
     if (!open) return;
@@ -118,8 +117,8 @@ export default function LevelForm({ open, setOpen, selectedItem, onSuccess }) {
     setMaxAge(selectedItem?.maxAge ?? '');
     setTeachers(selectedItem?.teachers || []);
 
-    fetchMembers();
-    fetchAssignedTeachers();
+    // Parallelize the two fetches
+    Promise.all([fetchMembers(), fetchAssignedTeachers()]);
   }, [open, selectedItem, fetchMembers, fetchAssignedTeachers]);
 
   // Members that are not already teachers of another level.
