@@ -11,7 +11,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SchoolIcon from '@mui/icons-material/School';
 import GroupIcon from '@mui/icons-material/Group';
+import UpgradeIcon from '@mui/icons-material/Upgrade';
 import ModuleTabs from '../../shared/ModuleTabs';
+import usePermission from '../../../hooks/usePermission';
 import {
   genericGetService,
   getAuthHeaders,
@@ -19,15 +21,19 @@ import {
 import { B2C_BASE_URL } from '../../../constants';
 import LevelMembers from './LevelMembers';
 import LevelAttendance from './LevelAttendance';
+import PromotionModal from './PromotionModal';
 
 export default function LevelDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const user = useSelector(state => state.user);
+  const canPromote = usePermission('/sunday-school-levels', 'promote_students');
 
   const [level, setLevel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
+  const [promotionOpen, setPromotionOpen] = useState(false);
+  const [membersRefreshKey, setMembersRefreshKey] = useState(0);
 
   useEffect(() => {
     const fetchLevel = async () => {
@@ -71,7 +77,7 @@ export default function LevelDetail() {
   const tabs = [
     {
       label: 'Integrantes',
-      content: <LevelMembers levelId={id} />,
+      content: <LevelMembers key={membersRefreshKey} levelId={id} />,
     },
     {
       label: 'Asistencia',
@@ -119,6 +125,16 @@ export default function LevelDetail() {
             sx={{ height: 20, '& .MuiChip-label': { fontSize: 11, px: 0.75 } }}
           />
         </Box>
+        {canPromote && (
+          <Button
+            variant="contained"
+            startIcon={<UpgradeIcon />}
+            onClick={() => setPromotionOpen(true)}
+            sx={{ textTransform: 'none' }}
+          >
+            Promociones
+          </Button>
+        )}
       </Box>
 
       <Card variant="outlined" sx={{ borderRadius: '12px', mb: 3 }}>
@@ -164,6 +180,13 @@ export default function LevelDetail() {
         tabs={tabs}
         value={activeTab}
         onChange={(_, v) => setActiveTab(v)}
+      />
+
+      <PromotionModal
+        open={promotionOpen}
+        onClose={() => setPromotionOpen(false)}
+        levelId={id}
+        onSuccess={() => setMembersRefreshKey(k => k + 1)}
       />
     </Box>
   );
