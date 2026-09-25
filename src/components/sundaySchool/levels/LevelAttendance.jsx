@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useSelector } from 'react-redux';
 import usePermission from '../../../hooks/usePermission';
 import {
@@ -10,6 +13,7 @@ import {
 } from '../../../api/externalServices';
 import { B2C_BASE_URL } from '../../../constants';
 import DataTable from '../../shared/DataTable';
+import AttendanceViewModal from '../../shared/AttendanceViewModal';
 import AttendanceForm from './AttendanceForm';
 
 function formatDate(dateStr) {
@@ -84,42 +88,78 @@ export default function LevelAttendance({ levelId }) {
     'register_attendance',
   );
   const [attendance, setAttendance] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [searchInput, setSearchInput] = useState('');
+  const [page, setPage] = useState(0);
+  const pageSize = 10;
   const [formOpen, setFormOpen] = useState(false);
+  const [viewRow, setViewRow] = useState(null);
 
   const fetchAttendance = useCallback(async () => {
     const headers = getAuthHeaders(user.token);
+    const params = new URLSearchParams({
+      page: String(page + 1),
+      limit: String(pageSize),
+    });
+    if (searchInput) params.set('search', searchInput);
     const [data] = await genericGetService(
-      `${B2C_BASE_URL}/sundaySchool/attendance/${levelId}`,
+      `${B2C_BASE_URL}/sundaySchool/attendance/${levelId}?${params}`,
       headers,
     );
-    if (data) setAttendance(data);
-  }, [levelId, user.token]);
+    if (data) {
+      setAttendance(data.data || []);
+      setTotalRecords(data.metadata?.totalRecords || 0);
+    }
+  }, [levelId, user.token, page, searchInput]);
 
   useEffect(() => {
     if (levelId) fetchAttendance();
   }, [levelId, fetchAttendance]);
 
-  const filteredData = useMemo(() => {
-    if (!searchInput) return attendance;
-    const q = searchInput.toLowerCase();
-    return attendance.filter(
-      a =>
-        a.lessonName?.toLowerCase().includes(q) ||
-        a.comments?.toLowerCase().includes(q),
-    );
-  }, [attendance, searchInput]);
+  const handleSearchChange = value => {
+    setSearchInput(value);
+    setPage(0);
+  };
+
+  const handlePageChange = newPage => {
+    setPage(newPage);
+  };
+
+  const rowActions = ({ row }) => (
+    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <Tooltip title="Ver asistentes">
+        <IconButton size="small" onClick={() => setViewRow(row)}>
+          <VisibilityIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  );
+
+  const viewStudents = (viewRow?.studentsAttendance || []).map(sa => ({
+    fullName:
+      sa.studentId && typeof sa.studentId === 'object'
+        ? `${sa.studentId.name || ''} ${sa.studentId.lastName || ''}`.trim()
+        : '—',
+    hasAttended: sa.hasAttended,
+  }));
 
   return (
     <Box>
       <DataTable
         columns={columns}
-        data={filteredData}
+        data={attendance}
         search={{
           value: searchInput,
-          onChange: setSearchInput,
+          onChange: handleSearchChange,
           placeholder: 'Buscar por clase u observaciones...',
         }}
+        pagination={{
+          page,
+          pageSize,
+          total: totalRecords,
+          onPageChange: handlePageChange,
+        }}
+        rowActions={rowActions}
         toolbarActions={
           canRegister && (
             <Button
@@ -139,6 +179,19 @@ export default function LevelAttendance({ levelId }) {
         setOpen={setFormOpen}
         levelId={levelId}
         onSave={fetchAttendance}
+      />
+      <AttendanceViewModal
+        open={!!viewRow}
+        onClose={() => setViewRow(null)}
+        title="Asistentes de la clase"
+        subtitle={
+          viewRow
+            ? `${formatDate(viewRow.date)} · ${viewRow.service || ''} · ${
+                viewRow.lessonName || ''
+              }`
+            : undefined
+        }
+        students={viewStudents}
       />
     </Box>
   );

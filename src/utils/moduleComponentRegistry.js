@@ -9,6 +9,7 @@ import ManageUsers from '../components/manageUsers';
 import StudentList from '../components/sundaySchool/students/StudentList';
 import LevelList from '../components/sundaySchool/levels/LevelList';
 import ClassList from '../components/sundaySchool/classes/ClassList';
+import SundaySchoolReports from '../components/sundaySchool/reports/SundaySchoolReports';
 
 const ROUTE_COMPONENTS = {
   '/create-events': EventListView,
@@ -22,6 +23,7 @@ const ROUTE_COMPONENTS = {
   '/sunday-school-students': StudentList,
   '/sunday-school-levels': LevelList,
   '/sunday-school-classes': ClassList,
+  '/sunday-school-reports': SundaySchoolReports,
 };
 
 export default ROUTE_COMPONENTS;
