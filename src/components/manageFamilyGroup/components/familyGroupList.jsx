@@ -25,6 +25,11 @@ const columns = [
     accessor: row => row.code,
   },
   {
+    id: 'type',
+    label: 'Tipo',
+    accessor: row => row.type || '—',
+  },
+  {
     id: 'leader',
     label: 'Líder principal',
     sortable: true,

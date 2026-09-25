@@ -212,6 +212,17 @@ export default function FamilyGroupDetail() {
                 </Typography>
                 <Typography variant="body2">{group.code || '—'}</Typography>
               </Box>
+              <Box sx={{ mt: 1.5 }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="block"
+                  sx={{ lineHeight: 1.3, mb: 0.25 }}
+                >
+                  Tipo
+                </Typography>
+                <Typography variant="body2">{group.type || '—'}</Typography>
+              </Box>
             </CardContent>
           </Card>
 

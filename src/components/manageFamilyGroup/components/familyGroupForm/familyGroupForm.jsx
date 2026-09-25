@@ -62,6 +62,8 @@ export default function FamilyGroupForm({
   const [day, setDay] = useState('');
   const [time, setTime] = useState('');
   const [status, setStatus] = useState('');
+  const [type, setType] = useState('');
+  const [familyGroupTypes, setFamilyGroupTypes] = useState([]);
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -86,6 +88,13 @@ export default function FamilyGroupForm({
     return await genericGetService(`${B2C_BASE_URL}/neighborhood`);
   }, []);
 
+  const getChurch = useCallback(async () => {
+    return await genericGetService(
+      `${B2C_BASE_URL}/church/${user.selectedChurchId}`,
+      getAuthHeaders(user.token),
+    );
+  }, [user.selectedChurchId, user.token]);
+
   useEffect(() => {
     if (!open) return;
 
@@ -100,14 +109,16 @@ export default function FamilyGroupForm({
     setDay(selectedItem?.day || '');
     setTime(selectedItem?.time || '');
     setStatus(selectedItem?.status || '');
+    setType(selectedItem?.type || '');
 
     const fetchAll = async () => {
-      const [membersRes, zonesRes, localitiesRes, neighborhoodsRes] =
+      const [membersRes, zonesRes, localitiesRes, neighborhoodsRes, churchRes] =
         await Promise.all([
           getMembers(),
           getZones(),
           getLocalities(),
           getNeighborhoods(),
+          getChurch(),
         ]);
 
       if (membersRes[0]?.data) setMembersList(membersRes[0].data);
@@ -154,6 +165,9 @@ export default function FamilyGroupForm({
           setNeighborhoodList(neighborhoodsRes[0]);
         }
       }
+      if (churchRes[0]?.familyGroupTypes) {
+        setFamilyGroupTypes(churchRes[0].familyGroupTypes);
+      }
     };
     fetchAll();
   }, [
@@ -163,6 +177,7 @@ export default function FamilyGroupForm({
     getZones,
     getLocalities,
     getNeighborhoods,
+    getChurch,
     user.zoneId,
   ]);
 
@@ -179,6 +194,7 @@ export default function FamilyGroupForm({
     if (!day) errs.day = 'Seleccione un día';
     if (!time) errs.time = 'Seleccione una hora';
     if (!status) errs.status = 'Seleccione un estado';
+    if (!type) errs.type = 'Seleccione un tipo de grupo familiar';
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -196,6 +212,7 @@ export default function FamilyGroupForm({
       time,
       day,
       status,
+      type,
     };
 
     setLoading(true);
@@ -282,6 +299,29 @@ export default function FamilyGroupForm({
             size="small"
             required
           />
+          <Select
+            label="Tipo de grupo familiar"
+            value={type}
+            onChange={e => setType(e.target.value)}
+            error={!!errors.type}
+            helperText={
+              errors.type ||
+              (familyGroupTypes.length === 0
+                ? 'La iglesia no tiene tipos configurados'
+                : '')
+            }
+            size="small"
+            required
+          >
+            <MenuItem value="">
+              <em>Seleccione un tipo</em>
+            </MenuItem>
+            {familyGroupTypes.map(t => (
+              <MenuItem key={t} value={t}>
+                {t}
+              </MenuItem>
+            ))}
+          </Select>
           <DateInput
             label="Fecha de inicio"
             value={startDate}
