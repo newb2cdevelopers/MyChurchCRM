@@ -256,8 +256,14 @@ export default function SundaySchoolReports() {
     maxBarSize: 28,
   };
 
+  // On mobile the charts scroll horizontally so axis labels never overlap.
+  // The min width gives each label ~100px; on desktop the chart fills the
+  // card normally.
+  const serviceChartMinWidth = Math.max(byServiceData.length * 100, 320);
+  const levelChartMinWidth = Math.max(byLevelData.length * 100, 320);
+
   return (
-    <Box sx={{ p: { xs: 2, md: 3 } }}>
+    <Box>
       {/* Filters */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
@@ -372,102 +378,30 @@ export default function SundaySchoolReports() {
                   >
                     Asistencia por culto
                   </Typography>
-                  <Box sx={{ height: 220 }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={byServiceData}>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke={theme.palette.divider}
-                          vertical={false}
-                        />
-                        <XAxis
-                          dataKey="service"
-                          tickFormatter={shortService}
-                          tick={{
-                            fontSize: 12,
-                            fill: theme.palette.text.secondary,
-                          }}
-                          interval={0}
-                          label={{
-                            value: 'Culto',
-                            position: 'insideBottom',
-                            offset: -5,
-                            fontSize: 12,
-                            fill: theme.palette.text.secondary,
-                          }}
-                        />
-                        <YAxis
-                          allowDecimals={false}
-                          tick={{
-                            fontSize: 12,
-                            fill: theme.palette.text.secondary,
-                          }}
-                          label={{
-                            value: 'Asistencias',
-                            angle: -90,
-                            position: 'insideLeft',
-                            fontSize: 12,
-                            fill: theme.palette.text.secondary,
-                          }}
-                        />
-                        <Tooltip
-                          formatter={value => [
-                            value.toLocaleString('es-CO'),
-                            'Asistencias',
-                          ]}
-                          labelFormatter={label => label}
-                        />
-                        <Bar
-                          dataKey="total"
-                          fill={theme.palette.primary.main}
-                          {...chartBarProps}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ fontWeight: 600, mb: 2 }}
-                  >
-                    Asistencia por nivel
-                  </Typography>
-                  {byLevelData.length === 0 ? (
+                  <Box sx={{ height: 220, overflowX: 'auto' }}>
                     <Box
                       sx={{
-                        height: 220,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        minWidth: { xs: serviceChartMinWidth, md: '100%' },
+                        height: '100%',
                       }}
                     >
-                      <Typography variant="body2" color="text.secondary">
-                        No hay datos para los filtros seleccionados
-                      </Typography>
-                    </Box>
-                  ) : (
-                    <Box sx={{ height: 220 }}>
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={byLevelData}>
+                        <BarChart data={byServiceData}>
                           <CartesianGrid
                             strokeDasharray="3 3"
                             stroke={theme.palette.divider}
                             vertical={false}
                           />
                           <XAxis
-                            dataKey="levelName"
+                            dataKey="service"
+                            tickFormatter={shortService}
                             tick={{
                               fontSize: 12,
                               fill: theme.palette.text.secondary,
                             }}
                             interval={0}
                             label={{
-                              value: 'Nivel',
+                              value: 'Culto',
                               position: 'insideBottom',
                               offset: -5,
                               fontSize: 12,
@@ -497,11 +431,97 @@ export default function SundaySchoolReports() {
                           />
                           <Bar
                             dataKey="total"
-                            fill={theme.palette.tertiary.main}
+                            fill={theme.palette.primary.main}
                             {...chartBarProps}
                           />
                         </BarChart>
                       </ResponsiveContainer>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ fontWeight: 600, mb: 2 }}
+                  >
+                    Asistencia por nivel
+                  </Typography>
+                  {byLevelData.length === 0 ? (
+                    <Box
+                      sx={{
+                        height: 220,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Typography variant="body2" color="text.secondary">
+                        No hay datos para los filtros seleccionados
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Box sx={{ height: 220, overflowX: 'auto' }}>
+                      <Box
+                        sx={{
+                          minWidth: { xs: levelChartMinWidth, md: '100%' },
+                          height: '100%',
+                        }}
+                      >
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={byLevelData}>
+                            <CartesianGrid
+                              strokeDasharray="3 3"
+                              stroke={theme.palette.divider}
+                              vertical={false}
+                            />
+                            <XAxis
+                              dataKey="levelName"
+                              tick={{
+                                fontSize: 12,
+                                fill: theme.palette.text.secondary,
+                              }}
+                              interval={0}
+                              label={{
+                                value: 'Nivel',
+                                position: 'insideBottom',
+                                offset: -5,
+                                fontSize: 12,
+                                fill: theme.palette.text.secondary,
+                              }}
+                            />
+                            <YAxis
+                              allowDecimals={false}
+                              tick={{
+                                fontSize: 12,
+                                fill: theme.palette.text.secondary,
+                              }}
+                              label={{
+                                value: 'Asistencias',
+                                angle: -90,
+                                position: 'insideLeft',
+                                fontSize: 12,
+                                fill: theme.palette.text.secondary,
+                              }}
+                            />
+                            <Tooltip
+                              formatter={value => [
+                                value.toLocaleString('es-CO'),
+                                'Asistencias',
+                              ]}
+                              labelFormatter={label => label}
+                            />
+                            <Bar
+                              dataKey="total"
+                              fill={theme.palette.tertiary.main}
+                              {...chartBarProps}
+                            />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </Box>
                     </Box>
                   )}
                 </CardContent>
@@ -510,28 +530,24 @@ export default function SundaySchoolReports() {
           </Grid>
 
           {/* Detail table */}
-          <Card>
-            <CardContent>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                Detalle por clase
-              </Typography>
-              <DataTable
-                columns={detailColumns}
-                data={records}
-                pagination={{
-                  page,
-                  pageSize,
-                  total: totalRecords,
-                  onPageChange: handlePageChange,
-                }}
-                rowActions={rowActions}
-                emptyState={{
-                  message:
-                    'No hay registros de asistencia para los filtros seleccionados',
-                }}
-              />
-            </CardContent>
-          </Card>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+            Detalle por clase
+          </Typography>
+          <DataTable
+            columns={detailColumns}
+            data={records}
+            pagination={{
+              page,
+              pageSize,
+              total: totalRecords,
+              onPageChange: handlePageChange,
+            }}
+            rowActions={rowActions}
+            emptyState={{
+              message:
+                'No hay registros de asistencia para los filtros seleccionados',
+            }}
+          />
         </>
       )}
 

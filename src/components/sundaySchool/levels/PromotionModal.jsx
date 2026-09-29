@@ -204,6 +204,7 @@ export default function PromotionModal({ open, onClose, levelId, onSuccess }) {
             variant="primary"
             onClick={() => setConfirmOpen(true)}
             disabled={loading || !selected.length || submitting}
+            sx={{ whiteSpace: 'nowrap' }}
           >
             {confirmText}
           </Button>

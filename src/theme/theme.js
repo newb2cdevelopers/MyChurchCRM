@@ -200,6 +200,20 @@ const theme = createTheme({
         },
       },
     },
+    MuiDialog: {
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          // On mobile the default 32px paper margin + fullWidth's
+          // `width: calc(100% - 64px)` leave visible side space. Reduce both
+          // so modals fill the screen width. Tablet and desktop keep the
+          // default behavior.
+          [theme.breakpoints.down('sm')]: {
+            margin: theme.spacing(1),
+            width: 'calc(100% - 16px)',
+          },
+        }),
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         body: {
