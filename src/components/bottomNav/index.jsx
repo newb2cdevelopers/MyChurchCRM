@@ -9,6 +9,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { setSelectedModule } from '../../features/navigation/navigationSlice';
 import { renderAppIcon } from '../../utils/iconResolver';
+import { useActiveModule, getModuleSlug } from '../../hooks/useActiveModule';
 
 const QUICK_MODULE_PRIORITY = [
   'Aforo',
@@ -101,34 +102,11 @@ function BottomNav({ onOpenMore }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { roles } = useSelector(state => state.user);
-  const { selectedModuleName } = useSelector(state => state.navigation);
-
-  const getModuleSlug = role => {
-    const route = role.accesses?.[0]?.module?.route;
-    if (route && route !== 'test') return route;
-    return role.module.toLowerCase().replace(/\s+/g, '-');
-  };
+  const activeModule = useActiveModule();
 
   const quickModules = pickQuickModules(roles);
 
   const isInicioActive = pathname === '/dashboard';
-  const matchDynamicModule = pathname.match(/^\/module\/([^/]+)/);
-  const activeDynamicSlug = matchDynamicModule ? matchDynamicModule[1] : '';
-  const activeModuleFromPath =
-    roles?.find(r =>
-      r.accesses?.some(
-        a => pathname === a.route || pathname.startsWith(`${a.route}/`),
-      ),
-    )?.module || '';
-  const activeModuleFromDynamic =
-    activeDynamicSlug
-      ? roles?.find(r => r.accesses?.[0]?.module?.route === activeDynamicSlug)
-          ?.module || ''
-      : '';
-  const activeModule =
-    activeModuleFromPath ||
-    activeModuleFromDynamic ||
-    (pathname.startsWith('/modules') ? selectedModuleName : '');
 
   const handleInicio = () => {
     dispatch(

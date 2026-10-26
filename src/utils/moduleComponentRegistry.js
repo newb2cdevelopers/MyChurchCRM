@@ -10,6 +10,7 @@ import StudentList from '../components/sundaySchool/students/StudentList';
 import LevelList from '../components/sundaySchool/levels/LevelList';
 import ClassList from '../components/sundaySchool/classes/ClassList';
 import SundaySchoolReports from '../components/sundaySchool/reports/SundaySchoolReports';
+import SettingsPage from '../components/settings/SettingsPage';
 
 const ROUTE_COMPONENTS = {
   '/create-events': EventListView,
@@ -24,6 +25,7 @@ const ROUTE_COMPONENTS = {
   '/sunday-school-levels': LevelList,
   '/sunday-school-classes': ClassList,
   '/sunday-school-reports': SundaySchoolReports,
+  '/settings': SettingsPage,
 };
 
 export default ROUTE_COMPONENTS;

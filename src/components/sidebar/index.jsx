@@ -16,6 +16,7 @@ import ChurchIcon from '@mui/icons-material/Church';
 import { setSelectedModule } from '../../features/navigation/navigationSlice';
 import * as authService from '../../services/authService';
 import { renderAppIcon } from '../../utils/iconResolver';
+import { useActiveModule, getModuleSlug } from '../../hooks/useActiveModule';
 
 const SIDEBAR_WIDTH = 260;
 
@@ -64,7 +65,7 @@ function SidebarContent({ onItemClick }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { roles, churchName } = useSelector(state => state.user);
-  const { selectedModuleName } = useSelector(state => state.navigation);
+  const activeModule = useActiveModule();
 
   const closeIfNeeded = () => {
     if (onItemClick) onItemClick();
@@ -80,12 +81,6 @@ function SidebarContent({ onItemClick }) {
     clearSelectedModule();
     navigate('/dashboard');
     closeIfNeeded();
-  };
-
-  const getModuleSlug = role => {
-    const route = role.accesses?.[0]?.module?.route;
-    if (route && route !== 'test') return route;
-    return role.module.toLowerCase().replace(/\s+/g, '-');
   };
 
   const handleSelectModule = role => {
@@ -106,17 +101,6 @@ function SidebarContent({ onItemClick }) {
   };
 
   const isInicioActive = pathname === '/dashboard';
-
-  // Highlight module while in /modules, or when visiting one of its sub-routes.
-  const activeModuleFromPath =
-    roles?.find(r =>
-      r.accesses?.some(
-        a => pathname === a.route || pathname.startsWith(`${a.route}/`),
-      ),
-    )?.module || '';
-  const activeModule =
-    activeModuleFromPath ||
-    (pathname.startsWith('/modules') ? selectedModuleName : '');
 
   return (
     <Box

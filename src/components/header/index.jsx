@@ -1,7 +1,6 @@
 import { useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import { alpha } from '@mui/material/styles';
@@ -10,37 +9,17 @@ import BusinessIcon from '@mui/icons-material/Business';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import DropdownButton from '../shared/DropdownButton';
+import UserAvatar from '../shared/UserAvatar';
+import { getDisplayName } from '../../utils/getDisplayName';
 
 const HEADER_HEIGHT = 64;
 
-function stringToColor(string) {
-  let hash = 0;
-  for (let i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  let color = '#';
-  for (let i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.slice(-2);
-  }
-  return color;
-}
-
-function stringAvatar(name) {
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-      width: 36,
-      height: 36,
-      fontSize: '0.875rem',
-      fontWeight: 600,
-    },
-    children: name.charAt(0).toUpperCase(),
-  };
-}
-
 function Header() {
-  const { userEmail } = useSelector(state => state.user);
+  const { userEmail, userName, userLastName } = useSelector(state => state.user);
+
+  // Short label: first name + first last name. Falls back to the email while
+  // the session stored before this change has not been refreshed yet.
+  const displayName = getDisplayName(userName, userLastName) || userEmail;
 
   return (
     <Box
@@ -165,10 +144,10 @@ function Header() {
               variant="subtitle2"
               sx={{ color: 'text.primary', lineHeight: 1.2 }}
             >
-              {userEmail}
+              {displayName}
             </Typography>
           </Box>
-          <Avatar {...stringAvatar(userEmail || 'U')} />
+          <UserAvatar name={displayName} />
         </Box>
       </Box>
     </Box>

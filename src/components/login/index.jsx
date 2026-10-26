@@ -91,6 +91,8 @@ function Login() {
       dispatch(
         login({
           userEmail: results[0].email,
+          userName: results[0].name,
+          userLastName: results[0].lastName,
           token: results[0].access_token,
           roles: results[0].roles,
           workfront: results[0].workfront,

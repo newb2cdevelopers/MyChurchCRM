@@ -4,6 +4,8 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: {
     userEmail: '',
+    userName: '',
+    userLastName: '',
     token: '',
     selectedChurchId: '',
     churchName: '',
@@ -14,6 +16,8 @@ export const userSlice = createSlice({
   reducers: {
     login: (state, action) => {
       state.userEmail = action.payload.userEmail;
+      state.userName = action.payload.userName || '';
+      state.userLastName = action.payload.userLastName || '';
       state.token = action.payload.token;
       state.roles = action.payload.roles;
       state.workfront = action.payload.workfront;
@@ -25,6 +29,8 @@ export const userSlice = createSlice({
     },
     logout: state => {
       state.userEmail = '';
+      state.userName = '';
+      state.userLastName = '';
       state.token = '';
       state.selectedChurchId = '';
       state.churchName = '';

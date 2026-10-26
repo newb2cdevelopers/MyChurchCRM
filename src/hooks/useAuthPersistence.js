@@ -48,6 +48,8 @@ export const useAuthPersistence = () => {
             dispatch(
               login({
                 userEmail: data.email || '',
+                userName: data.name || '',
+                userLastName: data.lastName || '',
                 token: data.access_token,
                 roles: data.roles || [],
                 workfront: data.workfront || null,
